@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexblog">
+    <meta property="og:title" content="
+  Script para seleccionar paquetes por repositorio - Alexblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/scriptrepositorio/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/scriptrepositorio/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/scriptrepositorio/">
+    <title>
+  Script para seleccionar paquetes por repositorio - Alexblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/scriptrepositorio/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
+    
+
+    <meta name="generator" content="Hugo 0.57.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Script para seleccionar paquetes por repositorio</h1>
+      <h2 class="date">October 2, 2019</h2>
+
+      
+    </header>
+
+    
+
+<h2 id="script-para-seleccionar-paquetes-por-repositorio">Script para seleccionar paquetes por repositorio</h2>
+<div class="highlight"><pre class="chroma"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>
+<span class="nb">echo</span> <span class="s2">&#34;¿Que repositorio quieres buscar?(Debe estar en /etc/apt/sources.list)&#34;</span>
+
+<span class="nb">read</span> repositorio
+
+<span class="nv">reposistema</span><span class="o">=</span><span class="sb">`</span>cat /etc/apt/sources.list <span class="p">|</span> grep -o <span class="nv">$repositorio</span> <span class="p">|</span> head -1<span class="sb">`</span>
+
+<span class="c1">#Aqui hacemos que si el repositorio está en el sistema avance el programa, sino simplemente finalice</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$repositorio</span> <span class="o">=</span> <span class="nv">$reposistema</span> <span class="o">]</span><span class="p">;</span>
+
+<span class="k">then</span>
+
+	<span class="nb">echo</span> <span class="s2">&#34;Repositorio encontrado&#34;</span>
+
+	<span class="c1">#Aqui encuentra los paquetes que estan instalados en el sistema</span>
+
+	<span class="k">for</span> paquetes in <span class="k">$(</span>dpkg -l <span class="p">|</span> grep <span class="s1">&#39;^ii&#39;</span><span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span><span class="p">;</span>
+
+	<span class="k">do</span>
+
+		<span class="c1">#Aqui está diciendo que si el repositorio se encuentra en el apt policy, entonces que mande por la terminal el paquete</span>
+
+		<span class="k">if</span> <span class="o">[</span> <span class="nv">$repositorio</span> <span class="o">=</span> <span class="k">$(</span>apt policy <span class="nv">$paquetes</span> <span class="m">2</span>&gt;/dev/null <span class="p">|</span> egrep <span class="s1">&#39;\*\*\*&#39;</span> -A1 <span class="p">|</span> tail -1 <span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span> <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+
+			<span class="nb">echo</span> <span class="nv">$paquetes</span>
+
+		<span class="k">fi</span>
+
+	<span class="k">done</span>
+
+<span class="k">else</span>
+
+	<span class="nb">echo</span> <span class="s2">&#34;Este repositorio no existe&#34;</span>
+
+<span class="k">fi</span></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fscriptrepositorio%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fscriptrepositorio%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fscriptrepositorio%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fscriptrepositorio%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

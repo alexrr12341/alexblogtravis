@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Alexblog</title>
+    <link>https://www.alexrrinformatico.com/posts/</link>
+    <description>Recent content in Posts on Alexblog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 16 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.alexrrinformatico.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Integración Continua estática y Django</title>
+      <link>https://www.alexrrinformatico.com/posts/integracion/</link>
+      <pubDate>Thu, 16 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/integracion/</guid>
+      <description>Despliegue de una página web estática Vamos a realizar una integración continua de este mismo blog en githubpages con travis, nuestra aplicación es de Hugo. Para ello crearemos un repositorio en github que solo contenga los ficheros markdown.
+ alexrr@pc-alex:~/Hugo$ git@github.com:alexrr12341/alexblogcontinuo.git alexrr@pc-alex:~/Hugo$ cp -r alexblog alexblogcontinuo/  Vamos ahora a borrar la carpeta public que es la que contiene los htmls  alexrr@pc-alex:~/Hugo/alexblogcontinuo$ rm -r public/ 
+Ahora vamos a hacer nuestro fichero travis y vamos a modificarlo para que instale hugo y ejecute el comando (.</description>
+    </item>
+    
+    <item>
+      <title>Creación de un Hosting Simple por FTP</title>
+      <link>https://www.alexrrinformatico.com/posts/ftp/</link>
+      <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/ftp/</guid>
+      <description>Instalación de Hugo Primero creamos un virtual host para nuestra página web
+server { listen 80; server_name hosting.alejandro.gonzalonazareno.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl; ssl_certificate /etc/nginx/cert/salmorejo.alejandro.gonzalonazareno.org.crt; ssl_certificate_key /etc/nginx/cert/salmorejo.alejandro.gonzalonazareno.org.key; root /var/www/hosting; index index.html index.htm index.nginx-debian.html index.php; server_name hosting.alejandro.gonzalonazareno.org; location / { try_files $uri $uri/ =404; } location ~ \.php$ { try_files $uri $uri/ =404; fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; include fastcgi_params; } if (!-e $request_filename) { rewrite ^(.</description>
+    </item>
+    
+    <item>
+      <title>Cortafuegos perimetral con DMZ</title>
+      <link>https://www.alexrrinformatico.com/posts/iptables/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/iptables/</guid>
+      <description>La máquina router-fw tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.
+iptables -A INPUT -s 172.22.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT iptables -A OUTPUT -d 172.22.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT iptables -A INPUT -s 172.23.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT iptables -A OUTPUT -d 172.</description>
+    </item>
+    
+    <item>
+      <title>Cifrado Asimétrico (GPG/OpenSSL)</title>
+      <link>https://www.alexrrinformatico.com/posts/gpg/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/gpg/</guid>
+      <description>h2. Tarea 1: Generación de claves (1 punto)
+1. Genera un par de claves (pública y privada). ¿En que directorio se guarda las claves de un usuario?
+Para generar el par de claves utilizamos el siguiente comando:
+gpg --gen-keygpg (GnuPG) 2.2.17; Copyright (C) 2019 Free Software Foundation, Inc. This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law. Nota: Usa &amp;#34;gpg --full-generate-key&amp;#34; para el diálogo completo de generación de clave.</description>
+    </item>
+    
+    <item>
+      <title>Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx</title>
+      <link>https://www.alexrrinformatico.com/posts/pythoncms/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/pythoncms/</guid>
+      <description>Vamos primero a hacer nuestro entorno virtual
+python3 -m venv mezzanine alexrr@pc-alex:~/pythonvirtual$ source mezzanine/bin/activate (mezzanine) alexrr@pc-alex:~/pythonvirtual$  Ahora vamos a instalar mezzanine con pip
+pip install mezzanine Ahora vamos a movernos a una carpeta, por ejemplo mezzanine y nos vamos a hacer un requirements.txt
+pip freeze &amp;gt; requirements.txt Y borramos la línea del requirements.txt de pkg-resources:
+pkg-resources==0.0.0 Y ahora vamos a hacer el proyecto de mezzanine
+mezzanine-project pythoncms Y vamos a crear la base de datos</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Python3 Makefile</title>
+      <link>https://www.alexrrinformatico.com/posts/python/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/python/</guid>
+      <description>h2. Instalación de Python
+https://www.python.org/downloads/
+tar -xf Python-3.8.0.tar.xz Y ejecutamos el configure
+mkdir /opt/python3 ./configure --prefix=/opt/python3make Nos saltará una dependencia
+zipimport.ZipImportError: can&amp;#39;t decompress data; zlib not available El paquete de esta dependencia es zlib1g-dev
+apt install zlib1g-dev Y ahora lo instalamos
+make make install</description>
+    </item>
+    
+    <item>
+      <title>Integridad, firmas y autentificación</title>
+      <link>https://www.alexrrinformatico.com/posts/firmas/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/firmas/</guid>
+      <description>h2. Tarea 1: Firmas electrónicas (3 puntos)
+Manda un documento y la firma electrónica del mismo a un compañero. Verifica la firma que tu has recibido. Le mando el documento y la firma electrónica a Paco por scp.
+alexrr@pc-alex:~/gpg$ echo &amp;#34;Hola amigos&amp;#34; &amp;gt; paco alexrr@pc-alex:~/gpg$ gpg --output paco.sig --detach-sig paco Ahora la verificamos
+gpg --verify alex.sig alex alexrr@pc-alex:~/gpg$ gpg --verify alex.sig alex gpg: Firmado el mar 15 oct 2019 11:07:01 CEST gpg: usando RSA clave DA21BD5A7231AF245B1BA986733C176D1363BFF4 gpg: Firma correcta de &amp;#34;Francisco Guillermo García &amp;lt;pakotoes@gmail.</description>
+    </item>
+    
+    <item>
+      <title>Servidor Apache2</title>
+      <link>https://www.alexrrinformatico.com/posts/apache/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/apache/</guid>
+      <description>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant con una máquina con una red pública o utiliza una máquina del cloud. Instala el servidor web Apache2 en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.
+apt install apache2 En /var/www/html editamos el fichero index.html y accedemos a la IP de la máquina en nuestro navegador Tarea 2 (2 puntos)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</description>
+    </item>
+    
+    <item>
+      <title>Servidor Nginx</title>
+      <link>https://www.alexrrinformatico.com/posts/nginx/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/nginx/</guid>
+      <description>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant o utiliza una máquina del cloud con una red pública. Instala el servidor web nginx en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :nginx do |nginx| nginx.vm.box = &amp;#34;debian/buster64&amp;#34; nginx.vm.hostname = &amp;#34;local&amp;#34; nginx.vm.network :public_network,:bridge=&amp;gt;&amp;#34;wlp0s20f3&amp;#34; nginx.vm.network :private_network, ip: &amp;#34;10.1.1.103&amp;#34;, virtualbox__intnet: &amp;#34;apache&amp;#34; end endapt install nginx Tarea 2 (1 punto)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</description>
+    </item>
+    
+    <item>
+      <title>Servidores DNS</title>
+      <link>https://www.alexrrinformatico.com/posts/dns/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/dns/</guid>
+      <description>Tarea 1 (2 punto)(Obligatorio): Modifica los clientes para que utilicen el nuevo servidor dns. Realiza una consulta a www.iesgn.org, y a www.josedomingo.org. Realiza una prueba de funcionamiento para comprobar que el servidor dnsmasq funciona como cache dns. Muestra el fichero hosts del cliente para demostrar que no estás utilizando resolución estática. Realiza una consulta directa al servidor dnsmasq. ¿Se puede realizar resolución inversa?. Documenta la tarea en redmine.
+Primero instalamos dnsmasq.</description>
+    </item>
+    
+    <item>
+      <title>Script para seleccionar paquetes por repositorio</title>
+      <link>https://www.alexrrinformatico.com/posts/scriptrepositorio/</link>
+      <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/scriptrepositorio/</guid>
+      <description> Script para seleccionar paquetes por repositorio #!/bin/sh  echo &amp;#34;¿Que repositorio quieres buscar?(Debe estar en /etc/apt/sources.list)&amp;#34; read repositorio reposistema=`cat /etc/apt/sources.list | grep -o $repositorio | head -1` #Aqui hacemos que si el repositorio está en el sistema avance el programa, sino simplemente finalice if [ $repositorio = $reposistema ]; then echo &amp;#34;Repositorio encontrado&amp;#34; #Aqui encuentra los paquetes que estan instalados en el sistema for paquetes in $(dpkg -l | grep &amp;#39;^ii&amp;#39;| awk &amp;#39;{print $2}&amp;#39;); do #Aqui está diciendo que si el repositorio se encuentra en el apt policy, entonces que mande por la terminal el paquete if [ $repositorio = $(apt policy $paquetes 2&amp;gt;/dev/null | egrep &amp;#39;\*\*\*&amp;#39; -A1 | tail -1 | awk &amp;#39;{print $2}&amp;#39;) ];then echo $paquetes fi done else echo &amp;#34;Este repositorio no existe&amp;#34; fi</description>
+    </item>
+    
+    <item>
+      <title>Servidor DHCP</title>
+      <link>https://www.alexrrinformatico.com/posts/creating-a-new-theme/</link>
+      <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/creating-a-new-theme/</guid>
+      <description>##Servidor DHCP
+Tarea 2 (1 punto)(Obligatorio): Entrega el fichero Vagrantfile que define el escenario.
+$script = &amp;lt;&amp;lt;-SCRIPT apt-get update apt-get -y install isc-dhcp-server SCRIPT Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :nodo_lan1 do |lan1| lan1.vm.box = &amp;#34;debian/buster64&amp;#34; lan1.vm.hostname = &amp;#34;nodolan1&amp;#34; lan1.vm.network :private_network,type: &amp;#34;dhcp&amp;#34;, virtualbox__intnet: &amp;#34;dhcp&amp;#34; lan1.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;ip r del default via 10.0.2.2&amp;#34; end config.vm.define :Servidor do |servidor| servidor.vm.box = &amp;#34;debian/buster64&amp;#34; servidor.vm.hostname = &amp;#34;Servidor&amp;#34; servidor.vm.network :private_network, ip: &amp;#34;192.168.100.1&amp;#34;, virtualbox__intnet: &amp;#34;dhcp&amp;#34; servidor.vm.network :public_network,:bridge=&amp;gt;&amp;#34;wlp0s20f3&amp;#34;,use_dhcp_assigned_default_route: true servidor.</description>
+    </item>
+    
+    <item>
+      <title>Ejercicio Raid 5</title>
+      <link>https://www.alexrrinformatico.com/posts/raid5/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid5/</guid>
+      <description>Ejercicio Raid 5 Fichero de Configuración
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid5 do |raid5| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; disco3 = &amp;#39;.vagrant/discoraid3.vdi&amp;#39; raid5.vm.box = &amp;#34;debian/buster64&amp;#34; raid5.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y upgrade&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install mdadm&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install lvm2&amp;#34; raid5.vm.provider :virtualbox do |v| if not File.exist?(disco) v.customize [&amp;#34;createhd&amp;#34;, &amp;#34;--filename&amp;#34;, disco, &amp;#34;--size&amp;#34;, 1024] end v.customize [&amp;#34;storageattach&amp;#34;, :id, &amp;#34;--storagectl&amp;#34;, &amp;#34;SATA Controller&amp;#34;, &amp;#34;--port&amp;#34;, 1, &amp;#34;--device&amp;#34;, 0, &amp;#34;--type&amp;#34;, &amp;#34;hdd&amp;#34;, &amp;#34;--medium&amp;#34;, disco] end raid5.</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Oracle 12c en Debian Jessie</title>
+      <link>https://www.alexrrinformatico.com/posts/oracle/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/oracle/</guid>
+      <description>Instalación de Oracle 12c en Debian Jessie Para instalar Oracle 12c debemos tener los siguientes requisitos mínimos:
+ 30GB de disco duro 2GB de RAM 2 procesadores Conexión a Internet  Configuración de Oracle Para la estructura de grupos y usuarios se recomienda la siguiente:
+addgroup --system oinstall addgroup --system dba adduser --system --ingroup oinstall -shell /bin/bash oracle adduser oracle dba passwd oracle Creación de directorios requeridos de Oracle:</description>
+    </item>
+    
+    <item>
+      <title>Primeros pasos de Hugo</title>
+      <link>https://www.alexrrinformatico.com/posts/hugo/</link>
+      <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/hugo/</guid>
+      <description>Instalación de Hugo Para instalar el generador Hugo simplemente debemos ejecutar el siguiente comando en la terminal
+apt-get install hugo  Hugo utiliza el lenguaje de programación Go Hugo utiliza el sistema de plantillas Go  Para crear un sitio web solo debemos ejecutar el siguiente comando en la terminal
+hugo new site {nombre} Configuración del theme Primero debemos elegir la plantilla Go que queramos y hacemos un git clone(debemos ponerla en la carpeta themes)</description>
+    </item>
+    
+    <item>
+      <title>Ejercicio Raid 1</title>
+      <link>https://www.alexrrinformatico.com/posts/raid1/</link>
+      <pubDate>Sat, 28 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid1/</guid>
+      <description>Ejercicio RAID 1  Tarea 1: Entrega un fichero Vagranfile donde definimos la máquina con los discos necesarios para hacer el ejercicio. Además al crear la máquina con vagrant se debe instalar el programa mdadm que nos permite la construcción del RAID.
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid1 do |raid1| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; raid1.vm.box = &amp;#34;debian/buster64&amp;#34; raid1.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid1.vm.network :public_network,:bridge=&amp;gt; &amp;#34;wlp0s20f3&amp;#34; raid1.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid1.</description>
+    </item>
+    
+  </channel>
+</rss>

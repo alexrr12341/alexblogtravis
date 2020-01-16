@@ -10,6 +10,7 @@ install:
 
 # Build the website
 script:
+  - sudo pip install Pygments
   - hugo --theme=hugo-coder-portfolio
 
 # Deploy to GitHub pages

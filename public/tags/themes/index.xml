@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>themes on Alexblog</title>
+    <link>https://www.alexrrinformatico.com/tags/themes/</link>
+    <description>Recent content in themes on Alexblog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 28 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.alexrrinformatico.com/tags/themes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Ejercicio Raid 1</title>
+      <link>https://www.alexrrinformatico.com/posts/raid1/</link>
+      <pubDate>Sat, 28 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid1/</guid>
+      <description>Ejercicio RAID 1  Tarea 1: Entrega un fichero Vagranfile donde definimos la máquina con los discos necesarios para hacer el ejercicio. Además al crear la máquina con vagrant se debe instalar el programa mdadm que nos permite la construcción del RAID.
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid1 do |raid1| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; raid1.vm.box = &amp;#34;debian/buster64&amp;#34; raid1.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid1.vm.network :public_network,:bridge=&amp;gt; &amp;#34;wlp0s20f3&amp;#34; raid1.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid1.</description>
+    </item>
+    
+  </channel>
+</rss>

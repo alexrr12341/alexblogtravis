@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexblog">
+    <meta property="og:title" content="
+  Instalación de Oracle 12c en Debian Jessie - Alexblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/oracle/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/oracle/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/oracle/">
+    <title>
+  Instalación de Oracle 12c en Debian Jessie - Alexblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/oracle/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
+    
+
+    <meta name="generator" content="Hugo 0.57.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Instalación de Oracle 12c en Debian Jessie</h1>
+      <h2 class="date">October 1, 2019</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    
+
+<h2 id="instalación-de-oracle-12c-en-debian-jessie">Instalación de Oracle 12c en Debian Jessie</h2>
+
+<p>Para instalar Oracle 12c debemos tener los siguientes requisitos mínimos:</p>
+
+<ul>
+<li>30GB de disco duro</li>
+<li>2GB de RAM</li>
+<li>2 procesadores</li>
+<li>Conexión a Internet</li>
+</ul>
+
+<h3 id="configuración-de-oracle">Configuración de Oracle</h3>
+
+<p><em>Para la estructura de grupos y usuarios se recomienda la siguiente:</em></p>
+<div class="highlight"><pre class="chroma">addgroup --system oinstall
+addgroup --system dba
+adduser --system --ingroup oinstall -shell /bin/bash oracle
+adduser oracle dba
+passwd oracle</pre></div>
+<p><em>Creación de directorios requeridos de Oracle:</em></p>
+<div class="highlight"><pre class="chroma">mkdir -p /opt/oracle/product/12.2.0.1
+mkdir -p /opt/oraInventory
+chown -R oracle:dba /opt/ora*</pre></div>
+<p><em>Enlaces para la instalación de Oracle:</em></p>
+<div class="highlight"><pre class="chroma">ln -s /usr/bin/awk /bin/awk
+ln -s /usr/bin/basename /bin/basename
+ln -s /usr/bin/rpm /bin/rpm
+ln -s /usr/lib/x86_64-linux-gnu /usr/lib64</pre></div>
+<p><em>Limites en el sistema</em></p>
+<div class="highlight"><pre class="chroma">echo &#34;&#34;&#34;
+## Valor del número máximo de manejadores de archivos. ##
+fs.file-max = 65536
+fs.aio-max-nr = 1048576
+## Valor de los parámetros de semáforo en el orden listado. ##
+## semmsl, semmns, semopm, semmni ##
+kernel.sem = 250 32000 100 128
+## Valor de los tamaños de segmento de memoria compartida. ##
+## (Oracle recomienda total de RAM -1 byte) 2GB ##
+kernel.shmmax = 2107670527
+kernel.shmall = 514567
+kernel.shmmni = 4096
+## Valor del rango de números de puerto. ##
+net.ipv4.ip_local_port_range = 1024 65000
+## Valor del número gid del grupo dba. ##
+vm.hugetlb_shm_group = 121
+## Valor del número de páginas de memoria. ##
+vm.nr_hugepages = 64
+&#34;&#34;&#34; &gt; /etc/sysctl.d/local-oracle.conf</pre></div>
+<p><em>Tras esto cargamos la configuración en el sistema:</em></p>
+<div class="highlight"><pre class="chroma">sysctl -p /etc/sysctl.d/local-oracle.conf</pre></div>
+<p><em>Hacemos la siguiente configuración por seguridad:</em></p>
+<div class="highlight"><pre class="chroma">echo &#34;&#34;&#34;
+## Número máximo de procesos disponibles para un solo usuario. ##
+oracle          soft    nproc           2047
+oracle          hard    nproc           16384
+## Número máximo de descriptores de archivo abiertos para un solo usuario. ##
+oracle          soft    nofile          1024
+oracle          hard    nofile          65536
+## Cantidad de RAM para el uso de páginas de memoria. ##
+oracle          soft    memlock         204800
+oracle          hard    memlock         204800
+&#34;&#34;&#34; &gt; /etc/security/limits.d/local-oracle.conf</pre></div>
+<p><em>Variables de entorno para Oracle:</em></p>
+<div class="highlight"><pre class="chroma">echo &#34;&#34;&#34;
+## Nombre del equipo ##
+export ORACLE_HOSTNAME=localhost
+## Usuario con permiso en archivos Oracle. ##
+export ORACLE_OWNER=oracle
+## Directorio que almacenará los distintos servicios de Oracle. ##
+export ORACLE_BASE=/opt/oracle
+## Directorio que almacenará la base de datos Oracle. ##
+export ORACLE_HOME=/opt/oracle/product/12.2.0.1/dbhome_1
+## Nombre único de la base de datos. ##
+export ORACLE_UNQNAME=oraname
+## Identificador de servicio de escucha. ##
+export ORACLE_SID=orasid
+## Ruta a archivos binarios. ##
+export PATH=$PATH:/opt/oracle/product/12.2.0.1/dbhome_1/bin
+## Ruta a la biblioteca. ##
+export LD_LIBRARY_PATH=/opt/oracle/product/12.2.0.1/dbhome_1/lib
+## Idioma
+export NLS_LANG=&#39;SPANISH_SPAIN.AL32UTF8&#39;
+&#34;&#34;&#34; &gt;&gt; /etc/bash.bashrc</pre></div>
+<p><em>Luego de esto cargamos las variables de entorno:</em></p>
+<div class="highlight"><pre class="chroma">source /etc/bash.bashrc</pre></div>
+<p><em>Por último, descargamos los paquetes que vamos a necesitar para la instalación de Oracle:</em></p>
+<div class="highlight"><pre class="chroma">apt -y install build-essential binutils libcap-dev gcc g++ libc6-dev ksh libaio-dev make libxi-dev libxtst-dev libxau-dev libxcb1-dev sysstat rpm xauth xorg unzip</pre></div>
+<h3 id="descarga-de-oracle-database-software">Descarga de Oracle Database Software</h3>
+
+<p>Entramos a la página de descargas de <a href="https://www.oracle.com/database/technologies/database12c-linux-downloads.html">Oracle</a></p>
+
+<p>Primero iniciamos sesión y aceptamos el &ldquo;License Agreement&rdquo;. Luego elegimos el siguiente:</p>
+
+<ul>
+<li>Oracle Database 12c Release 2</li>
+<li>(12.2.0.1.0) Enterprise Edition</li>
+<li>linux x86-64 File 1 (3.2 GB)</li>
+</ul>
+
+<p><em>Y descomprimimos el archivo</em></p>
+<div class="highlight"><pre class="chroma">unzip linuxx64_12201_database.zip</pre></div>
+<p><em>Si tenemos una máquina virtual usamos scp para pasar la carpeta database y si no entramos en el usuario Oracle</em></p>
+<div class="highlight"><pre class="chroma">ssh -XC oracle@servidor</pre></div>
+<p><em>Luego entramos y abrimos el instalador gráfico.</em></p>
+<div class="highlight"><pre class="chroma">database/runInstaller -IgnoreSysPreReqs -ignorePrereq</pre></div>
+<p>*Muy importante acceder con el usuario oracle</p>
+
+<h3 id="instalación-gráfica-de-oracle">Instalación gráfica de Oracle</h3>
+
+<p><em>Seleccionamos la opción de no recibir actualizaciones de seguridad.</em></p>
+
+<p><img src="/images/Oracle1.png" alt="" /></p>
+
+<p><em>Elegimos la opción para &ldquo;Crear y configurar base de datos&rdquo; ya que vamos a crear una nueva base de datos.</em></p>
+
+<p><img src="/images/Oracle2.png" alt="" /></p>
+
+<p><em>Elegimos la clase Servidor</em></p>
+
+<p><img src="/images/Oracle3.png" alt="" /></p>
+
+<p><em>Elegimos &ldquo;Instalación de Base de Datos de Instancia Única&rdquo;</em></p>
+
+<p><img src="/images/Oracle4.png" alt="" /></p>
+
+<p><em>Elegimos Avanzada para configurar mas a fondo.</em></p>
+
+<p><img src="/images/Oracle5.png" alt="" /></p>
+
+<p><em>El idioma lo dejamos por defecto</em></p>
+
+<p><img src="/images/Oracle6.png" alt="" /></p>
+
+<p><em>Elegimos la opción de Entrepise Edition</em></p>
+
+<p><img src="/images/Oracle7.png" alt="" /></p>
+
+<p><em>Ahora nos dirá donde instalar Oracle</em></p>
+
+<p>*Si tenemos bien configurada las variables de Entorno nos saldrá bien la ruta</p>
+
+<p><img src="/images/Oracle8.png" alt="" /></p>
+
+<p><em>El inventario si tenemos bien las variables se configurará automáticamente.</em></p>
+
+<p><img src="/images/Oracle9.png" alt="" /></p>
+
+<p><em>Seleccionamos el tipo de configuración General</em></p>
+
+<p><img src="/images/Oracle10.png" alt="" /></p>
+
+<p><em>En los identificadores dejamos todo por defecto</em></p>
+
+<p><img src="/images/Oracle11.png" alt="" /></p>
+
+<p><em>En las opciones de configuración vamos al apartado Juego de Caracteres y seleccionamos “Unicode”</em></p>
+
+<p><img src="/images/Oracle12.png" alt="" /></p>
+
+<p><em>Y marcamos en esquemas de ejemplo que cree la base de datos de ejemplo</em></p>
+
+<p><img src="/images/Oracle13.png" alt="" /></p>
+
+<p><em>En la almacenación dejamos por defecto</em></p>
+
+<p><img src="/images/Oracle14.png" alt="" /></p>
+
+<p><em>Y saltamos las opciones de gestión y las opciones de recuperación.</em></p>
+
+<p><em>En la autentificación,para mayor comodidad usamos la misma contraseña para todas las cuentas.</em></p>
+
+<p><img src="/images/Oracle15.png" alt="" /></p>
+
+<p><em>En grupos del sistema operativo con privilegios dejamos por defecto.</em></p>
+
+<p><img src="/images/Oracle16.png" alt="" /></p>
+
+<p><em>Y ya pondremos a instalar nuestro Oracle 12c.</em></p>
+
+<p><img src="/images/Oracle17.png" alt="" /></p>
+
+<p>*Nos pedirá en la instalación ejecutar unos comandos en modo root, lo ejecutaremos en nuestra terminal.</p>
+
+<p>Si todo va correctamente la instalación finalizará sin errores*</p>
+
+<p><img src="/images/Oracle18.png" alt="" /></p>
+
+<p><img src="/images/Oracle19.png" alt="" /></p>
+
+<p><em>Para comprobar que funciona correctamente utilizamos el comando</em></p>
+<div class="highlight"><pre class="chroma">sqlplus sys/{PASS} as sysdba</pre></div>
+<p><img src="/images/Oracle20.png" alt="" /></p>
+
+<h2 id="instalación-de-la-base-de-datos">Instalación de la base de datos</h2>
+
+<p><em>Por defecto oracle no arranca, asique la arrancaremos manualmente.</em></p>
+
+<p><em>Arrancaremos primero el listener</em></p>
+<div class="highlight"><pre class="chroma">lsnrctl start</pre></div>
+<p><img src="/images/Oracle21.png" alt="" /></p>
+
+<p><em>Arrancamos la base de datos</em></p>
+<div class="highlight"><pre class="chroma">sqlplus / as sysdba
+
+startup</pre></div>
+<p><img src="/images/Oracle22.png" alt="" /></p>
+
+<h2 id="configuración-del-acceso-remoto">Configuración del Acceso remoto</h2>
+
+<p><em>Si necesitamos acceder mediante la red simplemente debemos modificar el listener.</em></p>
+
+<p><em>Ponemos estas lineas en $ORACLE_HOME/network/admin/listener.ora</em></p>
+<div class="highlight"><pre class="chroma">SID_LIST_LISTENER =
+ (SID_LIST =
+  (SID_DESC =
+   (GLOBAL_DBNAME = orcl)
+   (ORACLE_HOME = /opt/oracle/product/12.2.0.1/dbhome_1)
+   (SID_NAME = orcl)
+  )
+ )
+
+LISTENER=
+ (DESCRIPTION_LIST =
+  (DESCRIPTION =
+   (ADDRESS_LIST =
+    (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+   )
+   (ADDRESS_LIST =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 0.0.0.0)(PORT = 1521))
+   )
+  )
+ )</pre></div>
+<p><em>Y reiniciamos el listener.</em></p>
+<div class="highlight"><pre class="chroma">lsnrctl stop
+lsnrctl start</pre></div>
+<p><img src="/images/Oracle23.png" alt="" /></p>
+
+<p><em>Ahora vamos a crear un usuario para que puedan acceder remotamente por ese usuario.</em></p>
+<div class="highlight"><pre class="chroma">Create user usuario identified by usuario;
+grant connect to usuario;</pre></div>
+<p><em>Y ya si queremos le podremos dar los privilegios que escojamos.</em></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2foracle%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2foracle%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2foracle%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2foracle%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>
