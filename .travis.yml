@@ -1,6 +1,6 @@
 #Before install
 before_install
-  - sudo apt install hugo python-pygments 
+  - sudo apt install -y hugo python-pygments 
 # Clean and don't fail
 install:
   - rm -rf public || exit 0
