@@ -1,8 +1,7 @@
 # Install the apt prerequisites
 addons:
-  apt:
+  brew:
     packages:
-      - python-pygments
       - hugo
 # Clean and don't fail
 install:
