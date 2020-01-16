@@ -5,6 +5,7 @@ dist: xenial
       - hugo
 # Clean and don't fail
 install:
+  - sudo snap install hugo
   - rm -rf public || exit 0
 
 # Build the website
