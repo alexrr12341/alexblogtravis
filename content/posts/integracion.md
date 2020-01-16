@@ -69,9 +69,30 @@ En nuestro repositorio, vamos a Settings, vamos al apartado de GitHub Pages(est�
 Ahora vamos a comprobar la integración continua con este mismo post, sacaremos antes de una actualización una foto sin estos contenidos y luego haremos:
 
 ```
-git add *
-git commit -am "Prueba Travis"
-git push
+alexrr@pc-alex:~/Hugo/alexblogtravis$ git add *
+alexrr@pc-alex:~/Hugo/alexblogtravis$ git commit -am "Prueba Travis"
+[master 17683d4] Prueba Travis
+ 3 files changed, 61 insertions(+), 8 deletions(-)
+ create mode 100644 themes/hugo-coder-portfolio/static/images/gh-pages.png
+ create mode 100644 themes/hugo-coder-portfolio/static/images/ic-travis.png
+alexrr@pc-alex:~/Hugo/alexblogtravis$ git push
+X11 forwarding request failed on channel 0
+Enumerando objetos: 19, listo.
+Contando objetos: 100% (19/19), listo.
+Compresión delta usando hasta 8 hilos
+Comprimiendo objetos: 100% (10/10), listo.
+Escribiendo objetos: 100% (11/11), 109.47 KiB | 903.00 KiB/s, listo.
+Total 11 (delta 5), reusado 0 (delta 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To github.com:alexrr12341/alexblogtravis.git
+   a318731..17683d4  master -> master
 ```
 
 ![](/images/ic-travis.png)
+
+La información llega a Travis:
+![](/images/ic-travis2.png)
+![](/images/ic-travis3.png)
+
+Y efectivamente está actualizado nuestro blog:
+![](/images/ic-travis4.png)
