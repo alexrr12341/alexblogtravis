@@ -20,7 +20,7 @@ install:
 
 # script - run the build script
 script:
-    - hugo
+    - hugo --theme=hugo-coder-portfolio
     - echo "$CNAME_URL" > public/CNAME
 # Deploy to GitHub pages
 deploy:
