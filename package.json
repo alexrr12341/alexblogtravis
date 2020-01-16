@@ -1,0 +1,20 @@
+{
+  "name": "alexblog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pre-push": "hugo",
+    "pre-push": "surge --domain alexblog.surge.sh /home/alexrr/Hugo/alexblog/public/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexrr12341/alexblog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexrr12341/alexblog/issues"
+  },
+  "homepage": "https://github.com/alexrr12341/alexblog#readme"
+}

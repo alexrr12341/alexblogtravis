@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/</loc>
+    <lastmod>2020-01-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/integracion/</loc>
+    <lastmod>2020-01-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/</loc>
+    <lastmod>2020-01-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/ftp/</loc>
+    <lastmod>2020-01-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/iptables/</loc>
+    <lastmod>2020-01-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/gpg/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/pythoncms/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/python/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/firmas/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/apache/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/nginx/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/dns/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/scriptrepositorio/</loc>
+    <lastmod>2019-10-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/creating-a-new-theme/</loc>
+    <lastmod>2019-10-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/categories/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/categories/development/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/development/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/raid5/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/go/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/categories/golang/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/golang/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/hugo/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/oracle/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/</loc>
+    <lastmod>2019-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/hugo/</loc>
+    <lastmod>2019-09-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/posts/raid1/</loc>
+    <lastmod>2019-09-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/templates/</loc>
+    <lastmod>2019-09-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/tags/themes/</loc>
+    <lastmod>2019-09-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/about/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/contact/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/contactar/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/projects/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/projects/</loc>
+  </url>
+  
+  <url>
+    <loc>https://www.alexrrinformatico.com/sobre/</loc>
+  </url>
+  
+</urlset>

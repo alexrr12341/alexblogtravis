@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexblog">
+    <meta property="og:title" content="
+  Ejercicio Raid 5 - Alexblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/raid5/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/raid5/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/raid5/">
+    <title>
+  Ejercicio Raid 5 - Alexblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/raid5/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
+    
+
+    <meta name="generator" content="Hugo 0.57.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Ejercicio Raid 5</h1>
+      <h2 class="date">October 1, 2019</h2>
+
+      
+    </header>
+
+    
+
+<h2 id="ejercicio-raid-5">Ejercicio Raid 5</h2>
+
+<p><em>Fichero de Configuración</em></p>
+<div class="highlight"><pre class="chroma">Vagrant.configure(&#34;2&#34;) do |config|
+
+  config.vm.define :raid5 do |raid5|
+
+    disco = &#39;.vagrant/discoraid1.vdi&#39;
+
+    disco2 = &#39;.vagrant/discoraid2.vdi&#39;
+
+    disco3 = &#39;.vagrant/discoraid3.vdi&#39;
+
+    raid5.vm.box = &#34;debian/buster64&#34;
+
+    raid5.vm.hostname = &#34;EscenarioRaid&#34;
+
+    raid5.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: &#34;apt-get update&#34;
+
+    raid5.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: &#34;apt-get -y upgrade&#34;
+
+    raid5.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: &#34;apt-get -y install mdadm&#34;
+
+    raid5.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: &#34;apt-get -y install lvm2&#34;
+
+    raid5.vm.provider :virtualbox do |v|
+
+	if not File.exist?(disco)
+
+                 v.customize [&#34;createhd&#34;, &#34;--filename&#34;, disco, &#34;--size&#34;, 1024]
+
+	end
+
+                 v.customize [&#34;storageattach&#34;, :id, &#34;--storagectl&#34;, &#34;SATA Controller&#34;,
+
+                              &#34;--port&#34;, 1, &#34;--device&#34;, 0, &#34;--type&#34;, &#34;hdd&#34;,
+
+                              &#34;--medium&#34;, disco]
+
+       
+
+     end
+
+     raid5.vm.provider :virtualbox do |v|
+
+             if not File.exist?(disco2)
+
+                 v.customize [&#34;createhd&#34;, &#34;--filename&#34;, disco2, &#34;--size&#34;, 1024]
+
+	     end
+
+                 v.customize [&#34;storageattach&#34;, :id, &#34;--storagectl&#34;, &#34;SATA Controller&#34;,
+
+                              &#34;--port&#34;, 2, &#34;--device&#34;, 0, &#34;--type&#34;, &#34;hdd&#34;,
+
+                              &#34;--medium&#34;, disco2]
+
+     end
+
+     raid5.vm.provider :virtualbox do |v|
+
+             if not File.exist?(disco3)
+
+                 v.customize [&#34;createhd&#34;, &#34;--filename&#34;, disco3, &#34;--size&#34;, 1024]
+
+	     end
+
+                 v.customize [&#34;storageattach&#34;, :id, &#34;--storagectl&#34;, &#34;SATA Controller&#34;,
+
+                              &#34;--port&#34;, 3, &#34;--device&#34;, 0, &#34;--type&#34;, &#34;hdd&#34;,
+
+                              &#34;--medium&#34;, disco3]
+
+     end
+
+  end
+
+end</pre></div>
+<p><em>Tarea 1: Crea una raid llamado md5 con los discos que hemos conectado a la máquina.</em></p>
+
+<p>Para hacer un raid 5 necesitamos 3 discos como mínimo y ejecutar el siguiente comando:</p>
+<div class="highlight"><pre class="chroma">mdadm --create /dev/md5 --level=5 --raid-devices=3 /dev/sdb /dev/sdc /dev/sdd</pre></div>
+<p><em>Tarea 2: Comprueba las características del RAID. Comprueba el estado del RAID. ¿Qué capacidad tiene el RAID que hemos creado?</em></p>
+
+<p>Para comprobar las características realizamos el comando:</p>
+<div class="highlight"><pre class="chroma">mdadm --detail /dev/md5
+
+/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 20:23:01 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 3
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct  1 20:23:13 2019
+             State : clean 
+    Active Devices : 3
+   Working Devices : 3
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 8cf8c1b5:aa709441:ea11eacf:b0de25f6
+            Events : 18
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       3       8       48        2      active sync   /dev/sdd</pre></div>
+<p>Para ver el estado usamos el comando:</p>
+<div class="highlight"><pre class="chroma">cat /proc/mdstat
+
+Personalities : [raid6] [raid5] [raid4] 
+md5 : active raid5 sdd[3] sdc[1] sdb[0]
+      2093056 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]
+      
+unused devices: &lt;none&gt;</pre></div>
+<p>La capacidad de esta raid será de 2GB.</p>
+
+<p><em>Tarea 3: Crea un volumen lógico de 500Mb en el raid 5.</em></p>
+
+<p>Para crear un volúmen lógico primero definimos el raid.</p>
+<div class="highlight"><pre class="chroma">pvcreate /dev/md5</pre></div>
+<p>Luego lo metermos en un grupo de volumenes</p>
+<div class="highlight"><pre class="chroma">vgcreate raid /dev/md5</pre></div>
+<p>Y creamos el volumen lógico</p>
+<div class="highlight"><pre class="chroma">lvcreate --size 500M -n raid-lv raid</pre></div>
+<p><em>Tarea 4: Formatea ese volumen con un sistema de archivo xfs.</em>
+Primero de todo instalados el paquete para poder formatear con xfs</p>
+<div class="highlight"><pre class="chroma">apt-get install xfsprogs</pre></div>
+<p>Luego realizamos el formateo del volumen</p>
+<div class="highlight"><pre class="chroma">mkfs.xfs /dev/mapper/raid-raid--lv -L &#34;Raid 5&#34;</pre></div>
+<p>Salida del comando lsblk -f</p>
+<div class="highlight"><pre class="chroma">NAME FSTYPE LABEL UUID                                   FSAVAIL FSUSE% MOUNTPOINT
+sda                                                                     
+├─sda1
+│    ext4         b9ffc3d1-86b2-4a2c-a8be-f2b2f4aa4cb5     16.2G     7% /
+├─sda2
+│                                                                       
+└─sda5
+     swap         f8f6d279-1b63-4310-a668-cb468c9091d8                  [SWAP]
+sdb  linux_ EscenarioRaid:5
+│                 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5
+     LVM2_m       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  a40e2225-d1f3-4eed-a7c7-e6e9b8a89283                  
+sdc  linux_ EscenarioRaid:5
+│                 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5
+     LVM2_m       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  a40e2225-d1f3-4eed-a7c7-e6e9b8a89283                  
+sdd  linux_ EscenarioRaid:5
+│                 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5
+     LVM2_m       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  a40e2225-d1f3-4eed-a7c7-e6e9b8a89283   </pre></div>
+<p><em>Tarea 5: Monta el volumen en el directorio /mnt/raid5 y crea un fichero. ¿Qué tendríamos que hacer para que este punto de montaje sea permanente?</em>
+Para montar el volumen realizamos el siguiente comando</p>
+<div class="highlight"><pre class="chroma">mkdir /mnt/raid5
+
+mount /dev/mapper/raid-raid--lv /mnt/raid5
+
+
+lsblk -f
+NAME              FSTYPE            LABEL           UUID                                   FSAVAIL FSUSE% MOUNTPOINT
+sda                                                                                                       
+├─sda1            ext4                              b9ffc3d1-86b2-4a2c-a8be-f2b2f4aa4cb5     16.2G     7% /
+├─sda2                                                                                                    
+└─sda5            swap                              f8f6d279-1b63-4310-a668-cb468c9091d8                  [SWAP]
+sdb               linux_raid_member EscenarioRaid:5 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5             LVM2_member                       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv xfs               Raid 5          a40e2225-d1f3-4eed-a7c7-e6e9b8a89283    470.6M     5% /mnt/raid5
+sdc               linux_raid_member EscenarioRaid:5 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5             LVM2_member                       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv xfs               Raid 5          a40e2225-d1f3-4eed-a7c7-e6e9b8a89283    470.6M     5% /mnt/raid5
+sdd               linux_raid_member EscenarioRaid:5 8cf8c1b5-aa70-9441-ea11-eacfb0de25f6                  
+└─md5             LVM2_member                       rzgN4Q-zYNz-hDHf-woWf-mK3j-Q72Z-X5t13s                
+  └─raid-raid--lv xfs               Raid 5          a40e2225-d1f3-4eed-a7c7-e6e9b8a89283    470.6M     5% /mnt/raid5</pre></div>
+<p>Si queremos hacerlo permanente editaremos el fichero /etc/fstab y pondremos la siguiente linea</p>
+<div class="highlight"><pre class="chroma">/dev/mapper/raid-raid--lv      /mnt/raid5      xfs    defaults        0       2</pre></div>
+<p>Y creamos el fichero</p>
+<div class="highlight"><pre class="chroma">root@EscenarioRaid:/mnt/raid5# echo &#34;Hola&#34; &gt; fichero.txt</pre></div>
+<p><em>Tarea 6: Marca un disco como estropeado. Muestra el estado del raid para comprobar que un disco falla. ¿Podemos acceder al fichero?</em>
+Para marcar un disco como estropeado realizamos el siguiente comando</p>
+<div class="highlight"><pre class="chroma">mdadm -f /dev/md5 /dev/sdd</pre></div>
+<p>Mostramos que el disco esta fallando</p>
+<div class="highlight"><pre class="chroma">/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 20:23:01 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 3
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct  1 20:40:39 2019
+             State : clean, degraded 
+    Active Devices : 2
+   Working Devices : 2
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 8cf8c1b5:aa709441:ea11eacf:b0de25f6
+            Events : 20
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       -       0        0        2      removed
+
+       3       8       48        -      faulty   /dev/sdd</pre></div>
+<p>Intentamos acceder al fichero</p>
+<div class="highlight"><pre class="chroma">root@EscenarioRaid:/mnt/raid5# cat fichero.txt 
+Hola</pre></div>
+<p>Esto es debido a que sólo ha fallado un disco y las propiedades del raid 5 es que si falla uno de los discos se puede recuperar la información ya que se guarda la paridad en los otros dos</p>
+
+<p><em>Tarea 7: Una vez marcado como estropeado, lo tenemos que retirar del raid.</em>
+Para retirarlo del raid ejecutamos el siguiente comando</p>
+<div class="highlight"><pre class="chroma">mdadm --remove /dev/md5 /dev/sdd</pre></div>
+<p>Mostramos que esta quitado del raid</p>
+<div class="highlight"><pre class="chroma">/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 20:23:01 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct  1 20:44:13 2019
+             State : clean, degraded 
+    Active Devices : 2
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 8cf8c1b5:aa709441:ea11eacf:b0de25f6
+            Events : 23
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       -       0        0        2      removed</pre></div>
+<p><em>Tarea 8: Imaginemos que lo cambiamos por un nuevo disco nuevo (el dispositivo de bloque se llama igual), añádelo al array y comprueba como se sincroniza con el anterior.</em>
+Para añadir el disco nuevo al raid simplemente ejecutamos el comando</p>
+<div class="highlight"><pre class="chroma">mdadm --add /dev/md5 /dev/sdd</pre></div>
+<p>Y observamos que se ha sincronizado con los demás</p>
+<div class="highlight"><pre class="chroma">/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 20:23:01 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 3
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct  1 20:47:01 2019
+             State : clean 
+    Active Devices : 3
+   Working Devices : 3
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 8cf8c1b5:aa709441:ea11eacf:b0de25f6
+            Events : 42
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       3       8       48        2      active sync   /dev/sdd</pre></div>
+<p><em>Tarea 9: Añade otro disco como reserva. Vuelve a simular el fallo de un disco y comprueba como automática se realiza la sincronización con el disco de reserva.</em>
+Para añadir otro disco como reserva usaremos el comando</p>
+<div class="highlight"><pre class="chroma">mdadm --add /dev/md5 /dev/sde</pre></div>
+<p>Y podemos observar que esta en el estado spare</p>
+<div class="highlight"><pre class="chroma">/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 21:02:13 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Oct  1 21:04:35 2019
+             State : clean 
+    Active Devices : 3
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 49295e89:8424ad45:0d715367:5587e7d9
+            Events : 21
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       3       8       48        2      active sync   /dev/sdd
+
+       4       8       64        -      spare   /dev/sde</pre></div>
+<p>Ahora vamos a simular el fallo en el disco sdd con el comando</p>
+<div class="highlight"><pre class="chroma">mdadm -f /dev/md5 /dev/sdd</pre></div>
+<p>Y podemos observar que se sincroniza con los demás</p>
+<div class="highlight"><pre class="chroma">/dev/md5:
+           Version : 1.2
+     Creation Time : Tue Oct  1 21:02:13 2019
+        Raid Level : raid5
+        Array Size : 2093056 (2044.00 MiB 2143.29 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 3
+     Total Devices : 4
+       Persistence : Superblock is persistent
+xfs_growfs /home
+       Update Time : Tue Oct  1 21:05:28 2019
+             State : clean 
+    Active Devices : 3
+   Working Devices : 3
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : EscenarioRaid:5  (local to host EscenarioRaid)
+              UUID : 49295e89:8424ad45:0d715367:5587e7d9
+            Events : 40
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       4       8       64        2      active sync   /dev/sde
+
+       3       8       48        -      faulty   /dev/sdd</pre></div>
+<p><em>Tarea 10: Redimensiona el volumen y el sistema de archivo de 500Mb al tamaño del raid.</em>
+Para extender el tamaño del volumen debemos usar el siguiente comando</p>
+<div class="highlight"><pre class="chroma">lvextend -L 1.99GiB /dev/mapper/raid-raid--lv
+
+Rounding size to boundary between physical extents: 1.99 GiB.
+  Size of logical volume raid/raid-lv changed from 1.90 GiB (487 extents) to 1.99 GiB (510 extents).
+  Logical volume raid/raid-lv successfully resized.</pre></div>
+<p>Para redimensionar el sistema de archivos usaremos el comando(debe estar montado al ser xfs)</p>
+<div class="highlight"><pre class="chroma">xfs_growfs /mnt/raid5</pre></div><div class="highlight"><pre class="chroma">root@EscenarioRaid:/mnt# lsblk -f
+NAME FSTYPE LABEL UUID                                   FSAVAIL FSUSE% MOUNTPOINT
+sda                                                                     
+├─sda1
+│    ext4         b9ffc3d1-86b2-4a2c-a8be-f2b2f4aa4cb5     16.3G     6% /
+├─sda2
+│                                                                       
+└─sda5
+     swap         f8f6d279-1b63-4310-a668-cb468c9091d8                  [SWAP]
+sdb  linux_ EscenarioRaid:5
+│                 49295e89-8424-ad45-0d71-53675587e7d9                  
+└─md5
+     LVM2_m       RDaJU8-howU-rGD0-auty-Y49f-t0lz-x8djFH                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  71abc232-2100-4812-85fd-c5888e815960        2G     1% /mnt/raid5
+sdc  linux_ EscenarioRaid:5
+│                 49295e89-8424-ad45-0d71-53675587e7d9                  
+└─md5
+     LVM2_m       RDaJU8-howU-rGD0-auty-Y49f-t0lz-x8djFH                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  71abc232-2100-4812-85fd-c5888e815960        2G     1% /mnt/raid5
+sdd  linux_ EscenarioRaid:5
+│                 49295e89-8424-ad45-0d71-53675587e7d9                  
+└─md5
+     LVM2_m       RDaJU8-howU-rGD0-auty-Y49f-t0lz-x8djFH                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  71abc232-2100-4812-85fd-c5888e815960        2G     1% /mnt/raid5
+sde  linux_ EscenarioRaid:5
+│                 49295e89-8424-ad45-0d71-53675587e7d9                  
+└─md5
+     LVM2_m       RDaJU8-howU-rGD0-auty-Y49f-t0lz-x8djFH                
+  └─raid-raid--lv
+     xfs    Raid 5
+                  71abc232-2100-4812-85fd-c5888e815960        2G     1% /mnt/raid5</pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fraid5%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fraid5%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fraid5%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fraid5%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

@@ -1,0 +1,93 @@
+baseurl = "https://www.alexrrinformatico.com"
+title = "Alexblog"
+
+theme = "hugo-coder-portfolio"
+
+DefaultContentLanguage = "en"
+
+paginate = 20
+
+pygmentsstyle = "b2"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+pygmentsUseClasses = true
+
+disqusShortname = "yourdiscussshortname"
+
+[params]
+    author = "Alejandro Rodríguez"
+    description = "Blog de Alejandro"
+    keywords = "blog,developer,personal"
+    info = "WEB AND APPS ENGINEER"
+    avatarurl = "images/avatar.jpg"
+    footercontent = "Enter a text here."
+    fixedbarContent = "¿Quieres conocerme mejor?→"
+    fixedbarContentAfter = "Dale click a los enlaces de la derecha→"
+
+    hideCredits = false
+    hideCopyright = false
+
+    # Bottom sns share
+    snsShare = true
+    # Popular sns share
+    # if you want add sns. please message!
+    enableTwitterShare = false
+    enableFacebookShare = true
+    enableHatenaShare = false
+    enableLineShare = false
+    enableLinkedInShare = true
+
+    thumbnail = "images/tn.png"
+    Oracle1 = "images/Oracle1.png"
+    # Custom CSS
+    custom_css = []
+
+    # Alignment of Mobile Menu items
+    itemscentered = true
+
+    # RTL support
+    rtl = false
+
+    langseparator = "|"
+
+[[params.social]]
+    name = "Github"
+    icon = "fab fa-github"
+    weight = 1
+    url = "https://github.com/alexrr12341"
+[[params.social]]
+    name = "LinkedIn"
+    icon = "fab fa-linkedin"
+    weight = 3
+    url = "https://www.linkedin.com/in/alejandro-rodr%C3%ADguez-rojas-16535117b/"
+
+[languages]
+    [languages.en]
+        languagecode = "en"
+        languagename = "English" # The language name to be displayed in the selector.
+        title = "Alexblog"
+
+        # You can configure the theme parameter for each language.
+        [languages.en.params]
+            author = "Alejandro Rodríguez"
+            info = "Administrador Informático"
+            description = "Blog de Alejandro"
+            keywords = "blog,developer,personal"
+
+        [languages.en.menu] # It is possible to change the menu too.
+
+            [[languages.en.menu.main]]
+                name = "Sobre mi"
+                weight = 1.0
+                url = "sobre"
+
+            [[languages.en.menu.main]]
+                name = "Blog"
+                weight = 2.0
+                url = "posts"
+
+            [[languages.en.menu.main]]
+                name = "Contactame"
+                weight = 5
+                url = "contactar"
+

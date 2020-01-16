@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hugo on Alexblog</title>
+    <link>https://www.alexrrinformatico.com/tags/hugo/</link>
+    <description>Recent content in hugo on Alexblog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.alexrrinformatico.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Ejercicio Raid 5</title>
+      <link>https://www.alexrrinformatico.com/posts/raid5/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid5/</guid>
+      <description>Ejercicio Raid 5 Fichero de Configuración
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid5 do |raid5| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; disco3 = &amp;#39;.vagrant/discoraid3.vdi&amp;#39; raid5.vm.box = &amp;#34;debian/buster64&amp;#34; raid5.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y upgrade&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install mdadm&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install lvm2&amp;#34; raid5.vm.provider :virtualbox do |v| if not File.exist?(disco) v.customize [&amp;#34;createhd&amp;#34;, &amp;#34;--filename&amp;#34;, disco, &amp;#34;--size&amp;#34;, 1024] end v.customize [&amp;#34;storageattach&amp;#34;, :id, &amp;#34;--storagectl&amp;#34;, &amp;#34;SATA Controller&amp;#34;, &amp;#34;--port&amp;#34;, 1, &amp;#34;--device&amp;#34;, 0, &amp;#34;--type&amp;#34;, &amp;#34;hdd&amp;#34;, &amp;#34;--medium&amp;#34;, disco] end raid5.</description>
+    </item>
+    
+  </channel>
+</rss>

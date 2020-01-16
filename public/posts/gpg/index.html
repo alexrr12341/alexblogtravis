@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexblog">
+    <meta property="og:title" content="
+  Cifrado Asimétrico (GPG/OpenSSL) - Alexblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/gpg/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/gpg/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/gpg/">
+    <title>
+  Cifrado Asimétrico (GPG/OpenSSL) - Alexblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/gpg/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
+    
+
+    <meta name="generator" content="Hugo 0.57.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Cifrado Asimétrico (GPG/OpenSSL)</h1>
+      <h2 class="date">December 10, 2019</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <p>h2. Tarea 1: Generación de claves (1 punto)</p>
+
+<p><em>1. Genera un par de claves (pública y privada). ¿En que directorio se guarda las claves de un usuario?</em></p>
+
+<p>Para generar el par de claves utilizamos el siguiente comando:</p>
+<div class="highlight"><pre class="chroma">gpg --gen-key</pre></div><div class="highlight"><pre class="chroma">gpg (GnuPG) 2.2.17; Copyright (C) 2019 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Nota: Usa &#34;gpg --full-generate-key&#34; para el diálogo completo de generación de clave.
+
+GnuPG debe construir un ID de usuario para identificar su clave.
+
+Nombre y apellidos: Alejandro Rodríguez Rojas
+Dirección de correo electrónico: alexrodriguezrojas98@gmail.com
+Está usando el juego de caracteres &#39;utf-8&#39;.
+Ha seleccionado este ID de usuario:
+    &#34;Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;&#34;
+
+¿Cambia (N)ombre, (D)irección o (V)ale/(S)alir? V
+Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+alguna otra tarea (trabajar en otra ventana/consola, mover el ratón, usar
+la red y los discos) durante la generación de números primos. Esto da al
+generador de números aleatorios mayor oportunidad de recoger suficiente
+entropía.
+Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+alguna otra tarea (trabajar en otra ventana/consola, mover el ratón, usar
+la red y los discos) durante la generación de números primos. Esto da al
+generador de números aleatorios mayor oportunidad de recoger suficiente
+entropía.
+gpg: clave 1CA5259568627FEF marcada como de confianza absoluta
+gpg: creado el directorio &#39;/home/alexrr/.gnupg/openpgp-revocs.d&#39;
+gpg: certificado de revocación guardado como &#39;/home/alexrr/.gnupg/openpgp-revocs.d/8EA1F9C7DB1DF4BED396BDF01CA5259568627FEF.rev&#39;
+claves pública y secreta creadas y firmadas.
+
+pub   rsa3072 2019-10-07 [SC] [caduca: 2021-10-06]
+      8EA1F9C7DB1DF4BED396BDF01CA5259568627FEF
+uid                      Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+sub   rsa3072 2019-10-07 [E] [caduca: 2021-10-06]</pre></div>
+<p>Se guardan en /home/usuario/.gnupg</p>
+
+<p><em>2. Lista las claves públicas que tienes en tu almacén de claves. Explica los distintos datos que nos muestra. ¿Cómo deberías haber generado las claves para indicar, por ejemplo, que tenga un 1 mes de validez?</em></p>
+
+<p>Para listar las claves públicas:</p>
+<div class="highlight"><pre class="chroma">gpg --list-keys
+
+pub   rsa3072 2019-10-07 [SC] [caduca: 2021-10-06]
+      07C2323FF578FA4339796C35037C4BC2B4F18FCA
+uid        [  absoluta ] Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+sub   rsa3072 2019-10-07 [E] [caduca: 2021-10-06]</pre></div>
+<p>Nos muestra el protocolo con el que está hecho (rsa3072), tiene confianza absoluta, caduca en el 2021-10-06 y fue creada el 2019-10-07. También nos muestra el nombre del fichero y el nombre del propietario junto a su email</p>
+
+<p>Con el comando gpg &ndash;full-generate-key  podemos especificar los meses de caducidad.</p>
+<div class="highlight"><pre class="chroma">gpg (GnuPG) 2.2.17; Copyright (C) 2019 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Por favor seleccione tipo de clave deseado:
+   (1) RSA y RSA (por defecto)
+   (2) DSA y ElGamal
+   (3) DSA (sólo firmar)
+   (4) RSA (sólo firmar)
+Su elección: 1
+las claves RSA pueden tener entre 1024 y 4096 bits de longitud.
+¿De qué tamaño quiere la clave? (3072) 
+El tamaño requerido es de 3072 bits
+Por favor, especifique el período de validez de la clave.
+         0 = la clave nunca caduca
+      &lt;n&gt;  = la clave caduca en n días
+      &lt;n&gt;w = la clave caduca en n semanas
+      &lt;n&gt;m = la clave caduca en n meses
+      &lt;n&gt;y = la clave caduca en n años
+¿Validez de la clave (0)? 1m
+La clave caduca mié 06 nov 2019 10:03:24 CET
+¿Es correcto? (s/n) </pre></div>
+<p><em>3. Lista las claves privadas de tu almacén de claves.</em></p>
+
+<p>Para listar las claves privadas:</p>
+<div class="highlight"><pre class="chroma">gpg --list-secret-keys
+
+sec   rsa3072 2019-10-07 [SC] [caduca: 2021-10-06]
+      07C2323FF578FA4339796C35037C4BC2B4F18FCA
+uid        [  absoluta ] Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+ssb   rsa3072 2019-10-07 [E] [caduca: 2021-10-06]</pre></div>
+<p>h2. Tarea 2: Importar / exportar clave pública (1 punto)</p>
+
+<p><em>1. Exporta tu clave pública en formato ASCII y guardalo en un archivo nombre_apellido.asc y envíalo al compañero con el que vas a hacer esta práctica.</em></p>
+
+<p>Para exportar mi clave privada ejecutaremos el siguiente comando y se la pasaremos a nuestro compañero Paco</p>
+<div class="highlight"><pre class="chroma">gpg --export -a &#34;Alejandro Rodríguez Rojas&#34; &gt; alejandro_rodriguez.asc</pre></div>
+<p><em>2. Importa las claves públicas recibidas de vuestro compañero.</em></p>
+<div class="highlight"><pre class="chroma">gpg --import francisco_guillermo.asc
+
+gpg: clave 733C176D1363BFF4: clave pública &#34;Francisco Guillermo García &lt;pakotoes@gmail.com&gt;&#34; importada
+gpg: Cantidad total procesada: 1
+gpg:               importadas: 1</pre></div>
+<p><em>3. Comprueba que las claves se han incluido correctamente en vuestro keyring.</em></p>
+<div class="highlight"><pre class="chroma">gpg --list-keys
+
+pub   rsa3072 2019-10-07 [SC] [caduca: 2021-10-06]
+      DA21BD5A7231AF245B1BA986733C176D1363BFF4
+uid        [desconocida] Francisco Guillermo García &lt;pakotoes@gmail.com&gt;
+sub   rsa3072 2019-10-07 [E] [caduca: 2021-10-06]</pre></div>
+<p>h2. Tarea 3: Cifrado asimétrico con claves públicas (3 puntos)</p>
+
+<p><em>1. Cifraremos un archivo cualquiera y lo remitiremos por email a uno de nuestros compañeros que nos proporcionó su clave pública.</em></p>
+
+<p>Creamos el fichero</p>
+<div class="highlight"><pre class="chroma">echo &#34;Paco&#34; &gt; paco.txt</pre></div>
+<p>Y encriptamos el archivo para luego enviarselo</p>
+<div class="highlight"><pre class="chroma">gpg -e -u &#34;Alejandro Rodríguez Rojas&#34; -r &#34;Francisco Guillermo García&#34; paco.txt </pre></div>
+<p><em>2. Nuestro compañero, a su vez, nos remitirá un archivo cifrado para que nosotros lo descifremos.</em></p>
+
+<p>Al enviarnos Paco su fichero solo tendremos que hacer el siguiente comando:</p>
+<div class="highlight"><pre class="chroma">gpg -d alex.txt.gpg
+ 
+gpg: cifrado con clave de 3072 bits RSA, ID 2EB053ECFD3FFD7F, creada el 2019-10-07
+      &#34;Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;&#34;
+hola alex</pre></div>
+<p><em>3. Tanto nosotros como nuestro compañero comprobaremos que hemos podido descifrar los mensajes recibidos respectivamente.</em></p>
+<div class="highlight"><pre class="chroma">gpg -d alex.txt.gpg &gt; alexdesencriptado.txt</pre></div><div class="highlight"><pre class="chroma">alexrr@pc-alex:~/gpg$ cat alexdesencriptado.txt 
+hola alex</pre></div>
+<p><em>4. Por último, enviaremos el documento cifrado a alguien que no estaba en la lista de destinatarios y comprobaremos que este usuario no podrá descifrar este archivo.</em></p>
+
+<p>Enviamos el archivo a Luis y vemos lo que le ocurre</p>
+<div class="highlight"><pre class="chroma">luis@kutulu:~/Descargas$ gpg -d paco.txt.gpg 
+gpg: cifrado con clave RSA, ID E623CEEF4E0E9E3A
+gpg: descifrado fallido: No tenemos la clave secreta</pre></div>
+<p><em>5. Para terminar, indica los comandos necesarios para borrar las claves públicas y privadas que posees.</em>
+Para borrar las claves simplemente ejecutamos el siguiente comando</p>
+<div class="highlight"><pre class="chroma">gpg --delete-secret-and-public-keys &#34;Alejandro Rodríguez Rojas&#34;</pre></div>
+<p>h2. Tarea 4: Exportar clave a un servidor público de claves PGP (2 puntos)</p>
+
+<p><em>1. Genera la clave de revocación de tu clave pública para utilizarla en caso de que haya problemas.</em></p>
+<div class="highlight"><pre class="chroma">gpg --gen-revoke &#34;Alejandro Rodríguez Rojas&#34; &gt; claverevo.key
+
+sec  rsa3072/037C4BC2B4F18FCA 2019-10-07 Alejandro Rodríguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+
+¿Crear un certificado de revocación para esta clave? (s/N) s
+Por favor elija una razón para la revocación:
+  0 = No se dio ninguna razón
+  1 = La clave ha sido comprometida
+  2 = La clave ha sido reemplazada
+  3 = La clave ya no está en uso
+  Q = Cancelar
+(Probablemente quería seleccionar 1 aquí)
+¿Su decisión? 0
+Introduzca una descripción opcional; acábela con una línea vacía:
+&gt; Revoco la clave
+&gt; 
+Razón para la revocación: No se dio ninguna razón
+Revoco la clave
+¿Es correcto? (s/N) s
+se fuerza salida con armadura ASCII.
+Certificado de revocación creado.
+
+Por favor consérvelo en un medio que pueda esconder; si alguien consigue
+acceso a este certificado puede usarlo para inutilizar su clave.
+Es inteligente imprimir este certificado y guardarlo en otro lugar, por
+si acaso su medio resulta imposible de leer. Pero precaución: ¡el sistema
+de impresión de su máquina podría almacenar los datos y hacerlos accesibles
+a otras personas!</pre></div>
+<p><em>2. Exporta tu clave pública al servidor pgp.rediris.es</em>
+Usamos el siguiente comando para exportarla en rediris</p>
+<div class="highlight"><pre class="chroma">gpg --keyserver pgp.rediris.es --send-keys 07C2323FF578FA4339796C35037C4BC2B4F18FCA
+gpg: enviando clave 037C4BC2B4F18FCA a hkp://pgp.rediris.es</pre></div>
+<p><em>3. Borra la clave pública de alguno de tus compañeros de clase e impórtala ahora del servidor público de rediris.</em>
+Borramos la clave de Paco</p>
+<div class="highlight"><pre class="chroma">gpg --delete-keys &#34;Francisco Guillermo García&#34;</pre></div>
+<p>Y importamos las claves</p>
+<div class="highlight"><pre class="chroma">gpg --keyserver pgp.rediris.es --recv-keys 733C176D1363BFF4
+
+gpg: clave 733C176D1363BFF4: clave pública &#34;Francisco Guillermo García &lt;pakotoes@gmail.com&gt;&#34; importada
+gpg: Cantidad total procesada: 1
+gpg:               importadas: 1</pre></div>
+<p><em>1. Genera un par de claves (pública y privada).</em>
+Para crear la clave privada hacemos el comando:</p>
+<div class="highlight"><pre class="chroma">openssl genrsa -out clave.pem 2048</pre></div>
+<p>Para conseguir la clave pública hacemos el comando:</p>
+<div class="highlight"><pre class="chroma">openssl rsa -in clave.pem -pubout -out clavepub.pem</pre></div>
+<p><em>2. Envía tu clave pública a un compañero.</em>
+He enviado la clave pública a Paco con scp</p>
+<div class="highlight"><pre class="chroma">scp clavepub.pem paco@ip</pre></div>
+<p><em>3. Utilizando la clave pública cifra un fichero de texto y envíalo a tu compañero.</em>
+Primero creamos el fichero con el contenido</p>
+<div class="highlight"><pre class="chroma">echo &#34;Pakitso&#34; &gt; paco.txt</pre></div>
+<p>Y luego encriptamos el archivo</p>
+<div class="highlight"><pre class="chroma">openssl rsautl -pubin -encrypt -in paco.txt -out paco.enc -inkey pacossl.pub </pre></div>
+<p>Y enviamos el fichero por scp</p>
+
+<p><em>4. Tu compañero te ha mandado un fichero cifrado, muestra el proceso para el descifrado.</em></p>
+
+<p>Para desencriptar el archivo simplemente ejecutamos el comando:</p>
+<div class="highlight"><pre class="chroma">openssl rsautl -decrypt -inkey clave.pem -in alex.enc -out alex.txt
+
+alexrr@pc-alex:~/openssl$ cat alex.txt 
+hola alejandro</pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fgpg%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fgpg%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fgpg%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fgpg%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexblog">
+    <meta property="og:title" content="
+  Cortafuegos perimetral con DMZ - Alexblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/iptables/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/iptables/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/iptables/">
+    <title>
+  Cortafuegos perimetral con DMZ - Alexblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/iptables/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
+    
+
+    <meta name="generator" content="Hugo 0.57.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Cortafuegos perimetral con DMZ</h1>
+      <h2 class="date">January 10, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <p>La máquina router-fw tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -s 172.22.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -d 172.22.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 172.23.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -d 172.23.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP</pre></div>
+<p>Prueba de funcionamiento:</p>
+<div class="highlight"><pre class="chroma">alexrr@pc-alex:~$ ssh debian@172.22.201.65
+Warning: No xauth data; using fake authentication data for X11 forwarding.
+X11 forwarding request failed on channel 0
+Linux router-fw 4.19.0-6-cloud-amd64 #1 SMP Debian 4.19.67-2+deb10u1 (2019-09-20) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Tue Dec 17 09:36:59 2019 from 172.22.1.22
+debian@router-fw:~$ </pre></div>
+<p>Vamos ahora a realizar una unidad de systemd para que se guarden las iptables</p>
+<div class="highlight"><pre class="chroma">[Unit]
+Description=Packet Filtering Framework
+
+[Service]
+Type=oneshot
+ExecStart=sh /home/debian/script-iptables.sh
+ExecReload=sh /home/debian/script-iptables.sh
+ExecStop=/usr/lib/systemd/scripts/iptables-flush
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target</pre></div>
+<p>script:</p>
+<div class="highlight"><pre class="chroma"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>iptables-restore &lt; /home/debian/firewall.txt</pre></div>
+<p>Y activamos para que al reiniciar funcione</p>
+<div class="highlight"><pre class="chroma">systemctl enable iprestore
+systemctl start iprestore</pre></div><div class="highlight"><pre class="chroma">root@router-fw:/home/debian# systemctl status iprestore
+● iprestore.service - Packet Filtering Framework
+   Loaded: loaded (/etc/systemd/system/iprestore.service; disabled; vendor preset: enabled)
+   Active: active (exited) since Sat 2020-01-11 13:09:27 UTC; 3s ago
+  Process: 697 ExecStart=/usr/bin/sh /home/debian/script-iptables.sh (code=exited, status=0/SUCCESS)
+ Main PID: 697 (code=exited, status=0/SUCCESS)
+
+Jan 11 13:09:27 router-fw systemd[1]: Starting Packet Filtering Framework...
+Jan 11 13:09:27 router-fw systemd[1]: Started Packet Filtering Framework.</pre></div>
+<p>Activamos también el bit de forward</p>
+<div class="highlight"><pre class="chroma">echo 1 &gt; /proc/sys/net/ipv4/ip_forward</pre></div>
+<p><em>La máquina router-fw tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.</em></p>
+
+<p>Vamos a redirigir las peticiones del puerto 22 al puerto 2222</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 2222 -j REDIRECT --to-ports 22</pre></div>
+<p>Y vamos a bloquear el puerto 22 para que nadie pueda acceder por él</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 22 -j DNAT --to-destination 127.0.0.1:22</pre></div>
+<p>Prueba de funcionamiento:</p>
+<div class="highlight"><pre class="chroma">alexrr@pc-alex:~/ic-travis-html5$ ssh debian@172.22.201.65
+ssh: connect to host 172.22.201.65 port 22: Connection timed out
+
+alexrr@pc-alex:~/ic-travis-html5$ ssh -p2222 debian@172.22.201.65
+Warning: No xauth data; using fake authentication data for X11 forwarding.
+X11 forwarding request failed on channel 0
+Linux router-fw 4.19.0-6-cloud-amd64 #1 SMP Debian 4.19.67-2+deb10u1 (2019-09-20) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Jan  9 08:45:13 2020 from 172.22.0.9
+debian@router-fw:~$ </pre></div>
+<p><em>Desde la LAN y la DMZ se debe permitir la conexión ssh por el puerto 22 al la máquina router-fw.</em></p>
+
+<p>LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -s 192.168.100.0/24 -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -d 192.168.100.0/24 -p tcp --sport 22 -j ACCEPT</pre></div>
+<p><img src="/images/LAN.png" alt="" /></p>
+
+<p>DMZ:</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -s 192.168.200.0/24 -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -d 192.168.200.0/24 -p tcp --sport 22 -j ACCEPT</pre></div>
+<p><img src="/images/DMZ.png" alt="" /></p>
+
+<p><em>La máquina router-fw debe tener permitido el tráfico para la interfaz loopback.</em></p>
+
+<p>Prueba antes de poner las reglas</p>
+<div class="highlight"><pre class="chroma">root@router-fw:/home/debian# ping 127.0.0.1
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+ping: sendmsg: Operation not permitted
+ping: sendmsg: Operation not permitted</pre></div>
+<p>Ponemos la regla:</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT</pre></div>
+<p>Prueba despues de poner la regla:</p>
+<div class="highlight"><pre class="chroma">root@router-fw:/home/debian# ping 127.0.0.1
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.059 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.078 ms</pre></div>
+<p><em>A la máquina router-fw se le puede hacer ping desde la DMZ, pero desde la LAN se le debe rechazar la conexión (REJECT).</em></p>
+
+<p>Para que podamos realizar ping desde la DMZ al router, realizamos la siguiente regla</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -i eth2 -s 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A OUTPUT -o eth2 -d 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p><img src="/images/pingDMZ.png" alt="" /></p>
+
+<p>Para que podamos rechazar la conexión realizamos la siguiente regla</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -i eth1 -s 192.168.100.0/24 -p icmp -m icmp --icmp-type echo-request -j REJECT --reject-with icmp-port-unreachable
+iptables -A OUTPUT -o eth1 -d 192.168.100.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
+iptables -A OUTPUT -o eth1 -d 192.168.100.0/24 -p icmp -m state --state RELATED -j ACCEPT</pre></div>
+<p><img src="/images/pingLAN.png" alt="" /></p>
+
+<p><em>La máquina router-fw puede hacer ping a la LAN, la DMZ y al exterior.</em></p>
+
+<p>LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A OUTPUT -o eth1 -d 192.168.100.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -i eth1 -s 192.168.100.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Prueba:</p>
+<div class="highlight"><pre class="chroma">root@router-fw:/home/debian# ping 192.168.100.10
+PING 192.168.100.10 (192.168.100.10) 56(84) bytes of data.
+64 bytes from 192.168.100.10: icmp_seq=1 ttl=64 time=1.75 ms
+64 bytes from 192.168.100.10: icmp_seq=2 ttl=64 time=1.38 ms</pre></div>
+<p>DMZ:</p>
+<div class="highlight"><pre class="chroma">iptables -A OUTPUT -o eth2 -d 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -i eth2 -s 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Prueba:</p>
+<div class="highlight"><pre class="chroma">iptables -A OUTPUT -o eth2 -d 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -i eth2 -s 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Exterior:</p>
+<div class="highlight"><pre class="chroma">iptables -A OUTPUT -o eth0 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A INPUT -i eth0 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Prueba:</p>
+<div class="highlight"><pre class="chroma">root@router-fw:/home/debian# ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=51 time=43.2 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=51 time=43.2 ms</pre></div>
+<p><em>Desde la máquina DMZ se puede hacer ping y conexión ssh a la máquina LAN.</em></p>
+
+<p>Habilitaremos el ssh hacia la máquina LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth2 -o eth1 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth2 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><img src="/images/sshDMZLAN.png" alt="" /></p>
+
+<p>Habilitaremos el ping hacia la máquina LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth2 -o eth1 -s 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth2 -d 192.168.200.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p><img src="/images/pingDMZLAN.png" alt="" /></p>
+
+<p><em>Desde la máquina LAN no se puede hacer ping, pero si se puede conectar por ssh a la máquina DMZ.</em></p>
+
+<p>Vamos a habilitar el ssh hacia DMZ</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth2 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth1 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><img src="/images/sshLANDMZ.png" alt="" />
+<img src="/images/pingLANDMZ.png" alt="" /></p>
+
+<p><em>Configura la máquina router-fw para que las máquinas LAN y DMZ puedan acceder al exterior.</em></p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.200.0/24 -o eth0 -j MASQUERADE</pre></div>
+<p><em>La máquina LAN se le permite hacer ping al exterior.</em></p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth0 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth1 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p><img src="/images/pingLANExt.png" alt="" /></p>
+
+<p><em>La máquina LAN puede navegar.</em></p>
+
+<p>Habilitamos http y https:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth0 -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth1 -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Habilitamos el dns:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth0 -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth1 -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><img src="/images/updateLAN.png" alt="" /></p>
+
+<p><em>La máquina DMZ puede navegar. Instala un servidor web, un servidor ftp y un servidor de correos.</em></p>
+
+<p>Vamos a realizar lo anterior con DMZ esta vez:</p>
+
+<p>Habilitamos http y https:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth2 -o eth0 -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2 -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Habilitamos el dns:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth2 -o eth0 -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2 -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Ahora instalaremos los servicios que se nos pide:</p>
+<div class="highlight"><pre class="chroma">apt install apache2
+apt install postfix
+apt install proftpd</pre></div>
+<p><em>Configura la máquina router-fw para que los servicios web y ftp sean accesibles desde el exterior.</em></p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp -m multiport --dports 80,443 -j DNAT --to 192.168.200.10
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 21 -j DNAT --to 192.168.200.10:21
+iptables -t nat -A POSTROUTING -o eth2 -p tcp --dport 21 -d 192.168.200.10 -j SNAT --to 192.168.200.2
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 20 -j DNAT --to 192.168.200.10:21
+iptables -t nat -A POSTROUTING -o eth2 -p tcp --dport 20 -d 192.168.200.10 -j SNAT --to 192.168.200.2
+iptables -A FORWARD -i eth0 -o eth2 -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth0 -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2 -p tcp --syn --dport 21 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2 -p tcp --syn --dport 20 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth0  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</pre></div>
+<p>Accesibilidad a apache:
+<img src="/images/apacheDMZ.png" alt="" /></p>
+
+<p>Accesibilidad a ftp:</p>
+<div class="highlight"><pre class="chroma">alexrr@pc-alex:~$ ftp 172.22.200.218
+Connected to 172.22.200.218.
+220 ProFTPD Server (Debian) [::ffff:192.168.200.10]
+Name (172.22.200.218:alexrr): ftp
+331 Anonymous login ok, send your complete email address as your password
+Password:
+230-Welcome, archive user ftp@192.168.200.2 !
+230-
+230-The local time is: Thu Jan 09 18:27:58 2020
+230-
+230-This is an experimental FTP server.  If you have any unusual problems,
+230-please report them via e-mail to &lt;root@dmz.novalocal&gt;.
+230-
+230 Anonymous access granted, restrictions apply
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp&gt; </pre></div>
+<p><em>El servidor web y el servidor ftp deben ser accesible desde la LAN y desde el exterior.</em></p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth2 -p tcp -m multiport --dports 80,443 -d 192.168.200.10 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth1 -p tcp -m multiport --sports 80,443 -s 192.168.200.10 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -i eth1 -o eth2 -p tcp --syn --dport 21 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth2 -p tcp --syn --dport 20 -m conntrack --ctstate NEW -j ACCEPT
+
+iptables -A FORWARD -i eth1 -o eth2  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth1  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</pre></div>
+<ul>
+<li><p>Prueba acceso servidor <em>FTP</em> desde la <em>LAN</em>
+<img src="/images/ftpLANDMZ.png" alt="" /></p></li>
+
+<li><p>Prueba acceso servidor <em>WEB</em> desde la <em>LAN</em>
+<img src="/images/apacheLANDMZ.png" alt="" /></p></li>
+</ul>
+
+<p>h3. El servidor de correos sólo debe ser accesible desde la LAN.</p>
+
+<p>Elegimos internet site y modificamos en /etc/postfix/main.cf la siguiente línea</p>
+<div class="highlight"><pre class="chroma">mynetworks = 127.0.0.0/8 192.168.100.0/24</pre></div>
+<p>Y añadimos las reglas</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth1 -o eth2 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth1 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><img src="/images/postfixLANDMZ.png" alt="" /></p>
+
+<p><em>En la máquina LAN instala un servidor mysql. A este servidor sólo se puede acceder desde la DMZ.</em></p>
+
+<p>Instalaremos un mariadb</p>
+<div class="highlight"><pre class="chroma">apt install mariadb-server</pre></div>
+<p>Y crearemos la base de datos</p>
+<div class="highlight"><pre class="chroma">create database prueba;
+create user dmz identified by &#34;dmz&#34;;
+grant all privileges on prueba.* to dmz;
+flush privileges;</pre></div>
+<p>Fichero /etc/mysql/mariadb.conf.d/50-server.cnf:</p>
+<div class="highlight"><pre class="chroma">bind-address            = 0.0.0.0</pre></div>
+<p>Reglas:</p>
+<div class="highlight"><pre class="chroma">iptables -A FORWARD -i eth2 -o eth1 -p tcp --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth2 -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><img src="/images/mariadbLANDMZ.png" alt="" /></p>
+
+<p><em>MEJORA: Utiliza nuevas cadenas para clasificar el tráfico.</em></p>
+<div class="highlight"><pre class="chroma">iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -F
+iptables -t nat -F
+iptables -Z
+iptables -t nat -Z</pre></div>
+<p>Vamos ahora a realizar las mejoras poniendo las nuevas cadenas:</p>
+
+<p>Router a dmz-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N router_dmz
+iptables -A OUTPUT -o eth2 -d 192.168.200.0/24 -j router_dmz</pre></div>
+<p>Router a lan-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N router_lan
+iptables -A OUTPUT -o eth1 -d 192.168.100.0/24 -j router_lan</pre></div>
+<p>Router al exterior-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N router_ext
+iptables -A OUTPUT -o eth0 -j router_ext</pre></div>
+<p>Exterior al router-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N ext_router
+iptables -A INPUT -i eth0 -j ext_router</pre></div>
+<p>Dmz a router-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N dmz_router
+iptables -A INPUT -i eth2 -s 192.168.200.0/24 -j dmz_router</pre></div>
+<p>Dmz a exterior-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N dmz_ext
+iptables -A FORWARD -i eth2 -o eth0 -s 192.168.200.0/24 -j dmz_ext</pre></div>
+<p>Dmz a lan-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N dmz_lan
+iptables -A FORWARD -i eth2 -o eth1 -s 192.168.200.0/24 -j dmz_lan</pre></div>
+<p>Exterior a dmz-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N ext_dmz
+iptables -A FORWARD -i eth0 -o eth2 -j ext_dmz</pre></div>
+<p>Lan a router-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N lan_router
+iptables -A INPUT -i eth1 -s 192.168.100.0/24 -j lan_router</pre></div>
+<p>Lan a exterior-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N lan_ext
+iptables -A FORWARD -i eth1 -o eth0 -s 192.168.100.0/24 -j lan_ext</pre></div>
+<p>Lan a dmz-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N lan_dmz
+iptables -A FORWARD -i eth1 -o eth2 -s 192.168.100.0/24 -j lan_dmz</pre></div>
+<p>Exterior a lan-&gt;</p>
+<div class="highlight"><pre class="chroma">iptables -N ext_lan
+iptables -A FORWARD -i eth0 -o eth1 -j ext_lan</pre></div>
+<p>La máquina router-fw tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -s 172.22.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -d 172.22.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 172.23.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -d 172.23.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP</pre></div>
+<p>Bit de forward:</p>
+<div class="highlight"><pre class="chroma">echo 1 &gt; /proc/sys/net/ipv4/ip_forward</pre></div>
+<p>Redirigir puerto 22 a 2222:</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 2222 -j REDIRECT --to-ports 22</pre></div>
+<p>Puerto 22 para inutilizarlo:</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 22 -j DNAT --to-destination 127.0.0.1:22</pre></div>
+<p>Ssh desde la LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_router -p tcp --dport 22 -j ACCEPT
+iptables -A router_lan -p tcp --sport 22 -j ACCEPT</pre></div>
+<p>Ssh desde la dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A dmz_router -p tcp --dport 22 -j ACCEPT
+iptables -A router_dmz -p tcp --sport 22 -j ACCEPT</pre></div>
+<p>Permitir loopback:</p>
+<div class="highlight"><pre class="chroma">iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT</pre></div>
+<p>Permitir ping desde la dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A dmz_router -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A router_dmz -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>No Permitir ping desde la lan:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_router -p icmp -m icmp --icmp-type echo-request -j REJECT --reject-with icmp-port-unreachable</pre></div>
+<p>Permitir ping a la LAN:</p>
+<div class="highlight"><pre class="chroma">iptables -A router_lan -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
+iptables -A router_lan -p icmp -m state --state RELATED -j ACCEPT
+iptables -A router_lan -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A lan_router -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Ping a Dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A router_dmz -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A dmz_router -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Ping al exterior:</p>
+<div class="highlight"><pre class="chroma">iptables -A router_ext -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A ext_router -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Ping y ssh desde la dmz a la lan</p>
+<div class="highlight"><pre class="chroma">iptables -A dmz_lan -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A lan_dmz -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A dmz_lan -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A lan_dmz -p icmp -m icmp --icmp-type echo-reply -j ACCEPT</pre></div>
+<p>Ssh desde la lan a dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_dmz -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A dmz_lan -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Exterior a lan y dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.200.0/24 -o eth0 -j MASQUERADE</pre></div>
+<p>ping desde la lan a exterior</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_ext -p icmp -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A ext_lan -p icmp -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Navegación desde la lan:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_ext -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A ext_lan -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT
+iptables -A lan_ext -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A ext_lan -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Navegacion desde la dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A dmz_ext -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A ext_dmz -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT
+iptables -A dmz_ext -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A ext_dmz -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Acceso a dmz para servidor web</p>
+<div class="highlight"><pre class="chroma">iptables -A ext_dmz -p tcp -m multiport --dports 80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A dmz_ext -p tcp -m multiport --sports 80,443 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Acceso a ftp</p>
+<div class="highlight"><pre class="chroma">iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 21 -j DNAT --to 192.168.200.10:21
+iptables -t nat -A POSTROUTING -o eth2 -p tcp --dport 21 -d 192.168.200.10 -j SNAT --to 192.168.200.2
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 20 -j DNAT --to 192.168.200.10:21
+iptables -t nat -A POSTROUTING -o eth2 -p tcp --dport 20 -d 192.168.200.10 -j SNAT --to 192.168.200.2
+iptables -A ext_dmz -p tcp --syn --dport 21 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A ext_dmz -i eth0 -o eth2 -p tcp --syn --dport 20 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A ext_dmz -i eth0 -o eth2 -p tcp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A dmz_ext -i eth2 -o eth0 -p tcp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</pre></div>
+<p>Acceso al servidor web para dmz:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_dmz -p tcp -m multiport --dports 80,443 -d 192.168.200.10 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A dmz_lan -p tcp -m multiport --sports 80,443 -s 192.168.200.10 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Acceso al servidor ftp</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_dmz -p tcp --syn --dport 21 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A lan_dmz -p tcp --syn --dport 20 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A lan_dmz -p tcp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A dmz_lan -p tcp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</pre></div>
+<p>Acecso al servidor postfix:</p>
+<div class="highlight"><pre class="chroma">iptables -A lan_dmz -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A dmz_lan -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p>Acceso al servidor mysql:</p>
+<div class="highlight"><pre class="chroma">iptables -A dmz_lan -p tcp --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A lan_dmz -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT</pre></div>
+<p><em>MEJORA: Consruye el cortafuego utilizando nftables.</em></p>
+
+<p>Utilizando la herramienta iptables-translate vamos a poder traducir línea a línea las iptables de nuestro cortafuegos y transformarlas, para ello podemos utilizar un script que automatice la transformación, el resultado será:</p>
+<div class="highlight"><pre class="chroma">nft add chain inet filter router_dmz
+nft add chain inet filter router_lan
+nft add chain inet filter router_ext
+nft add chain inet filter ext_router
+nft add chain inet filter dmz_router
+nft add chain inet filter dmz_ext
+nft add chain inet filter dmz_lan
+nft add chain inet filter ext_dmz
+nft add chain inet filter lan_router
+nft add chain inet filter lan_ext
+nft add chain inet filter lan_dmz
+nft add chain inet filter ext_lan
+nft add rule inet filter input iifname &#34;eth0&#34; counter jump ext_router
+nft add rule inet filter input iifname &#34;eth2&#34; inet saddr 192.168.200.0/24 counter jump dmz_router
+nft add rule inet filter input iifname &#34;eth1&#34; inet saddr 192.168.100.0/24 counter jump lan_router
+nft add rule inet filter input inet saddr 172.22.0.0/16 tcp dport 22 ct state new,established  counter accept
+nft add rule inet filter input inet saddr 172.23.0.0/16 tcp dport 22 ct state new,established  counter accept
+nft add rule inet filter input iifname &#34;lo&#34; counter accept
+nft add rule inet filter forward iifname &#34;eth2&#34; oifname &#34;eth0&#34; inet saddr 192.168.200.0/24 counter jump dmz_ext
+nft add rule inet filter forward iifname &#34;eth2&#34; oifname &#34;eth1&#34; inet saddr 192.168.200.0/24 counter jump dmz_lan
+nft add rule inet filter forward iifname &#34;eth0&#34; oifname &#34;eth2&#34; counter jump ext_dmz
+nft add rule inet filter forward iifname &#34;eth1&#34; oifname &#34;eth0&#34; inet saddr 192.168.100.0/24 counter jump lan_ext
+nft add rule inet filter forward iifname &#34;eth1&#34; oifname &#34;eth2&#34; inet saddr 192.168.100.0/24 counter jump lan_dmz
+nft add rule inet filter forward iifname &#34;eth0&#34; oifname &#34;eth1&#34; counter jump ext_lan
+nft add rule inet filter output oifname &#34;eth2&#34; inet daddr 192.168.200.0/24 counter jump router_dmz
+nft add rule inet filter output oifname &#34;eth1&#34; inet daddr 192.168.100.0/24 counter jump router_lan
+nft add rule inet filter output oifname &#34;eth0&#34; counter jump router_ext
+nft add rule inet filter output inet daddr 172.22.0.0/16 tcp sport 22 ct state established  counter accept
+nft add rule inet filter output inet daddr 172.23.0.0/16 tcp sport 22 ct state established  counter accept
+nft add rule inet filter output oifname &#34;lo&#34; counter accept
+nft add rule inet filter router_dmz tcp sport 22 counter accept
+nft add rule inet filter router_dmz icmp type echo-reply counter accept
+nft add rule inet filter router_dmz icmp type echo-request counter accept
+nft add rule inet filter router_lan tcp sport 22 counter accept
+nft add rule inet filter router_lan icmp type echo-reply counter accept
+nft add rule inet filter router_lan inet protocol icmp ct state related  counter accept
+nft add rule inet filter router_lan icmp type echo-request counter accept
+nft add rule inet filter router_ext icmp type echo-request counter accept
+nft add rule inet filter ext_router icmp type echo-reply counter accept
+nft add rule inet filter dmz_router tcp dport 22 counter accept
+nft add rule inet filter dmz_router icmp type echo-request counter accept
+nft add rule inet filter dmz_router icmp type echo-reply counter accept
+nft add rule inet filter dmz_ext inet protocol tcp tcp dport { 80,443} ct state new,established  counter accept
+nft add rule inet filter dmz_ext udp dport 53 ct state new,established  counter accept
+nft add rule inet filter dmz_ext inet protocol tcp tcp sport { 80,443} ct state established  counter accept
+nft add rule inet filter dmz_ext iifname &#34;eth2&#34; oifname &#34;eth0&#34; inet protocol tcp ct state related,established counter accept
+nft add rule inet filter dmz_lan tcp dport 22 ct state new,established  counter accept
+nft add rule inet filter dmz_lan icmp type echo-request counter accept
+nft add rule inet filter dmz_lan tcp sport 22 ct state established  counter accept
+nft add rule inet filter dmz_lan inet protocol tcp inet saddr 192.168.200.10 tcp sport { 80,443} ct state established  counter accept
+nft add rule inet filter dmz_lan inet protocol tcp ct state related,established counter accept
+nft add rule inet filter dmz_lan tcp sport 25 ct state established  counter accept
+nft add rule inet filter dmz_lan tcp dport 3306 ct state new,established  counter accept
+nft add rule inet filter ext_dmz inet protocol tcp tcp sport { 80,443} ct state established  counter accept
+nft add rule inet filter ext_dmz udp sport 53 ct state established  counter accept
+nft add rule inet filter ext_dmz inet protocol tcp tcp dport { 80,443} ct state new,established  counter accept
+nft add rule inet filter ext_dmz tcp dport 21 tcp flags &amp; (fin|syn|rst|ack) == syn ct state new counter accept
+nft add rule inet filter ext_dmz iifname &#34;eth0&#34; oifname &#34;eth2&#34; tcp dport 20 tcp flags &amp; (fin|syn|rst|ack) == syn ct state new counter accept
+nft add rule inet filter ext_dmz iifname &#34;eth0&#34; oifname &#34;eth2&#34; inet protocol tcp ct state related,established counter accept
+nft add rule inet filter lan_router tcp dport 22 counter accept
+nft add rule inet filter lan_router icmp type echo-request counter reject
+nft add rule inet filter lan_router icmp type echo-reply counter accept
+nft add rule inet filter lan_ext inet protocol icmp ct state new,established  counter accept
+nft add rule inet filter lan_ext inet protocol tcp tcp dport { 80,443} ct state new,established  counter accept
+nft add rule inet filter lan_ext udp dport 53 ct state new,established  counter accept
+nft add rule inet filter lan_dmz tcp sport 22 ct state established  counter accept
+nft add rule inet filter lan_dmz icmp type echo-reply counter accept
+nft add rule inet filter lan_dmz tcp dport 22 ct state new,established  counter accept
+nft add rule inet filter lan_dmz inet protocol tcp inet daddr 192.168.200.10 tcp dport { 80,443} ct state new,established  counter accept
+nft add rule inet filter lan_dmz tcp dport 21 tcp flags &amp; (fin|syn|rst|ack) == syn ct state new counter accept
+nft add rule inet filter lan_dmz tcp dport 20 tcp flags &amp; (fin|syn|rst|ack) == syn ct state new counter accept
+nft add rule inet filter lan_dmz inet protocol tcp ct state related,established counter accept
+nft add rule inet filter lan_dmz tcp dport 25 ct state new,established  counter accept
+nft add rule inet filter lan_dmz tcp sport 3306 ct state established  counter accept
+nft add rule inet filter ext_lan inet protocol icmp ct state established  counter accept
+nft add rule inet filter ext_lan inet protocol tcp tcp sport { 80,443} ct state established  counter accept
+nft add rule inet filter ext_lan udp sport 53 ct state established  counter accept
+nft add rule inet filter prerouting iifname &#34;eth0&#34; tcp dport 2222 counter redirect to :22
+nft add rule inet filter prerouting iifname &#34;eth0&#34; tcp dport 22 counter dnat to 127.0.0.1:22
+nft add rule inet filter prerouting iifname &#34;eth0&#34; tcp dport 21 counter dnat to 192.168.200.10:21
+nft add rule inet filter prerouting iifname &#34;eth0&#34; tcp dport 20 counter dnat to 192.168.200.10:21
+nft add rule inet filter postrouting oifname &#34;eth0&#34; inet saddr 192.168.100.0/24 counter masquerade 
+nft add rule inet filter postrouting oifname &#34;eth0&#34; inet saddr 192.168.200.0/24 counter masquerade 
+nft add rule inet filter postrouting oifname &#34;eth2&#34; inet daddr 192.168.200.10 tcp dport 21 counter snat to 192.168.200.2
+nft add rule inet filter postrouting oifname &#34;eth2&#34; inet daddr 192.168.200.10 tcp dport 20 counter snat to 192.168.200.2</pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fiptables%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fiptables%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fiptables%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fiptables%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>
