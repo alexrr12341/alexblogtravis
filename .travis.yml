@@ -1,17 +1,27 @@
-# Install the apt prerequisites
 dist: xenial
-  addons:
-    snaps:
-      - hugo
-# Clean and don't fail
+language: python
+python:
+  - "3.7"
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get -yq install apt-transport-https tor curl
+
+# install - install any dependencies required
 install:
-  - sudo snap install hugo
-  - rm -rf public || exit 0
+    # install latest release version
+    # Github may forbid request from travis container, so use tor proxy
+    - sudo systemctl start tor
+    # - curl -fsL --socks5-hostname 127.0.0.1:9050 https://api.github.com/repos/gohugoio/hugo/releases/latest | sed -r -n '/browser_download_url/{/Linux-64bit.deb/{s@[^:]*:[[:space:]]*"([^"]*)".*@\1@g;p;q}}' | xargs wget
+    - download_command='curl -fsSL -x socks5h://127.0.0.1:9050' # --socks5-hostname
+    - $download_command -O $($download_command https://api.github.com/repos/gohugoio/hugo/releases/latest | sed -r -n '/browser_download_url/{/Linux-64bit.deb/{s@[^:]*:[[:space:]]*"([^"]*)".*@\1@g;p;q}}')
+    - sudo dpkg -i hugo*.deb
+    - rm -rf public 2> /dev/null
 
-# Build the website
+# script - run the build script
 script:
-  - hugo --theme=hugo-coder-portfolio
-
+    - hugo
+    - echo "$CNAME_URL" > public/CNAME
 # Deploy to GitHub pages
 deploy:
   provider: pages
