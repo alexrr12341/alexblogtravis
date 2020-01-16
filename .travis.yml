@@ -10,7 +10,7 @@ install:
 
 # Build the website
 script:
-  - hugo --theme=hugo-coder-portfolio --gc --minify
+  - hugo -vv --theme=hugo-coder-portfolio
 # Deploy to GitHub pages
 deploy:
   provider: pages
