@@ -1,6 +1,6 @@
 # Install the apt prerequisites
 addons:
-  brew:
+  homebrew:
     packages:
       - hugo
 # Clean and don't fail
