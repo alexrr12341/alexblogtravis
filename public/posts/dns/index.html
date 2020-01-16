@@ -1,161 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="author" content="Alejandro Rodríguez">
-    <meta name="description" content="https://www.alexrrinformatico.com">
-    <meta name="keywords" content="blog,developer,personal">
-
-    <meta property="og:site_name" content="Alexblog">
-    <meta property="og:title" content="
-  Servidores DNS - Alexblog
-">
-    <meta property="og:description" content="">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/dns/">
-    <meta property="og:image" content="https://www.alexrrinformatico.com">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/dns/">
-    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
-
-    <base href="https://www.alexrrinformatico.com/posts/dns/">
-    <title>
-  Servidores DNS - Alexblog
-</title>
-
-    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/dns/">
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    
-    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
-
-    
-
-    
-
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
-
-    
-      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
-      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
-    
-
-    <meta name="generator" content="Hugo 0.57.2" />
-  </head>
-
-  <body class="">
-    <main class="wrapper">
-      <nav class="navigation">
-  <section class="container">
-    <a class="navigation-title" href="/">Alexblog</a>
-    <input type="checkbox" id="menu-control"/>
-    <label class="menu-mobile  float-right " for="menu-control">
-      <span class="btn-mobile  float-right ">&#9776;</span>
-      <ul class="navigation-list">
-        
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
-            </li>
-          
-        
-        
-      </ul>
-    </label>
-  </section>
-</nav>
-
-
-      <div class="content">
-        
-  <section class="container post">
-  <article>
-    <header>
-      <h1 class="title">Servidores DNS</h1>
-      <h2 class="date">December 10, 2019</h2>
-
-      
-        <script type="text/javascript" async
-          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
-          MathJax.Hub.Config({
-            tex2jax: {
-              inlineMath: [['$','$']],
-              displayMath: [['$$','$$']],
-              processEscapes: true,
-              processEnvironments: true,
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
-            }
-          });
-          MathJax.Hub.Queue(function() {
-            
-            
-            
-            var all = MathJax.Hub.getAllJax(), i;
-            for(i = 0; i < all.length; i += 1) {
-                all[i].SourceElement().parentNode.className += ' has-jax';
-            }
-          });
-          </script>
-      
-    </header>
-
-    <p><em>Tarea 1 (2 punto)(Obligatorio): Modifica los clientes para que utilicen el nuevo servidor dns. Realiza una consulta a www.iesgn.org, y a www.josedomingo.org. Realiza una prueba de funcionamiento para comprobar que el servidor dnsmasq funciona como cache dns. Muestra el fichero hosts del cliente para demostrar que no estás utilizando resolución estática. Realiza una consulta directa al servidor dnsmasq. ¿Se puede realizar resolución inversa?. Documenta la tarea en redmine.</em></p>
-
-<p>Primero instalamos dnsmasq.</p>
-<div class="highlight"><pre class="chroma">apt install dnsmasq</pre></div>
-<p>Ahora montamos el escenario con el servidor web para ello instalamos apache2 y creamos dos virtual hosts</p>
-<div class="highlight"><pre class="chroma">apt install apache2</pre></div>
-<p>iesgn.conf:</p>
-<div class="highlight"><pre class="chroma">&lt;VirtualHost *:80&gt;
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Alejandro Rodríguez"><meta name=description content=https://www.alexrrinformatico.com><meta name=keywords content=blog,developer,personal><meta property=og:site_name content=Alexblog><meta property=og:title content="Servidores DNS - Alexblog"><meta property=og:description content><meta property=og:type content=website><meta property=og:url content=https://www.alexrrinformatico.com/posts/dns/><meta property=og:image content=https://www.alexrrinformatico.com><meta name=twitter:card content=summary><meta name=twitter:site content=https://www.alexrrinformatico.com/posts/dns/><meta name=twitter:image content=https://www.alexrrinformatico.com><base href=https://www.alexrrinformatico.com/posts/dns/><title>Servidores DNS - Alexblog</title><link rel=canonical href=https://www.alexrrinformatico.com/posts/dns/><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.2.0/css/all.css integrity=sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ crossorigin=anonymous><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700"><link rel=stylesheet href=https://www.alexrrinformatico.com/css/normalize.min.css><link rel=stylesheet href=https://www.alexrrinformatico.com/css/style.min.css><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-16x16.png sizes=16x16><link rel=alternate href=https://www.alexrrinformatico.com/index.xml type=application/rss+xml title=Alexblog><link href=https://www.alexrrinformatico.com/index.xml rel=feed type=application/rss+xml title=Alexblog><meta name=generator content="Hugo 0.57.2"></head><body><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Alexblog</a>
+<input type=checkbox id=menu-control>
+<label class="menu-mobile  float-right" for=menu-control><span class="btn-mobile  float-right">&#9776;</span><ul class=navigation-list><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/sobre>Sobre mi</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/posts>Blog</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/contactar>Contactame</a></li></ul></label></section></nav><div class=content><section class="container post"><article><header><h1 class=title>Servidores DNS</h1><h2 class=date>December 10, 2019</h2><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">MathJax.Hub.Config({tex2jax:{inlineMath:[['$','$']],displayMath:[['$$','$$']],processEscapes:true,processEnvironments:true,skipTags:['script','noscript','style','textarea','pre'],TeX:{extensions:["AMSmath.js","AMSsymbols.js"]}}});MathJax.Hub.Queue(function(){var all=MathJax.Hub.getAllJax(),i;for(i=0;i<all.length;i+=1){all[i].SourceElement().parentNode.className+=' has-jax';}});</script></header><p><em>Tarea 1 (2 punto)(Obligatorio): Modifica los clientes para que utilicen el nuevo servidor dns. Realiza una consulta a www.iesgn.org, y a www.josedomingo.org. Realiza una prueba de funcionamiento para comprobar que el servidor dnsmasq funciona como cache dns. Muestra el fichero hosts del cliente para demostrar que no estás utilizando resolución estática. Realiza una consulta directa al servidor dnsmasq. ¿Se puede realizar resolución inversa?. Documenta la tarea en redmine.</em></p><p>Primero instalamos dnsmasq.</p><div class=highlight><pre class=chroma>apt install dnsmasq</pre></div><p>Ahora montamos el escenario con el servidor web para ello instalamos apache2 y creamos dos virtual hosts</p><div class=highlight><pre class=chroma>apt install apache2</pre></div><p>iesgn.conf:</p><div class=highlight><pre class=chroma>&lt;VirtualHost *:80&gt;
         ServerAdmin webmaster@localhost
         ServerName www.iesgn.org
         DocumentRoot /var/www/iesgn
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-&lt;/VirtualHost&gt;</pre></div>
-<p>departamentos.conf:</p>
-<div class="highlight"><pre class="chroma">&lt;VirtualHost *:80&gt;
+&lt;/VirtualHost&gt;</pre></div><p>departamentos.conf:</p><div class=highlight><pre class=chroma>&lt;VirtualHost *:80&gt;
         ServerAdmin webmaster@localhost
         ServerName departamentos.iesgn.org
         DocumentRoot /var/www/departamentos
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-&lt;/VirtualHost&gt;</pre></div><div class="highlight"><pre class="chroma">a2ensite iesgn
+&lt;/VirtualHost&gt;</pre></div><div class=highlight><pre class=chroma>a2ensite iesgn
 a2ensite departamentos
-systemctl restart apache2</pre></div>
-<p>Ahora en el servidor DNS editamos en /etc/dnsmasq.conf:</p>
-<div class="highlight"><pre class="chroma">strict-order
-interface=eth1</pre></div>
-<p>Ahora añadimos en el servidor DNS los DNS de las ips seleccionadas en el /etc/hosts</p>
-<div class="highlight"><pre class="chroma">192.168.1.2     alejandro.iesgn.org       alejandro
+systemctl restart apache2</pre></div><p>Ahora en el servidor DNS editamos en /etc/dnsmasq.conf:</p><div class=highlight><pre class=chroma>strict-order
+interface=eth1</pre></div><p>Ahora añadimos en el servidor DNS los DNS de las ips seleccionadas en el /etc/hosts</p><div class=highlight><pre class=chroma>192.168.1.2     alejandro.iesgn.org       alejandro
 192.168.1.201   www.iesgn.org
-192.168.1.201   departamentos.iesgn.org</pre></div>
-<p>Ahora modificamos el /etc/resolv.conf del cliente para que pregunte siempre por el servidor DNS</p>
-<div class="highlight"><pre class="chroma">domain gonzalonazareno.org
+192.168.1.201   departamentos.iesgn.org</pre></div><p>Ahora modificamos el /etc/resolv.conf del cliente para que pregunte siempre por el servidor DNS</p><div class=highlight><pre class=chroma>domain gonzalonazareno.org
 search gonzalonazareno.org
-nameserver 192.168.1.2</pre></div>
-<p>/etc/host del cliente:
-<img src="/images/host.png" alt="" /></p>
-
-<p>Consulta a www.iesgn.org</p>
-<div class="highlight"><pre class="chroma">vagrant@cliente:~$ dig www.iesgn.org
+nameserver 192.168.1.2</pre></div><p>/etc/host del cliente:
+<img src=/images/host.png alt></p><p>Consulta a www.iesgn.org</p><div class=highlight><pre class=chroma>vagrant@cliente:~$ dig www.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; www.iesgn.org
 ;; global options: +cmd
@@ -174,9 +41,7 @@ www.iesgn.org.		0	IN	A	192.168.1.201
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 13 07:57:14 GMT 2019
-;; MSG SIZE  rcvd: 58</pre></div>
-<p>Consulta a www.josedomingo.org</p>
-<div class="highlight"><pre class="chroma">dig www.josedomingo.org
+;; MSG SIZE  rcvd: 58</pre></div><p>Consulta a www.josedomingo.org</p><div class=highlight><pre class=chroma>dig www.josedomingo.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; www.josedomingo.org
 ;; global options: +cmd
@@ -211,9 +76,7 @@ ns5.cdmondns-01.com.	135538	IN	A	52.59.146.62
 ;; Query time: 7 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 13 08:00:13 GMT 2019
-;; MSG SIZE  rcvd: 322</pre></div>
-<p>Para comprobar que funciona como servidor caché hacemos de vuelta la consulta a josedomingo</p>
-<div class="highlight"><pre class="chroma">dig www.josedomingo.org
+;; MSG SIZE  rcvd: 322</pre></div><p>Para comprobar que funciona como servidor caché hacemos de vuelta la consulta a josedomingo</p><div class=highlight><pre class=chroma>dig www.josedomingo.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; www.josedomingo.org
 ;; global options: +cmd
@@ -233,11 +96,7 @@ playerone.josedomingo.org. 866	IN	A	137.74.161.90
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 13 08:01:17 GMT 2019
-;; MSG SIZE  rcvd: 103</pre></div>
-<p>Ahora probamos la resolución inversa:</p>
-
-<p>www.iesgn.org</p>
-<div class="highlight"><pre class="chroma">dig -x 192.168.1.201
+;; MSG SIZE  rcvd: 103</pre></div><p>Ahora probamos la resolución inversa:</p><p>www.iesgn.org</p><div class=highlight><pre class=chroma>dig -x 192.168.1.201
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; -x 192.168.1.201
 ;; global options: +cmd
@@ -256,15 +115,7 @@ playerone.josedomingo.org. 866	IN	A	137.74.161.90
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 13 08:08:35 GMT 2019
-;; MSG SIZE  rcvd: 82</pre></div>
-<p><em>Tarea 2 (2 puntos)(Obligatorio): Realiza la instalación y configuración del servidor bind9 con las características anteriomente señaladas. Entrega las zonas que has definido. Muestra al profesor su funcionamiento.</em></p>
-
-<p>Primero desistalamos el dnsmaq</p>
-<div class="highlight"><pre class="chroma">apt purge dnsmasq</pre></div>
-<p>Y instalamos bind9</p>
-<div class="highlight"><pre class="chroma">apt install bind9</pre></div>
-<p>Ahora vamos a /etc/bind/named.conf.local y configuramos las zonas</p>
-<div class="highlight"><pre class="chroma">zone &#34;iesgn.org&#34; {
+;; MSG SIZE  rcvd: 82</pre></div><p><em>Tarea 2 (2 puntos)(Obligatorio): Realiza la instalación y configuración del servidor bind9 con las características anteriomente señaladas. Entrega las zonas que has definido. Muestra al profesor su funcionamiento.</em></p><p>Primero desistalamos el dnsmaq</p><div class=highlight><pre class=chroma>apt purge dnsmasq</pre></div><p>Y instalamos bind9</p><div class=highlight><pre class=chroma>apt install bind9</pre></div><p>Ahora vamos a /etc/bind/named.conf.local y configuramos las zonas</p><div class=highlight><pre class=chroma>zone &#34;iesgn.org&#34; {
 
 type master;
 
@@ -278,10 +129,8 @@ type master;
 
 file &#34;/var/cache/bind/db.192.168.1&#34;;
 
-};</pre></div><div class="highlight"><pre class="chroma">root@servidor:/etc/bind# cp db.local /var/cache/bind/db.iesgn.org
-root@servidor:/etc/bind# cp db.127 /var/cache/bind/db.192.168.1</pre></div>
-<p>db.iesgn.org</p>
-<div class="highlight"><pre class="chroma">;
+};</pre></div><div class=highlight><pre class=chroma>root@servidor:/etc/bind# cp db.local /var/cache/bind/db.iesgn.org
+root@servidor:/etc/bind# cp db.127 /var/cache/bind/db.192.168.1</pre></div><p>db.iesgn.org</p><div class=highlight><pre class=chroma>;
 ; BIND data file for local loopback interface
 ;
 $TTL	604800
@@ -301,9 +150,7 @@ correo		IN	A	192.168.1.200
 ftp		IN	A	192.168.1.202
 cliente		IN	A	192.168.1.205
 www		IN	CNAME	apache
-departamentos	IN	CNAME	apache</pre></div>
-<p>db.192.168.1</p>
-<div class="highlight"><pre class="chroma">;
+departamentos	IN	CNAME	apache</pre></div><p>db.192.168.1</p><div class=highlight><pre class=chroma>;
 ; BIND reverse data file for local loopback interface
 ;
 $TTL	604800
@@ -321,21 +168,15 @@ $ORIGIN	1.168.192.in-addr.arpa.
 201	IN	PTR	apache.iesgn.org.
 205	IN	PTR	cliente.iesgn.org.
 200	IN	PTR	correo.iesgn.org.
-202	IN	PTR	ftp.iesgn.org.</pre></div>
-<p>IPv6:
-Vamos a nombrar la zona DNS inversa de IPv6, para ello primero vamos a hacer que la zona inversa de ipv6 coja la zona directa de ipv4</p>
-<div class="highlight"><pre class="chroma">apt-get install ipv6calc
-ipv6calc --out revnibbles.arpa 2001:abcd::/64</pre></div>
-<p>Ahora vamos a /etc/bind/named.conf.local y ponemos la zona inversa</p>
-<div class="highlight"><pre class="chroma">zone &#34;0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34; {
+202	IN	PTR	ftp.iesgn.org.</pre></div><p>IPv6:
+Vamos a nombrar la zona DNS inversa de IPv6, para ello primero vamos a hacer que la zona inversa de ipv6 coja la zona directa de ipv4</p><div class=highlight><pre class=chroma>apt-get install ipv6calc
+ipv6calc --out revnibbles.arpa 2001:abcd::/64</pre></div><p>Ahora vamos a /etc/bind/named.conf.local y ponemos la zona inversa</p><div class=highlight><pre class=chroma>zone &#34;0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34; {
 
 type master;
 
 file &#34;/var/cache/bind/db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34;;
 
-};</pre></div>
-<p>Ahora vamos a /var/cache/bind y creamos el fichero db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa</p>
-<div class="highlight"><pre class="chroma">$TTL 86400
+};</pre></div><p>Ahora vamos a /var/cache/bind y creamos el fichero db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa</p><div class=highlight><pre class=chroma>$TTL 86400
 @ IN SOA alejandro.iesgn.org. admin.email. (
  5 ; Serial
  604800 ; Refresh
@@ -350,19 +191,15 @@ $ORIGIN 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa.
 2 IN PTR apache.iesgn.org.
 3 IN PTR cliente.iesgn.org.
 4 IN PTR correo.iesgn.org.
-5 IN PTR ftp.iesgn.org.</pre></div>
-<p>Zona directa:
-En nuestro fichero db.iesgn.org editamos las siguientes líneas si queremos que resuelva la zona directa por IPv6</p>
-<div class="highlight"><pre class="chroma">$ORIGIN iesgn.org.
+5 IN PTR ftp.iesgn.org.</pre></div><p>Zona directa:
+En nuestro fichero db.iesgn.org editamos las siguientes líneas si queremos que resuelva la zona directa por IPv6</p><div class=highlight><pre class=chroma>$ORIGIN iesgn.org.
 ....
 
 alejandro	IN	AAAA	2001:abcd::1
 apache		IN	AAAA	2001:abcd::2
 cliente		IN	AAAA	2001:abcd::3
 correo		IN	AAAA	2001:abcd::4
-ftp		IN	AAAA	2001:abcd::5</pre></div>
-<p><em>Tarea 3 (2 puntos)(Obligatorio): Realiza las consultas dig/nslookup desde los clientes preguntando por los siguientes:</em></p>
-<div class="highlight"><pre class="chroma">Dirección de pandora.iesgn.org, www.iesgn.org, ftp.iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig alejandro.iesgn.org
+ftp		IN	AAAA	2001:abcd::5</pre></div><p><em>Tarea 3 (2 puntos)(Obligatorio): Realiza las consultas dig/nslookup desde los clientes preguntando por los siguientes:</em></p><div class=highlight><pre class=chroma>Dirección de pandora.iesgn.org, www.iesgn.org, ftp.iesgn.org</pre></div><div class=highlight><pre class=chroma>dig alejandro.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; alejandro.iesgn.org
 ;; global options: +cmd
@@ -449,7 +286,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 09:20:01 GMT 2019
-;; MSG SIZE  rcvd: 154</pre></div><div class="highlight"><pre class="chroma">El servidor DNS con autoridad sobre la zona del dominio iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig ns iesgn.org
+;; MSG SIZE  rcvd: 154</pre></div><div class=highlight><pre class=chroma>El servidor DNS con autoridad sobre la zona del dominio iesgn.org</pre></div><div class=highlight><pre class=chroma>dig ns iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; ns iesgn.org
 ;; global options: +cmd
@@ -473,7 +310,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 12:27:05 GMT 2019
-;; MSG SIZE  rcvd: 134</pre></div><div class="highlight"><pre class="chroma">El servidor de correo configurado para iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig mx iesgn.org
+;; MSG SIZE  rcvd: 134</pre></div><div class=highlight><pre class=chroma>El servidor de correo configurado para iesgn.org</pre></div><div class=highlight><pre class=chroma>dig mx iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; mx iesgn.org
 ;; global options: +cmd
@@ -502,7 +339,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 12:27:37 GMT 2019
-;; MSG SIZE  rcvd: 201</pre></div><div class="highlight"><pre class="chroma">La dirección IP de www.josedomingo.org</pre></div><div class="highlight"><pre class="chroma">dig -x 137.74.161.90
+;; MSG SIZE  rcvd: 201</pre></div><div class=highlight><pre class=chroma>La dirección IP de www.josedomingo.org</pre></div><div class=highlight><pre class=chroma>dig -x 137.74.161.90
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; -x 137.74.161.90
 ;; global options: +cmd
@@ -526,7 +363,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 3511 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 12:28:19 GMT 2019
-;; MSG SIZE  rcvd: 168</pre></div><div class="highlight"><pre class="chroma">Una resolución inversa</pre></div><div class="highlight"><pre class="chroma">dig -x 192.168.1.201
+;; MSG SIZE  rcvd: 168</pre></div><div class=highlight><pre class=chroma>Una resolución inversa</pre></div><div class=highlight><pre class=chroma>dig -x 192.168.1.201
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; -x 192.168.1.201
 ;; global options: +cmd
@@ -553,7 +390,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 12:28:52 GMT 2019
-;; MSG SIZE  rcvd: 181</pre></div><div class="highlight"><pre class="chroma">La dirección ipv6 de pandora.iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig AAAA alejandro.iesgn.org
+;; MSG SIZE  rcvd: 181</pre></div><div class=highlight><pre class=chroma>La dirección ipv6 de pandora.iesgn.org</pre></div><div class=highlight><pre class=chroma>dig AAAA alejandro.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; AAAA alejandro.iesgn.org
 ;; global options: +cmd
@@ -579,14 +416,8 @@ alejandro.iesgn.org.	604800	IN	A	192.168.1.2
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Mon Nov 18 12:29:10 GMT 2019
-;; MSG SIZE  rcvd: 134</pre></div>
-<p><em>Tarea 4 (3 puntos): Realiza la instalación del servidor DNS esclavo. Documenta los siguientes apartados:</em></p>
-<div class="highlight"><pre class="chroma">Entrega la configuración de las zonas del maestro y del esclavo.</pre></div>
-<p>Primero instalamos el bind9 en el nuevo servidor dns esclavo</p>
-<div class="highlight"><pre class="chroma">apt install bind9</pre></div>
-<p>Maestro:
-Por seguridad no permitimos la transferencia del servidor dns por defecto en /etc/bind/named-conf.options</p>
-<div class="highlight"><pre class="chroma">allow-transfer { none; };</pre></div><div class="highlight"><pre class="chroma">zone &#34;iesgn.org&#34; {
+;; MSG SIZE  rcvd: 134</pre></div><p><em>Tarea 4 (3 puntos): Realiza la instalación del servidor DNS esclavo. Documenta los siguientes apartados:</em></p><div class=highlight><pre class=chroma>Entrega la configuración de las zonas del maestro y del esclavo.</pre></div><p>Primero instalamos el bind9 en el nuevo servidor dns esclavo</p><div class=highlight><pre class=chroma>apt install bind9</pre></div><p>Maestro:
+Por seguridad no permitimos la transferencia del servidor dns por defecto en /etc/bind/named-conf.options</p><div class=highlight><pre class=chroma>allow-transfer { none; };</pre></div><div class=highlight><pre class=chroma>zone &#34;iesgn.org&#34; {
 	type master;
 	file &#34;/var/cache/bind/db.iesgn.org&#34;;
 	allow-transfer { 192.168.1.230; };
@@ -607,15 +438,11 @@ type master;
 file &#34;/var/cache/bind/db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34;;
 allow-transfer { 192.168.1.230; };
         notify yes;
-};</pre></div>
-<p>Y en todas las zonas del maestro poner:</p>
-<div class="highlight"><pre class="chroma">@       IN      NS              afrodita.iesgn.org.
+};</pre></div><p>Y en todas las zonas del maestro poner:</p><div class=highlight><pre class=chroma>@       IN      NS              afrodita.iesgn.org.
 $ORIGIN
 ...
 
-afrodita        IN      A       192.168.1.230 </pre></div>
-<p>Esclavo:</p>
-<div class="highlight"><pre class="chroma">zone &#34;iesgn.org&#34; {
+afrodita        IN      A       192.168.1.230 </pre></div><p>Esclavo:</p><div class=highlight><pre class=chroma>zone &#34;iesgn.org&#34; {
 	type slave;
 	file &#34;/var/cache/bind/db.iesgn.org&#34;;
 	masters { 192.168.1.2; };
@@ -631,7 +458,7 @@ zone &#34;0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34; {
 	type slave;
 	file &#34;/var/cache/bind/db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa&#34;;
 	masters { 192.168.1.2; };
-};</pre></div><div class="highlight"><pre class="chroma">Comprueba si las zonas definidas en el maestro tienen algún error con el comando adecuado.</pre></div><div class="highlight"><pre class="chroma">root@servidor:/etc/bind# named-checkzone iesgn.org /var/cache/bind/db.iesgn.org 
+};</pre></div><div class=highlight><pre class=chroma>Comprueba si las zonas definidas en el maestro tienen algún error con el comando adecuado.</pre></div><div class=highlight><pre class=chroma>root@servidor:/etc/bind# named-checkzone iesgn.org /var/cache/bind/db.iesgn.org 
 zone iesgn.org/IN: loaded serial 2
 OK
 
@@ -641,14 +468,14 @@ OK
 
 root@servidor:/etc/bind# named-checkzone 0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa /var/cache/bind/db.0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa 
 zone 0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN: loaded serial 5
-OK</pre></div><div class="highlight"><pre class="chroma">Comprueba si la configuración de named.conf tiene algún error con el comando adecuado.</pre></div><div class="highlight"><pre class="chroma">root@servidor:/etc/bind# named-checkconf
-root@servidor:/etc/bind# </pre></div><div class="highlight"><pre class="chroma">Reinicia los servidores y comprueba en los logs si hay algún error. No olvides incrementar el número de serie en el registro SOA si has modificado la zona en el maestro.</pre></div><div class="highlight"><pre class="chroma">root@servidor:/etc/bind# rndc reload
+OK</pre></div><div class=highlight><pre class=chroma>Comprueba si la configuración de named.conf tiene algún error con el comando adecuado.</pre></div><div class=highlight><pre class=chroma>root@servidor:/etc/bind# named-checkconf
+root@servidor:/etc/bind# </pre></div><div class=highlight><pre class=chroma>Reinicia los servidores y comprueba en los logs si hay algún error. No olvides incrementar el número de serie en el registro SOA si has modificado la zona en el maestro.</pre></div><div class=highlight><pre class=chroma>root@servidor:/etc/bind# rndc reload
 server reload successful
 
 cat /var/log/syslog
 Nov 18 18:23:47 servidor named[3703]: received control channel command &#39;reload iesgn.org&#39; 
 Nov 18 18:23:47 servidor named[3703]: zone iesgn.org/IN: loaded serial 2 
-Nov 18 18:23:47 servidor named[3703]: zone iesgn.org/IN: sending notifies (serial 2</pre></div><div class="highlight"><pre class="chroma">Muestra la salida del log donde se demuestra que se ha realizado la transferencia de zona.</pre></div><div class="highlight"><pre class="chroma">cat /var/log/syslog
+Nov 18 18:23:47 servidor named[3703]: zone iesgn.org/IN: sending notifies (serial 2</pre></div><div class=highlight><pre class=chroma>Muestra la salida del log donde se demuestra que se ha realizado la transferencia de zona.</pre></div><div class=highlight><pre class=chroma>cat /var/log/syslog
 Nov 18 18:23:47 servidor3 named[962]: transfer of &#39;1.168.192.in-addr.arpa/IN&#39; from 192.168.1.2#53: connected using 192.168.1.230#51177
 Nov 18 18:23:47 servidor3 named[962]: zone 1.168.192.in-addr.arpa/IN: transferred serial 3
 Nov 18 18:23:47 servidor3 named[962]: transfer of &#39;1.168.192.in-addr.arpa/IN&#39; from 192.168.1.2#53: Transfer status: success
@@ -691,12 +518,8 @@ Nov 18 18:25:18 servidor3 named[962]: transfer of &#39;0.0.0.0.0.0.0.0.d.c.b.a.1
 Nov 18 18:25:18 servidor3 named[962]: zone 0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN: transferred serial 8
 Nov 18 18:25:18 servidor3 named[962]: transfer of &#39;0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN&#39; from 192.168.1.2#53: Transfer status: success
 Nov 18 18:25:18 servidor3 named[962]: transfer of &#39;0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN&#39; from 192.168.1.2#53: Transfer completed: 1 messages, 11 records, 365 bytes, 0.001 secs (365000 bytes/sec)
-Nov 18 18:25:18 servidor3 named[962]: zone 0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN: sending notifies (serial 8)</pre></div>
-<p><em>Tarea 5 (1 punto): Documenta los siguientes apartados:</em></p>
-<div class="highlight"><pre class="chroma">Configura un cliente para que utilice los dos servidores como servidores DNS.</pre></div>
-<p>Ponemos en el /etc/resolv.conf del cliente</p>
-<div class="highlight"><pre class="chroma">nameserver 192.168.1.2 #Servidor Principal
-nameserver 192.168.1.230 #Servidor Esclavo</pre></div><div class="highlight"><pre class="chroma">Realiza una consulta con dig tanto al maestro como al esclavo para comprobar que las respuestas son autorizadas. ¿En qué te tienes que fijar?</pre></div><div class="highlight"><pre class="chroma">dig @192.168.1.2 apache.iesgn.org
+Nov 18 18:25:18 servidor3 named[962]: zone 0.0.0.0.0.0.0.0.d.c.b.a.1.0.0.2.ip6.arpa/IN: sending notifies (serial 8)</pre></div><p><em>Tarea 5 (1 punto): Documenta los siguientes apartados:</em></p><div class=highlight><pre class=chroma>Configura un cliente para que utilice los dos servidores como servidores DNS.</pre></div><p>Ponemos en el /etc/resolv.conf del cliente</p><div class=highlight><pre class=chroma>nameserver 192.168.1.2 #Servidor Principal
+nameserver 192.168.1.230 #Servidor Esclavo</pre></div><div class=highlight><pre class=chroma>Realiza una consulta con dig tanto al maestro como al esclavo para comprobar que las respuestas son autorizadas. ¿En qué te tienes que fijar?</pre></div><div class=highlight><pre class=chroma>dig @192.168.1.2 apache.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; @192.168.1.2 apache.iesgn.org
 ; (1 server found)
@@ -758,20 +581,12 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.230#53(192.168.1.230)
 ;; WHEN: Tue Nov 19 08:49:26 GMT 2019
-;; MSG SIZE  rcvd: 196</pre></div>
-<p>Te tienes que fijar en el servidor que responde SERVER: &hellip;</p>
-<div class="highlight"><pre class="chroma">Solicita una copia completa de la zona desde el cliente ¿qué tiene que ocurrir?. Solicita una copia completa desde el esclavo ¿qué tiene que ocurrir?</pre></div>
-<p>Cliente:</p>
-<div class="highlight"><pre class="chroma">vagrant@cliente:~$ dig @192.168.1.2 iesgn.org. axfr
+;; MSG SIZE  rcvd: 196</pre></div><p>Te tienes que fijar en el servidor que responde SERVER: &hellip;</p><div class=highlight><pre class=chroma>Solicita una copia completa de la zona desde el cliente ¿qué tiene que ocurrir?. Solicita una copia completa desde el esclavo ¿qué tiene que ocurrir?</pre></div><p>Cliente:</p><div class=highlight><pre class=chroma>vagrant@cliente:~$ dig @192.168.1.2 iesgn.org. axfr
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; @192.168.1.2 iesgn.org. axfr
 ; (1 server found)
 ;; global options: +cmd
-; Transfer failed.</pre></div>
-<p>La transferencia del cliente no está permitida ya que pusimos la opción en named.conf.options para que nadie pueda transferir</p>
-
-<p>Esclavo:</p>
-<div class="highlight"><pre class="chroma">root@servidor3:/home/vagrant# dig @192.168.1.2 iesgn.org. axfr
+; Transfer failed.</pre></div><p>La transferencia del cliente no está permitida ya que pusimos la opción en named.conf.options para que nadie pueda transferir</p><p>Esclavo:</p><div class=highlight><pre class=chroma>root@servidor3:/home/vagrant# dig @192.168.1.2 iesgn.org. axfr
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; @192.168.1.2 iesgn.org. axfr
 ; (1 server found)
@@ -797,13 +612,7 @@ iesgn.org.		604800	IN	SOA	alejandro.iesgn.org. root.iesgn.org. 19111901 604800 8
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Tue Nov 19 08:52:48 GMT 2019
-;; XFR size: 18 records (messages 1, bytes 514)</pre></div>
-<p>Y aqui el esclavo si puede ya que el maestro lo tiene permitido</p>
-
-<p><em>Tarea 6 (1 punto): Muestra al profesor el funcionamiento del DNS esclavo:</em></p>
-<div class="highlight"><pre class="chroma">Realiza una consulta desde el cliente y comprueba que servidor está respondiendo.</pre></div>
-<p>dig apache.iesgn.org</p>
-<div class="highlight"><pre class="chroma">; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; apache.iesgn.org
+;; XFR size: 18 records (messages 1, bytes 514)</pre></div><p>Y aqui el esclavo si puede ya que el maestro lo tiene permitido</p><p><em>Tarea 6 (1 punto): Muestra al profesor el funcionamiento del DNS esclavo:</em></p><div class=highlight><pre class=chroma>Realiza una consulta desde el cliente y comprueba que servidor está respondiendo.</pre></div><p>dig apache.iesgn.org</p><div class=highlight><pre class=chroma>; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; apache.iesgn.org
 ;; global options: +cmd
 ;; Got answer:
 ;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 23628
@@ -830,9 +639,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Tue Nov 19 08:54:42 GMT 2019
-;; MSG SIZE  rcvd: 196</pre></div>
-<p>Responde el servidor que va en primer lugar en el /etc/resolv.conf</p>
-<div class="highlight"><pre class="chroma">Posteriormente apaga el servidor maestro y vuelve a realizar una consulta desde el cliente ¿quién responde?</pre></div><div class="highlight"><pre class="chroma">systemctl stop bind9
+;; MSG SIZE  rcvd: 196</pre></div><p>Responde el servidor que va en primer lugar en el /etc/resolv.conf</p><div class=highlight><pre class=chroma>Posteriormente apaga el servidor maestro y vuelve a realizar una consulta desde el cliente ¿quién responde?</pre></div><div class=highlight><pre class=chroma>systemctl stop bind9
 
 dig apache.iesgn.org
 
@@ -863,36 +670,24 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.230#53(192.168.1.230)
 ;; WHEN: Tue Nov 19 08:55:32 GMT 2019
-;; MSG SIZE  rcvd: 196</pre></div>
-<p><em>Tarea 7 (3 puntos): Realiza la instalación y configuración del nuevo servidor dns con las características anteriormente señaladas. Muestra el resultado al profesor.</em>
-Hacemos una nueva máquina Vagrant</p>
-<div class="highlight"><pre class="chroma">config.vm.define :servidor4 do |servidor4|
+;; MSG SIZE  rcvd: 196</pre></div><p><em>Tarea 7 (3 puntos): Realiza la instalación y configuración del nuevo servidor dns con las características anteriormente señaladas. Muestra el resultado al profesor.</em>
+Hacemos una nueva máquina Vagrant</p><div class=highlight><pre class=chroma>config.vm.define :servidor4 do |servidor4|
          servidor4.vm.box = &#34;debian/buster64&#34;
          servidor4.vm.hostname = &#34;servidor4&#34;
          servidor4.vm.network :private_network, ip: &#34;192.168.1.240&#34;, virtualbox__intnet: &#34;dns1&#34;
-  end</pre></div>
-<p>En nuestro dominio principal añadimos las siguientes líneas:</p>
-<div class="highlight"><pre class="chroma">@      IN      NS      ns.informatica.iesgn.org.
+  end</pre></div><p>En nuestro dominio principal añadimos las siguientes líneas:</p><div class=highlight><pre class=chroma>@      IN      NS      ns.informatica.iesgn.org.
 $ORIGIN informatica.iesgn.org.
-ns     IN      A       192.168.1.240</pre></div>
-<p>Ahora vamos al dominio delegado y instalamos el bind9</p>
-<div class="highlight"><pre class="chroma">apt install bind9</pre></div>
-<p>Ahora vamos a la configuración de zonas y ponemos:</p>
-<div class="highlight"><pre class="chroma">zone &#34;informatica.iesgn.org&#34; {
+ns     IN      A       192.168.1.240</pre></div><p>Ahora vamos al dominio delegado y instalamos el bind9</p><div class=highlight><pre class=chroma>apt install bind9</pre></div><p>Ahora vamos a la configuración de zonas y ponemos:</p><div class=highlight><pre class=chroma>zone &#34;informatica.iesgn.org&#34; {
         type master;
         file &#34;/var/cache/bind/db.informatica.iesgn.org&#34;;
-};</pre></div>
-<p>Ahora crearemos el fichero /var/cache/bind/db.informatica.iesgn.org</p>
-<div class="highlight"><pre class="chroma">@       IN      NS      ns.informatica.iesgn.org.
+};</pre></div><p>Ahora crearemos el fichero /var/cache/bind/db.informatica.iesgn.org</p><div class=highlight><pre class=chroma>@       IN      NS      ns.informatica.iesgn.org.
 @       IN      MX      10      correo.informatica.iesgn.org.
 $ORIGIN informatica.iesgn.org.
 ns      IN      A       192.168.1.240
 web     IN      A       192.168.1.241
 WWW     IN      CNAME   web
 ftp     IN      CNAME   web
-correo  IN      A       192.168.1.242</pre></div>
-<p><em>Tarea 8 (1 punto): Realiza las consultas dig/neslookup desde los clientes preguntando por los siguientes:</em></p>
-<div class="highlight"><pre class="chroma">Dirección de www.informatica.iesgn.org, ftp.informatica.iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig www.informatica.iesgn.org
+correo  IN      A       192.168.1.242</pre></div><p><em>Tarea 8 (1 punto): Realiza las consultas dig/neslookup desde los clientes preguntando por los siguientes:</em></p><div class=highlight><pre class=chroma>Dirección de www.informatica.iesgn.org, ftp.informatica.iesgn.org</pre></div><div class=highlight><pre class=chroma>dig www.informatica.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; www.informatica.iesgn.org
 ;; global options: +cmd
@@ -942,7 +737,7 @@ informatica.iesgn.org.	604800	IN	NS	ns.informatica.iesgn.org.
 ;; Query time: 4 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 20 08:26:50 GMT 2019
-;; MSG SIZE  rcvd: 133</pre></div><div class="highlight"><pre class="chroma">El servidor DNS que tiene configurado la zona del dominio informatica.iesgn.org. ¿Es el mismo que el servidor DNS con autoridad para la zona iesgn.org?</pre></div><div class="highlight"><pre class="chroma">dig ns informatica.iesgn.org
+;; MSG SIZE  rcvd: 133</pre></div><div class=highlight><pre class=chroma>El servidor DNS que tiene configurado la zona del dominio informatica.iesgn.org. ¿Es el mismo que el servidor DNS con autoridad para la zona iesgn.org?</pre></div><div class=highlight><pre class=chroma>dig ns informatica.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; ns informatica.iesgn.org
 ;; global options: +cmd
@@ -990,7 +785,7 @@ alejandro.iesgn.org.	604800	IN	AAAA	2001:abcd::1
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 20 08:27:33 GMT 2019
-;; MSG SIZE  rcvd: 173</pre></div><div class="highlight"><pre class="chroma">El servidor de correo configurado para informatica.iesgn.org</pre></div><div class="highlight"><pre class="chroma">dig mx informatica.iesgn.org
+;; MSG SIZE  rcvd: 173</pre></div><div class=highlight><pre class=chroma>El servidor de correo configurado para informatica.iesgn.org</pre></div><div class=highlight><pre class=chroma>dig mx informatica.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; mx informatica.iesgn.org
 ;; global options: +cmd
@@ -1013,25 +808,17 @@ informatica.iesgn.org.	86376	IN	NS	ns.informatica.iesgn.org.
 ;; Query time: 2 msec
 ;; SERVER: 192.168.1.2#53(192.168.1.2)
 ;; WHEN: Wed Nov 20 08:27:47 GMT 2019
-;; MSG SIZE  rcvd: 118</pre></div>
-<p><em>Tarea 9 (5 puntos): Documenta en redmine el proceso que has realizado para configurar un DNS dinámico. Muestra un aprueba de funcionamiento.</em>
-Vamos a hacer una nueva máquina para que veamos el servidor dns dinámico</p>
-<div class="highlight"><pre class="chroma">config.vm.define :servidor4 do |servidor4|
+;; MSG SIZE  rcvd: 118</pre></div><p><em>Tarea 9 (5 puntos): Documenta en redmine el proceso que has realizado para configurar un DNS dinámico. Muestra un aprueba de funcionamiento.</em>
+Vamos a hacer una nueva máquina para que veamos el servidor dns dinámico</p><div class=highlight><pre class=chroma>config.vm.define :servidor4 do |servidor4|
          dinamico.vm.box = &#34;debian/buster64&#34;
          dinamico.vm.hostname = &#34;dinamico&#34;
          dinamico.vm.network :private_network, ip: &#34;192.168.1.220&#34;, virtualbox__intnet: &#34;dns1&#34;
-  end</pre></div>
-<p>Instalamos bind9</p>
-<div class="highlight"><pre class="chroma">apt install bind9</pre></div>
-<p>En named.conf ponemos las siguientes líneas</p>
-<div class="highlight"><pre class="chroma">include &#34;/etc/bind/rndc.key&#34;;
+  end</pre></div><p>Instalamos bind9</p><div class=highlight><pre class=chroma>apt install bind9</pre></div><p>En named.conf ponemos las siguientes líneas</p><div class=highlight><pre class=chroma>include &#34;/etc/bind/rndc.key&#34;;
 
 controls {
 inet 127.0.0.1 port 953
 allow { 127.0.0.1; } keys { &#34;rndc-key&#34;; };
-};</pre></div>
-<p>Ahora vamos a crear las zonas, directas e inversas</p>
-<div class="highlight"><pre class="chroma">zone &#34;iesgn.org&#34; {
+};</pre></div><p>Ahora vamos a crear las zonas, directas e inversas</p><div class=highlight><pre class=chroma>zone &#34;iesgn.org&#34; {
 type master;
 file &#34;/var/cache/bind/db.iesgn.org&#34;;
 allow-update { key &#34;rndc-key&#34;; };
@@ -1043,19 +830,13 @@ type master;
 file &#34;/var/cache/bind/db.192.168.1&#34;;
 allow-update { key &#34;rndc-key&#34;; };
 notify yes;
-};</pre></div>
-<p>Ahora creamos db.iesgn.org</p>
-<div class="highlight"><pre class="chroma">@       IN      NS      dinamico.iesgn.org.
+};</pre></div><p>Ahora creamos db.iesgn.org</p><div class=highlight><pre class=chroma>@       IN      NS      dinamico.iesgn.org.
 
 $ORIGIN iesgn.org.
-dinamico        IN      A       192.168.1.220</pre></div>
-<p>Y db.192.168.1</p>
-<div class="highlight"><pre class="chroma">@       IN      NS      dinamico.iesgn.org.
+dinamico        IN      A       192.168.1.220</pre></div><p>Y db.192.168.1</p><div class=highlight><pre class=chroma>@       IN      NS      dinamico.iesgn.org.
 
 $ORIGIN 1.168.192.in-addr.arpa.
-220     IN      PTR     dinamico.iesgn.org.</pre></div>
-<p>Vemos que funciona</p>
-<div class="highlight"><pre class="chroma">dig @192.168.1.220 dinamico.iesgn.org
+220     IN      PTR     dinamico.iesgn.org.</pre></div><p>Vemos que funciona</p><div class=highlight><pre class=chroma>dig @192.168.1.220 dinamico.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; @192.168.1.220 dinamico.iesgn.org
 ; (1 server found)
@@ -1079,13 +860,7 @@ iesgn.org.		86400	IN	NS	dinamico.iesgn.org.
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.220#53(192.168.1.220)
 ;; WHEN: Wed Nov 20 09:18:21 GMT 2019
-;; MSG SIZE  rcvd: 105</pre></div>
-<p>Ahora vamos a instalar el servidor dhcp</p>
-<div class="highlight"><pre class="chroma">apt install isc-dhcp-server</pre></div>
-<p>Ahora en /etc/default/isc-dhcp-server metemos</p>
-<div class="highlight"><pre class="chroma">INTERFACESv4=&#34;eth1&#34;</pre></div>
-<p>Ahora lo que quedaría es definir las zonas DNS en /etc/dhcp/dhcpd.conf</p>
-<div class="highlight"><pre class="chroma">server-identifier    dinamico.iesgn.org;
+;; MSG SIZE  rcvd: 105</pre></div><p>Ahora vamos a instalar el servidor dhcp</p><div class=highlight><pre class=chroma>apt install isc-dhcp-server</pre></div><p>Ahora en /etc/default/isc-dhcp-server metemos</p><div class=highlight><pre class=chroma>INTERFACESv4=&#34;eth1&#34;</pre></div><p>Ahora lo que quedaría es definir las zonas DNS en /etc/dhcp/dhcpd.conf</p><div class=highlight><pre class=chroma>server-identifier    dinamico.iesgn.org;
 ddns-updates        on;
 ddns-update-style   interim;
 ddns-domainname     &#34;iesgn.org.&#34;;
@@ -1107,24 +882,16 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
   range 192.168.1.20 192.168.1.100;
   option routers 192.168.1.220;
   option domain-name &#34;iesgn.org.&#34;;
-}</pre></div>
-<p>Ahora ponemos en marcha ambos servicios, para ello vaciamos primero los ficheros de peticiones y volvemos a arrancar los servicios</p>
-<div class="highlight"><pre class="chroma">systemctl stop bind9
+}</pre></div><p>Ahora ponemos en marcha ambos servicios, para ello vaciamos primero los ficheros de peticiones y volvemos a arrancar los servicios</p><div class=highlight><pre class=chroma>systemctl stop bind9
 systemctl stop isc-dhcp-server
 echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases
-echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases~</pre></div>
-<p>Ahora volvemos a iniciar los servicios</p>
-<div class="highlight"><pre class="chroma">root@dinamico:/home/vagrant# systemctl restart bind9
-root@dinamico:/home/vagrant# systemctl restart isc-dhcp-server</pre></div>
-<p>Ahora vamos a hacer que un cliente pida dhcp y vemos si consigue DNS</p>
-<div class="highlight"><pre class="chroma">config.vm.define :cliente1 do |cliente1|
+echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases~</pre></div><p>Ahora volvemos a iniciar los servicios</p><div class=highlight><pre class=chroma>root@dinamico:/home/vagrant# systemctl restart bind9
+root@dinamico:/home/vagrant# systemctl restart isc-dhcp-server</pre></div><p>Ahora vamos a hacer que un cliente pida dhcp y vemos si consigue DNS</p><div class=highlight><pre class=chroma>config.vm.define :cliente1 do |cliente1|
          cliente1.vm.box = &#34;debian/buster64&#34;
          cliente1.vm.hostname = &#34;cliente1&#34;
          cliente1.vm.network :private_network, virtualbox__intnet: &#34;dns1&#34;
-  end</pre></div>
-<p>Vamos a activar el dhcp en /etc/network/interfaces</p>
-<div class="highlight"><pre class="chroma">auto eth1
-iface eth1 inet dhcp </pre></div><div class="highlight"><pre class="chroma">root@cliente1:/home/vagrant# ifup eth1
+  end</pre></div><p>Vamos a activar el dhcp en /etc/network/interfaces</p><div class=highlight><pre class=chroma>auto eth1
+iface eth1 inet dhcp </pre></div><div class=highlight><pre class=chroma>root@cliente1:/home/vagrant# ifup eth1
 Internet Systems Consortium DHCP Client 4.4.1
 Copyright 2004-2018 Internet Systems Consortium.
 All rights reserved.
@@ -1138,9 +905,7 @@ DHCPDISCOVER on eth1 to 255.255.255.255 port 67 interval 4
 DHCPOFFER of 192.168.1.20 from 192.168.1.220
 DHCPREQUEST for 192.168.1.20 on eth1 to 255.255.255.255 port 67
 DHCPACK of 192.168.1.20 from 192.168.1.220
-bound to 192.168.1.20 -- renewal in 18046 seconds.</pre></div>
-<p>Ahora veamos en /var/log/syslog si le ha dado el servidor el dns</p>
-<div class="highlight"><pre class="chroma">Nov 20 18:47:10 dinamico systemd[1]: Started LSB: DHCP server.
+bound to 192.168.1.20 -- renewal in 18046 seconds.</pre></div><p>Ahora veamos en /var/log/syslog si le ha dado el servidor el dns</p><div class=highlight><pre class=chroma>Nov 20 18:47:10 dinamico systemd[1]: Started LSB: DHCP server.
 Nov 20 18:49:30 dinamico systemd[1]: session-6.scope: Succeeded.
 Nov 20 18:51:26 dinamico dhcpd[1149]: dinamico.iesgn.org: host unknown.
 Nov 20 18:51:26 dinamico dhcpd[1149]: DHCPDISCOVER from 08:00:27:43:2b:5a via eth1
@@ -1154,9 +919,7 @@ Nov 20 18:51:27 dinamico dhcpd[1149]: Added new forward map from cliente1.iesgn.
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: signer &#34;rndc-key&#34; approved
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: updating zone &#39;1.168.192.in-addr.arpa/IN&#39;: deleting rrset at &#39;20.1.168.192.in-addr.arpa&#39; PTR
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: updating zone &#39;1.168.192.in-addr.arpa/IN&#39;: adding an RR at &#39;20.1.168.192.in-addr.arpa&#39; PTR cliente1.iesgn.org.
-Nov 20 18:51:27 dinamico dhcpd[1149]: Added reverse map from 20.1.168.192.in-addr.arpa. to cliente1.iesgn.org.</pre></div>
-<p>Y finalmente hacemos una consulta para ver si está funcionando el DNS</p>
-<div class="highlight"><pre class="chroma">dig cliente1.iesgn.org
+Nov 20 18:51:27 dinamico dhcpd[1149]: Added reverse map from 20.1.168.192.in-addr.arpa. to cliente1.iesgn.org.</pre></div><p>Y finalmente hacemos una consulta para ver si está funcionando el DNS</p><div class=highlight><pre class=chroma>dig cliente1.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; cliente1.iesgn.org
 ;; global options: +cmd
@@ -1182,25 +945,17 @@ dinamico.iesgn.org.	86400	IN	A	192.168.1.220
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.220#53(192.168.1.220)
 ;; WHEN: Wed Nov 20 18:53:30 GMT 2019
-;; MSG SIZE  rcvd: 130</pre></div>
-<p><em>Tarea 9 (5 puntos): Documenta en redmine el proceso que has realizado para configurar un DNS dinámico. Muestra un aprueba de funcionamiento.</em>
-Vamos a hacer una nueva máquina para que veamos el servidor dns dinámico</p>
-<div class="highlight"><pre class="chroma">config.vm.define :servidor4 do |servidor4|
+;; MSG SIZE  rcvd: 130</pre></div><p><em>Tarea 9 (5 puntos): Documenta en redmine el proceso que has realizado para configurar un DNS dinámico. Muestra un aprueba de funcionamiento.</em>
+Vamos a hacer una nueva máquina para que veamos el servidor dns dinámico</p><div class=highlight><pre class=chroma>config.vm.define :servidor4 do |servidor4|
          dinamico.vm.box = &#34;debian/buster64&#34;
          dinamico.vm.hostname = &#34;dinamico&#34;
          dinamico.vm.network :private_network, ip: &#34;192.168.1.220&#34;, virtualbox__intnet: &#34;dns1&#34;
-  end</pre></div>
-<p>Instalamos bind9</p>
-<div class="highlight"><pre class="chroma">apt install bind9</pre></div>
-<p>En named.conf ponemos las siguientes líneas</p>
-<div class="highlight"><pre class="chroma">include &#34;/etc/bind/rndc.key&#34;;
+  end</pre></div><p>Instalamos bind9</p><div class=highlight><pre class=chroma>apt install bind9</pre></div><p>En named.conf ponemos las siguientes líneas</p><div class=highlight><pre class=chroma>include &#34;/etc/bind/rndc.key&#34;;
 
 controls {
 inet 127.0.0.1 port 953
 allow { 127.0.0.1; } keys { &#34;rndc-key&#34;; };
-};</pre></div>
-<p>Ahora vamos a crear las zonas, directas e inversas</p>
-<div class="highlight"><pre class="chroma">zone &#34;iesgn.org&#34; {
+};</pre></div><p>Ahora vamos a crear las zonas, directas e inversas</p><div class=highlight><pre class=chroma>zone &#34;iesgn.org&#34; {
 type master;
 file &#34;/var/cache/bind/db.iesgn.org&#34;;
 allow-update { key &#34;rndc-key&#34;; };
@@ -1212,19 +967,13 @@ type master;
 file &#34;/var/cache/bind/db.192.168.1&#34;;
 allow-update { key &#34;rndc-key&#34;; };
 notify yes;
-};</pre></div>
-<p>Ahora creamos db.iesgn.org</p>
-<div class="highlight"><pre class="chroma">@       IN      NS      dinamico.iesgn.org.
+};</pre></div><p>Ahora creamos db.iesgn.org</p><div class=highlight><pre class=chroma>@       IN      NS      dinamico.iesgn.org.
 
 $ORIGIN iesgn.org.
-dinamico        IN      A       192.168.1.220</pre></div>
-<p>Y db.192.168.1</p>
-<div class="highlight"><pre class="chroma">@       IN      NS      dinamico.iesgn.org.
+dinamico        IN      A       192.168.1.220</pre></div><p>Y db.192.168.1</p><div class=highlight><pre class=chroma>@       IN      NS      dinamico.iesgn.org.
 
 $ORIGIN 1.168.192.in-addr.arpa.
-220     IN      PTR     dinamico.iesgn.org.</pre></div>
-<p>Vemos que funciona</p>
-<div class="highlight"><pre class="chroma">dig @192.168.1.220 dinamico.iesgn.org
+220     IN      PTR     dinamico.iesgn.org.</pre></div><p>Vemos que funciona</p><div class=highlight><pre class=chroma>dig @192.168.1.220 dinamico.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; @192.168.1.220 dinamico.iesgn.org
 ; (1 server found)
@@ -1248,13 +997,7 @@ iesgn.org.		86400	IN	NS	dinamico.iesgn.org.
 ;; Query time: 0 msec
 ;; SERVER: 192.168.1.220#53(192.168.1.220)
 ;; WHEN: Wed Nov 20 09:18:21 GMT 2019
-;; MSG SIZE  rcvd: 105</pre></div>
-<p>Ahora vamos a instalar el servidor dhcp</p>
-<div class="highlight"><pre class="chroma">apt install isc-dhcp-server</pre></div>
-<p>Ahora en /etc/default/isc-dhcp-server metemos</p>
-<div class="highlight"><pre class="chroma">INTERFACESv4=&#34;eth1&#34;</pre></div>
-<p>Ahora lo que quedaría es definir las zonas DNS en /etc/dhcp/dhcpd.conf</p>
-<div class="highlight"><pre class="chroma">server-identifier    dinamico.iesgn.org;
+;; MSG SIZE  rcvd: 105</pre></div><p>Ahora vamos a instalar el servidor dhcp</p><div class=highlight><pre class=chroma>apt install isc-dhcp-server</pre></div><p>Ahora en /etc/default/isc-dhcp-server metemos</p><div class=highlight><pre class=chroma>INTERFACESv4=&#34;eth1&#34;</pre></div><p>Ahora lo que quedaría es definir las zonas DNS en /etc/dhcp/dhcpd.conf</p><div class=highlight><pre class=chroma>server-identifier    dinamico.iesgn.org;
 ddns-updates        on;
 ddns-update-style   interim;
 ddns-domainname     &#34;iesgn.org.&#34;;
@@ -1276,24 +1019,16 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
   range 192.168.1.20 192.168.1.100;
   option routers 192.168.1.220;
   option domain-name &#34;iesgn.org.&#34;;
-}</pre></div>
-<p>Ahora ponemos en marcha ambos servicios, para ello vaciamos primero los ficheros de peticiones y volvemos a arrancar los servicios</p>
-<div class="highlight"><pre class="chroma">systemctl stop bind9
+}</pre></div><p>Ahora ponemos en marcha ambos servicios, para ello vaciamos primero los ficheros de peticiones y volvemos a arrancar los servicios</p><div class=highlight><pre class=chroma>systemctl stop bind9
 systemctl stop isc-dhcp-server
 echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases
-echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases~</pre></div>
-<p>Ahora volvemos a iniciar los servicios</p>
-<div class="highlight"><pre class="chroma">root@dinamico:/home/vagrant# systemctl restart bind9
-root@dinamico:/home/vagrant# systemctl restart isc-dhcp-server</pre></div>
-<p>Ahora vamos a hacer que un cliente pida dhcp y vemos si consigue DNS</p>
-<div class="highlight"><pre class="chroma">config.vm.define :cliente1 do |cliente1|
+echo &#34;&#34; &gt; /var/lib/dhcp/dhcpd.leases~</pre></div><p>Ahora volvemos a iniciar los servicios</p><div class=highlight><pre class=chroma>root@dinamico:/home/vagrant# systemctl restart bind9
+root@dinamico:/home/vagrant# systemctl restart isc-dhcp-server</pre></div><p>Ahora vamos a hacer que un cliente pida dhcp y vemos si consigue DNS</p><div class=highlight><pre class=chroma>config.vm.define :cliente1 do |cliente1|
          cliente1.vm.box = &#34;debian/buster64&#34;
          cliente1.vm.hostname = &#34;cliente1&#34;
          cliente1.vm.network :private_network, virtualbox__intnet: &#34;dns1&#34;
-  end</pre></div>
-<p>Vamos a activar el dhcp en /etc/network/interfaces</p>
-<div class="highlight"><pre class="chroma">auto eth1
-iface eth1 inet dhcp </pre></div><div class="highlight"><pre class="chroma">root@cliente1:/home/vagrant# ifup eth1
+  end</pre></div><p>Vamos a activar el dhcp en /etc/network/interfaces</p><div class=highlight><pre class=chroma>auto eth1
+iface eth1 inet dhcp </pre></div><div class=highlight><pre class=chroma>root@cliente1:/home/vagrant# ifup eth1
 Internet Systems Consortium DHCP Client 4.4.1
 Copyright 2004-2018 Internet Systems Consortium.
 All rights reserved.
@@ -1307,9 +1042,7 @@ DHCPDISCOVER on eth1 to 255.255.255.255 port 67 interval 4
 DHCPOFFER of 192.168.1.20 from 192.168.1.220
 DHCPREQUEST for 192.168.1.20 on eth1 to 255.255.255.255 port 67
 DHCPACK of 192.168.1.20 from 192.168.1.220
-bound to 192.168.1.20 -- renewal in 18046 seconds.</pre></div>
-<p>Ahora veamos en /var/log/syslog si le ha dado el servidor el dns</p>
-<div class="highlight"><pre class="chroma">Nov 20 18:47:10 dinamico systemd[1]: Started LSB: DHCP server.
+bound to 192.168.1.20 -- renewal in 18046 seconds.</pre></div><p>Ahora veamos en /var/log/syslog si le ha dado el servidor el dns</p><div class=highlight><pre class=chroma>Nov 20 18:47:10 dinamico systemd[1]: Started LSB: DHCP server.
 Nov 20 18:49:30 dinamico systemd[1]: session-6.scope: Succeeded.
 Nov 20 18:51:26 dinamico dhcpd[1149]: dinamico.iesgn.org: host unknown.
 Nov 20 18:51:26 dinamico dhcpd[1149]: DHCPDISCOVER from 08:00:27:43:2b:5a via eth1
@@ -1323,9 +1056,7 @@ Nov 20 18:51:27 dinamico dhcpd[1149]: Added new forward map from cliente1.iesgn.
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: signer &#34;rndc-key&#34; approved
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: updating zone &#39;1.168.192.in-addr.arpa/IN&#39;: deleting rrset at &#39;20.1.168.192.in-addr.arpa&#39; PTR
 Nov 20 18:51:27 dinamico named[1130]: client @0x7f6fc4055090 127.0.0.1#36495/key rndc-key: updating zone &#39;1.168.192.in-addr.arpa/IN&#39;: adding an RR at &#39;20.1.168.192.in-addr.arpa&#39; PTR cliente1.iesgn.org.
-Nov 20 18:51:27 dinamico dhcpd[1149]: Added reverse map from 20.1.168.192.in-addr.arpa. to cliente1.iesgn.org.</pre></div>
-<p>Y finalmente hacemos una consulta para ver si está funcionando el DNS</p>
-<div class="highlight"><pre class="chroma">dig cliente1.iesgn.org
+Nov 20 18:51:27 dinamico dhcpd[1149]: Added reverse map from 20.1.168.192.in-addr.arpa. to cliente1.iesgn.org.</pre></div><p>Y finalmente hacemos una consulta para ver si está funcionando el DNS</p><div class=highlight><pre class=chroma>dig cliente1.iesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; cliente1.iesgn.org
 ;; global options: +cmd
@@ -1351,16 +1082,10 @@ dinamico.iesgn.org.	86400	IN	A	192.168.1.220
 ;; Query time: 1 msec
 ;; SERVER: 192.168.1.220#53(192.168.1.220)
 ;; WHEN: Wed Nov 20 18:53:30 GMT 2019
-;; MSG SIZE  rcvd: 130</pre></div>
-<p><em>Tarea 13 (1 punto): Instala un WebFrontend para manejar PowerDns. WebFrontends</em>
-Vamos a instalar  Opera&rsquo;s LDAP-authenticated PowerDNS user interface
-Para ello vamos a instalar un apache</p>
-<div class="highlight"><pre class="chroma">apt install apache2
-a2enmod rewrite</pre></div>
-<p>Ahora vamos a instalar git para clonar el repositorio</p>
-<div class="highlight"><pre class="chroma">apt install git</pre></div>
-<p>Vamos a configurar un virtualhost para la web</p>
-<div class="highlight"><pre class="chroma">&lt;VirtualHost *:80&gt;
+;; MSG SIZE  rcvd: 130</pre></div><p><em>Tarea 13 (1 punto): Instala un WebFrontend para manejar PowerDns. WebFrontends</em>
+Vamos a instalar Opera&rsquo;s LDAP-authenticated PowerDNS user interface
+Para ello vamos a instalar un apache</p><div class=highlight><pre class=chroma>apt install apache2
+a2enmod rewrite</pre></div><p>Ahora vamos a instalar git para clonar el repositorio</p><div class=highlight><pre class=chroma>apt install git</pre></div><p>Vamos a configurar un virtualhost para la web</p><div class=highlight><pre class=chroma>&lt;VirtualHost *:80&gt;
     ServerAdmin webmaster@localhost
 
     ServerName pdns.iesgn.com
@@ -1381,32 +1106,16 @@ a2enmod rewrite</pre></div>
         RewriteRule ^ index.php [QSA,L]
     &lt;/Directory&gt;
 
-&lt;/VirtualHost&gt;</pre></div><div class="highlight"><pre class="chroma">a2ensite nsedit
-systemctl restart apache2</pre></div>
-<p>Ahora instalamos los modulos necesarios de php</p>
-<div class="highlight"><pre class="chroma">apt install php libapache2-mod-php php-mysql php-apcu</pre></div>
-<p>Clonamos el repositorio</p>
-<div class="highlight"><pre class="chroma">root@servidorpdns:/var/www# git clone https://github.com/loewexy/pdnsmanager.git</pre></div>
-<p>Ahora entramos a la página y ponemos /setup
-<img src="/images/powerdnsmanager.png" alt="" /></p>
-
-<p>En dicha página, no podremos usar la base de datos antigüa ya que esta web tiene un diseño de la base de datos distinto al que hemos creado, por lo que vamos a probarlo con una nueva base de datos</p>
-<div class="highlight"><pre class="chroma">create database pdnsmanager
+&lt;/VirtualHost&gt;</pre></div><div class=highlight><pre class=chroma>a2ensite nsedit
+systemctl restart apache2</pre></div><p>Ahora instalamos los modulos necesarios de php</p><div class=highlight><pre class=chroma>apt install php libapache2-mod-php php-mysql php-apcu</pre></div><p>Clonamos el repositorio</p><div class=highlight><pre class=chroma>root@servidorpdns:/var/www# git clone https://github.com/loewexy/pdnsmanager.git</pre></div><p>Ahora entramos a la página y ponemos /setup
+<img src=/images/powerdnsmanager.png alt></p><p>En dicha página, no podremos usar la base de datos antigüa ya que esta web tiene un diseño de la base de datos distinto al que hemos creado, por lo que vamos a probarlo con una nueva base de datos</p><div class=highlight><pre class=chroma>create database pdnsmanager
 grant all privileges on pdnsmanager.* to pdns;
-flush privileges;</pre></div>
-<p><img src="/images/powerdnsmanager2.png" alt="" /></p>
-
-<p>Para añadir nuevos registros añadimos un nuevo master y seguimos haciendo los registros NS y A respectivamente
-<img src="/images/powerdnsmanager3.png" alt="" /></p>
-
-<p>Vamos a probar ahora que en dichos registros podemos consultar al servidor, para que funcione deberemos cambiar la base de datos en el fichero /etc/powerdns/pdns.conf y tener abierto el puerto 53 para pdns</p>
-<div class="highlight"><pre class="chroma">launch=gmysql
+flush privileges;</pre></div><p><img src=/images/powerdnsmanager2.png alt></p><p>Para añadir nuevos registros añadimos un nuevo master y seguimos haciendo los registros NS y A respectivamente
+<img src=/images/powerdnsmanager3.png alt></p><p>Vamos a probar ahora que en dichos registros podemos consultar al servidor, para que funcione deberemos cambiar la base de datos en el fichero /etc/powerdns/pdns.conf y tener abierto el puerto 53 para pdns</p><div class=highlight><pre class=chroma>launch=gmysql
 gmysql-host=127.0.0.1
 gmysql-user=pdns
 gmysql-dbname=pdnsmanager
-gmysql-password=pdns</pre></div>
-<p>Y probamos su funcionamiento</p>
-<div class="highlight"><pre class="chroma">vagrant@cliente:~$ dig cliente.alexiesgn.org
+gmysql-password=pdns</pre></div><p>Y probamos su funcionamiento</p><div class=highlight><pre class=chroma>vagrant@cliente:~$ dig cliente.alexiesgn.org
 
 ; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; cliente.alexiesgn.org
 ;; global options: +cmd
@@ -1449,98 +1158,5 @@ alexiesgn.org.		86400	IN	NS	ns.alexiesgn.org.
 ;; Query time: 2 msec
 ;; SERVER: 192.168.1.3#53(192.168.1.3)
 ;; WHEN: Thu Nov 28 07:49:16 GMT 2019
-;; MSG SIZE  rcvd: 59</pre></div>
-  </article>
-
-  <br/>
-
-  
-      <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-  
-  
-</section>
-
-      </div>
-      
-        <footer class="footer">
-  <section class="container">
-    
-      <div class="sns-shares sp-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-    
-      <p>Enter a text here.</p>
-    
-     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
-
-  </section>
-</footer>
-<div class="fixed-bar">
-  <section class="container">
-    
-      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
-    
-    
-      <div class="sns-shares pc-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-  </section>
-</div>
-
-      
-    </main>
-
-    
-
-  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
-  
-  <script>
-  (function($) {
-    $(function() {
-      $('#privateTrigger').on('click', function() {
-        $('.private').slideToggle();
-        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
-      });
-    });
-   })(jQuery);
-  </script>
-  
-  </body>
-</html>
+;; MSG SIZE  rcvd: 59</pre></div></article><br><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"yourdiscussshortname"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></div><footer class=footer><section class=container><div class="sns-shares sp-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f"><i class="fab fa-linkedin"></i></a></div><p>Enter a text here.</p>© 2020 · Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/naro143/hugo-coder-portfolio>CoderPortfolio</a>.</section></footer><div class=fixed-bar><section class=container><p id=privateTriggerText>¿Quieres conocerme mejor?→<a id=privateTrigger>Click!</a></p><div class="sns-shares pc-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdns%2f"><i class="fab fa-linkedin"></i></a></div></section></div></main><script src=https://www.alexrrinformatico.com/js/app.js></script><script>(function($){$(function(){$('#privateTrigger').on('click',function(){$('.private').slideToggle();$('#privateTriggerText').text("Dale click a los enlaces de la derecha→");});});})(jQuery);</script></body></html>

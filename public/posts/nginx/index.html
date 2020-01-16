@@ -1,136 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="author" content="Alejandro Rodríguez">
-    <meta name="description" content="https://www.alexrrinformatico.com">
-    <meta name="keywords" content="blog,developer,personal">
-
-    <meta property="og:site_name" content="Alexblog">
-    <meta property="og:title" content="
-  Servidor Nginx - Alexblog
-">
-    <meta property="og:description" content="">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/nginx/">
-    <meta property="og:image" content="https://www.alexrrinformatico.com">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/nginx/">
-    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
-
-    <base href="https://www.alexrrinformatico.com/posts/nginx/">
-    <title>
-  Servidor Nginx - Alexblog
-</title>
-
-    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/nginx/">
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    
-    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
-
-    
-
-    
-
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
-
-    
-      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
-      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
-    
-
-    <meta name="generator" content="Hugo 0.57.2" />
-  </head>
-
-  <body class="">
-    <main class="wrapper">
-      <nav class="navigation">
-  <section class="container">
-    <a class="navigation-title" href="/">Alexblog</a>
-    <input type="checkbox" id="menu-control"/>
-    <label class="menu-mobile  float-right " for="menu-control">
-      <span class="btn-mobile  float-right ">&#9776;</span>
-      <ul class="navigation-list">
-        
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
-            </li>
-          
-        
-        
-      </ul>
-    </label>
-  </section>
-</nav>
-
-
-      <div class="content">
-        
-  <section class="container post">
-  <article>
-    <header>
-      <h1 class="title">Servidor Nginx</h1>
-      <h2 class="date">December 10, 2019</h2>
-
-      
-        <script type="text/javascript" async
-          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
-          MathJax.Hub.Config({
-            tex2jax: {
-              inlineMath: [['$','$']],
-              displayMath: [['$$','$$']],
-              processEscapes: true,
-              processEnvironments: true,
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
-            }
-          });
-          MathJax.Hub.Queue(function() {
-            
-            
-            
-            var all = MathJax.Hub.getAllJax(), i;
-            for(i = 0; i < all.length; i += 1) {
-                all[i].SourceElement().parentNode.className += ' has-jax';
-            }
-          });
-          </script>
-      
-    </header>
-
-    <p><em>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant o utiliza una máquina del cloud con una red pública. Instala el servidor web nginx en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.</em></p>
-<div class="highlight"><pre class="chroma">Vagrant.configure(&#34;2&#34;) do |config|
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Alejandro Rodríguez"><meta name=description content=https://www.alexrrinformatico.com><meta name=keywords content=blog,developer,personal><meta property=og:site_name content=Alexblog><meta property=og:title content="Servidor Nginx - Alexblog"><meta property=og:description content><meta property=og:type content=website><meta property=og:url content=https://www.alexrrinformatico.com/posts/nginx/><meta property=og:image content=https://www.alexrrinformatico.com><meta name=twitter:card content=summary><meta name=twitter:site content=https://www.alexrrinformatico.com/posts/nginx/><meta name=twitter:image content=https://www.alexrrinformatico.com><base href=https://www.alexrrinformatico.com/posts/nginx/><title>Servidor Nginx - Alexblog</title><link rel=canonical href=https://www.alexrrinformatico.com/posts/nginx/><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.2.0/css/all.css integrity=sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ crossorigin=anonymous><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700"><link rel=stylesheet href=https://www.alexrrinformatico.com/css/normalize.min.css><link rel=stylesheet href=https://www.alexrrinformatico.com/css/style.min.css><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-16x16.png sizes=16x16><link rel=alternate href=https://www.alexrrinformatico.com/index.xml type=application/rss+xml title=Alexblog><link href=https://www.alexrrinformatico.com/index.xml rel=feed type=application/rss+xml title=Alexblog><meta name=generator content="Hugo 0.57.2"></head><body><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Alexblog</a>
+<input type=checkbox id=menu-control>
+<label class="menu-mobile  float-right" for=menu-control><span class="btn-mobile  float-right">&#9776;</span><ul class=navigation-list><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/sobre>Sobre mi</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/posts>Blog</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/contactar>Contactame</a></li></ul></label></section></nav><div class=content><section class="container post"><article><header><h1 class=title>Servidor Nginx</h1><h2 class=date>December 10, 2019</h2><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">MathJax.Hub.Config({tex2jax:{inlineMath:[['$','$']],displayMath:[['$$','$$']],processEscapes:true,processEnvironments:true,skipTags:['script','noscript','style','textarea','pre'],TeX:{extensions:["AMSmath.js","AMSsymbols.js"]}}});MathJax.Hub.Queue(function(){var all=MathJax.Hub.getAllJax(),i;for(i=0;i<all.length;i+=1){all[i].SourceElement().parentNode.className+=' has-jax';}});</script></header><p><em>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant o utiliza una máquina del cloud con una red pública. Instala el servidor web nginx en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.</em></p><div class=highlight><pre class=chroma>Vagrant.configure(&#34;2&#34;) do |config|
   config.vm.define :nginx do |nginx|
         nginx.vm.box = &#34;debian/buster64&#34;
         nginx.vm.hostname = &#34;local&#34;
         nginx.vm.network :public_network,:bridge=&gt;&#34;wlp0s20f3&#34;
         nginx.vm.network :private_network, ip: &#34;10.1.1.103&#34;, virtualbox__intnet: &#34;apache&#34;
   end
-end</pre></div><div class="highlight"><pre class="chroma">apt install nginx</pre></div>
-<p><img src="/images/capturanginx.png" alt="" /></p>
-
-<p><em>Tarea 2 (1 punto)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</em></p>
-
-<p>Configuramos el virtualhost iesgn y departamentos en /etc/nginx/sites-available</p>
-
-<p>iesgn:</p>
-<div class="highlight"><pre class="chroma">server {
+end</pre></div><div class=highlight><pre class=chroma>apt install nginx</pre></div><p><img src=/images/capturanginx.png alt></p><p><em>Tarea 2 (1 punto)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</em></p><p>Configuramos el virtualhost iesgn y departamentos en /etc/nginx/sites-available</p><p>iesgn:</p><div class=highlight><pre class=chroma>server {
         listen 80 default_server;
 
         root /srv/www/iesgn;
@@ -143,9 +20,7 @@ end</pre></div><div class="highlight"><pre class="chroma">apt install nginx</pre
                 try_files $uri $uri/ =404;
         }
 
-}</pre></div>
-<p>departamentos:</p>
-<div class="highlight"><pre class="chroma">server {
+}</pre></div><p>departamentos:</p><div class=highlight><pre class=chroma>server {
         listen 80;
 
 
@@ -159,49 +34,21 @@ end</pre></div><div class="highlight"><pre class="chroma">apt install nginx</pre
                 try_files $uri $uri/ =404;
         }
 
-}</pre></div><div class="highlight"><pre class="chroma">sudo ln -s /etc/nginx/sites-available/iesgn /etc/nginx/sites-enabled/
+}</pre></div><div class=highlight><pre class=chroma>sudo ln -s /etc/nginx/sites-available/iesgn /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/departamentos /etc/nginx/sites-enabled/
-sudo systemctl restart nginx</pre></div>
-<p>Ya simplemente crearemos las carpetas</p>
-<div class="highlight"><pre class="chroma">mkdir /srv/www
+sudo systemctl restart nginx</pre></div><p>Ya simplemente crearemos las carpetas</p><div class=highlight><pre class=chroma>mkdir /srv/www
 mkdir /srv/www/iesgn
-mkdir /srv/www/departamentos</pre></div>
-<p><img src="/images/iesgnnginx.png" alt="" />
-<img src="/images/departamentosnginx.png" alt="" /></p>
-
-<p><em>Tarea 3 (1 punto)(Obligatorio): Cuando se entre a la dirección www.iesgn.org se redireccionará automáticamente a www.iesgn.org/principal, donde se mostrará el mensaje de bienvenida. En el directorio principal no se permite ver la lista de los ficheros, no se permite que se siga los enlaces s en imbólicos y no se permite negociación de contenido. Muestra al profesor el funcionamiento.</em></p>
-
-<p>Creamos la carpeta principal</p>
-<div class="highlight"><pre class="chroma">vagrant@local:/srv/www/iesgn$ sudo mkdir principal
-vagrant@local:/srv/www/iesgn/principal$ sudo mv ../index.nginx-debian.html .</pre></div>
-<p>Y en nuestro virtualhost añadimos la siguiente línea</p>
-<div class="highlight"><pre class="chroma">rewrite ^/$ /principal;</pre></div>
-<p>Reiniciamos el servicio</p>
-<div class="highlight"><pre class="chroma">systemctl restart nginx</pre></div>
-<p>En el fichero iesgn añadimos las siguientes líneas:</p>
-<div class="highlight"><pre class="chroma">location /principal {
+mkdir /srv/www/departamentos</pre></div><p><img src=/images/iesgnnginx.png alt>
+<img src=/images/departamentosnginx.png alt></p><p><em>Tarea 3 (1 punto)(Obligatorio): Cuando se entre a la dirección www.iesgn.org se redireccionará automáticamente a www.iesgn.org/principal, donde se mostrará el mensaje de bienvenida. En el directorio principal no se permite ver la lista de los ficheros, no se permite que se siga los enlaces s en imbólicos y no se permite negociación de contenido. Muestra al profesor el funcionamiento.</em></p><p>Creamos la carpeta principal</p><div class=highlight><pre class=chroma>vagrant@local:/srv/www/iesgn$ sudo mkdir principal
+vagrant@local:/srv/www/iesgn/principal$ sudo mv ../index.nginx-debian.html .</pre></div><p>Y en nuestro virtualhost añadimos la siguiente línea</p><div class=highlight><pre class=chroma>rewrite ^/$ /principal;</pre></div><p>Reiniciamos el servicio</p><div class=highlight><pre class=chroma>systemctl restart nginx</pre></div><p>En el fichero iesgn añadimos las siguientes líneas:</p><div class=highlight><pre class=chroma>location /principal {
                 autoindex off;
                 disable_symlinks on;
                 try_files $uri $uri/ =404;
-        }</pre></div>
-<p><em>Tarea 4 (1 punto)(Obligatorio): Si accedes a la página www.iesgn.org/principal/documentos se visualizarán los documentos que hay en /srv/doc. Por lo tanto se permitirá el listado de fichero y el seguimiento de enlaces simbólicos siempre que sean a ficheros o directorios cuyo dueño sea el usuario. Muestra al profesor el funcionamiento.</em></p>
-
-<p>Primero creamos la carpeta</p>
-<div class="highlight"><pre class="chroma">mkdir /srv/doc</pre></div>
-<p>También crearemos ficheros de prueba.</p>
-
-<p>Y para hacer que se permita el listado de ficheros,seguimientos de enlaces simbólicos del dueño  y el alias, añadimos las siguientes líneas en nuestro iesgn.</p>
-<div class="highlight"><pre class="chroma">location /principal/documentos {
+        }</pre></div><p><em>Tarea 4 (1 punto)(Obligatorio): Si accedes a la página www.iesgn.org/principal/documentos se visualizarán los documentos que hay en /srv/doc. Por lo tanto se permitirá el listado de fichero y el seguimiento de enlaces simbólicos siempre que sean a ficheros o directorios cuyo dueño sea el usuario. Muestra al profesor el funcionamiento.</em></p><p>Primero creamos la carpeta</p><div class=highlight><pre class=chroma>mkdir /srv/doc</pre></div><p>También crearemos ficheros de prueba.</p><p>Y para hacer que se permita el listado de ficheros,seguimientos de enlaces simbólicos del dueño y el alias, añadimos las siguientes líneas en nuestro iesgn.</p><div class=highlight><pre class=chroma>location /principal/documentos {
                 alias   /srv/doc;
                 autoindex on;
                 disable_symlinks if_not_owner;
-        }</pre></div>
-<p><em>Tarea 5 (1 punto): En todo el host virtual se debe redefinir los mensajes de error de objeto no encontrado y no permitido. Para el ello se crearan dos ficheros html dentro del directorio error. Entrega las modificaciones necesarias en la configuración y una comprobación del buen funcionamiento.</em></p>
-
-<p>Creamos la carpeta error</p>
-<div class="highlight"><pre class="chroma">mkdir /srv/error</pre></div>
-<p>En nuestro virtualhost añadimos la localización en nuestro virtualhost y el error</p>
-<div class="highlight"><pre class="chroma"> error_page 404 /404.html;
+        }</pre></div><p><em>Tarea 5 (1 punto): En todo el host virtual se debe redefinir los mensajes de error de objeto no encontrado y no permitido. Para el ello se crearan dos ficheros html dentro del directorio error. Entrega las modificaciones necesarias en la configuración y una comprobación del buen funcionamiento.</em></p><p>Creamos la carpeta error</p><div class=highlight><pre class=chroma>mkdir /srv/error</pre></div><p>En nuestro virtualhost añadimos la localización en nuestro virtualhost y el error</p><div class=highlight><pre class=chroma> error_page 404 /404.html;
         location = /404.html {
                 root /srv/error;
                 internal;
@@ -210,161 +57,36 @@ vagrant@local:/srv/www/iesgn/principal$ sudo mv ../index.nginx-debian.html .</pr
         location = /403.html {
                 root /srv/error;
                 internal;
-        }</pre></div>
-<p><img src="/images/error404.png" alt="" />
-<img src="/images/error403.png" alt="" /></p>
-
-<p><em>Tarea 6 (1 punto)(Obligatorio): Añade al escenario Vagrant otra máquina conectada por una red interna al servidor. A la URL departamentos.iesgn.org/intranet sólo se debe tener acceso desde el cliente de la red local, y no se pueda acceder desde la anfitriona por la red pública. A la URL departamentos.iesgn.org/internet, sin embargo, sólo se debe tener acceso desde la anfitriona por la red pública, y no desde la red local.</em></p>
-
-<p>Crearemos la carpeta intranet e internet</p>
-<div class="highlight"><pre class="chroma">mkdir /srv/www/departamentos/intranet
-mkdir /srv/www/departamentos/internet</pre></div>
-<p>Y en nuestro virtualhost de departamentos añadimos las siguientes lineas:</p>
-<div class="highlight"><pre class="chroma">location /intranet {
+        }</pre></div><p><img src=/images/error404.png alt>
+<img src=/images/error403.png alt></p><p><em>Tarea 6 (1 punto)(Obligatorio): Añade al escenario Vagrant otra máquina conectada por una red interna al servidor. A la URL departamentos.iesgn.org/intranet sólo se debe tener acceso desde el cliente de la red local, y no se pueda acceder desde la anfitriona por la red pública. A la URL departamentos.iesgn.org/internet, sin embargo, sólo se debe tener acceso desde la anfitriona por la red pública, y no desde la red local.</em></p><p>Crearemos la carpeta intranet e internet</p><div class=highlight><pre class=chroma>mkdir /srv/www/departamentos/intranet
+mkdir /srv/www/departamentos/internet</pre></div><p>Y en nuestro virtualhost de departamentos añadimos las siguientes lineas:</p><div class=highlight><pre class=chroma>location /intranet {
                 allow 10.1.1.0/24;
                 deny all;
         }
 location /internet {
                 allow 172.22.0.1/16;
                 deny all;
-        }</pre></div>
-<p>Internet:
-<img src="/images/pruebainternetfuera.png" alt="" />
-<img src="/images/pruebainternetdentro.png" alt="" />
+        }</pre></div><p>Internet:
+<img src=/images/pruebainternetfuera.png alt>
+<img src=/images/pruebainternetdentro.png alt>
 Intranet:
-<img src="/images/pruebaintranetfuera.png" alt="" />
-<img src="/images/pruebaintranetdentro.png" alt="" /></p>
-
-<p><em>Tarea 7 (1 punto): Autentificación básica. Limita el acceso a la URL departamentos.iesgn.org/secreto. Comprueba las cabeceras de los mensajes HTTP que se intercambian entre el servidor y el cliente. ¿Cómo se manda la contraseña entre el cliente y el servidor?. Entrega una breve explicación del ejercicio.</em></p>
-
-<p>Creamos la carpeta secreto en departamentos</p>
-<div class="highlight"><pre class="chroma">mkdir /srv/www/departamentos/secreto</pre></div>
-<p>Vamos a la configuración de departamento y añadimos las siguientes líneas:</p>
-<div class="highlight"><pre class="chroma">location /secreto {
+<img src=/images/pruebaintranetfuera.png alt>
+<img src=/images/pruebaintranetdentro.png alt></p><p><em>Tarea 7 (1 punto): Autentificación básica. Limita el acceso a la URL departamentos.iesgn.org/secreto. Comprueba las cabeceras de los mensajes HTTP que se intercambian entre el servidor y el cliente. ¿Cómo se manda la contraseña entre el cliente y el servidor?. Entrega una breve explicación del ejercicio.</em></p><p>Creamos la carpeta secreto en departamentos</p><div class=highlight><pre class=chroma>mkdir /srv/www/departamentos/secreto</pre></div><p>Vamos a la configuración de departamento y añadimos las siguientes líneas:</p><div class=highlight><pre class=chroma>location /secreto {
                 auth_basic      &#34;Acceso restringido&#34;;
                 auth_basic_user_file    &#34;/etc/nginx/claves/htpasswd&#34;;
-        }</pre></div>
-<p>Y hacemos el fichero htpassword</p>
-<div class="highlight"><pre class="chroma">mkdir /etc/nginx/claves
+        }</pre></div><p>Y hacemos el fichero htpassword</p><div class=highlight><pre class=chroma>mkdir /etc/nginx/claves
 
 sudo sh -c &#34;echo -n &#39;usuario:&#39; &gt;&gt; /etc/nginx/claves/htpasswd&#34;
-sudo sh -c &#34;openssl passwd -apr1 &gt;&gt; /etc/nginx/claves/htpasswd&#34;</pre></div>
-<p>Y ya debería funcionar:</p>
-
-<p><img src="/images/imagenht.png" alt="" />
-<img src="/images/imagenht2.png" alt="" /></p>
-
-<p><img src="/images/cabeceras.png" alt="" /></p>
-
-<p>En Authorization: Basic dXN1YXJpbzp1c3Vhcmlv está en base64 con el siguiente formado &ldquo;usuario:contraseña&rdquo;</p>
-
-<p><em>Tarea 9 (1 punto): Vamos a combinar el control de acceso (tarea 6) y la autentificación (tareas 7 y 8), y vamos a configurar el virtual host para que se comporte de la siguiente manera: el acceso a la URL departamentos.iesgn.org/secreto se hace forma directa desde la intranet, desde la red pública te pide la autentificación. Muestra el resultado al profesor.</em>
-Para hacer esta tarea, debemos entrar en nuestro virtual host y poner las siguientes líneas</p>
-<div class="highlight"><pre class="chroma">location /secreto {
+sudo sh -c &#34;openssl passwd -apr1 &gt;&gt; /etc/nginx/claves/htpasswd&#34;</pre></div><p>Y ya debería funcionar:</p><p><img src=/images/imagenht.png alt>
+<img src=/images/imagenht2.png alt></p><p><img src=/images/cabeceras.png alt></p><p>En Authorization: Basic dXN1YXJpbzp1c3Vhcmlv está en base64 con el siguiente formado &ldquo;usuario:contraseña&rdquo;</p><p><em>Tarea 9 (1 punto): Vamos a combinar el control de acceso (tarea 6) y la autentificación (tareas 7 y 8), y vamos a configurar el virtual host para que se comporte de la siguiente manera: el acceso a la URL departamentos.iesgn.org/secreto se hace forma directa desde la intranet, desde la red pública te pide la autentificación. Muestra el resultado al profesor.</em>
+Para hacer esta tarea, debemos entrar en nuestro virtual host y poner las siguientes líneas</p><div class=highlight><pre class=chroma>location /secreto {
 		satisfy any;
 		allow 10.1.1.0/24;
 		deny all;
                 auth_basic      &#34;Acceso restringido&#34;;
                 auth_basic_user_file    &#34;/etc/nginx/claves/htpasswd&#34;;
-        }</pre></div>
-<p>Ahora comprobaremos si está funcionando</p>
-
-<p>local:
-<img src="/images/localnginx.png" alt="" />
+        }</pre></div><p>Ahora comprobaremos si está funcionando</p><p>local:
+<img src=/images/localnginx.png alt>
 Internet:
-<img src="/images/internetnginx.png" alt="" /></p>
-
-  </article>
-
-  <br/>
-
-  
-      <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-  
-  
-</section>
-
-      </div>
-      
-        <footer class="footer">
-  <section class="container">
-    
-      <div class="sns-shares sp-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-    
-      <p>Enter a text here.</p>
-    
-     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
-
-  </section>
-</footer>
-<div class="fixed-bar">
-  <section class="container">
-    
-      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
-    
-    
-      <div class="sns-shares pc-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-  </section>
-</div>
-
-      
-    </main>
-
-    
-
-  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
-  
-  <script>
-  (function($) {
-    $(function() {
-      $('#privateTrigger').on('click', function() {
-        $('.private').slideToggle();
-        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
-      });
-    });
-   })(jQuery);
-  </script>
-  
-  </body>
-</html>
+<img src=/images/internetnginx.png alt></p></article><br><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"yourdiscussshortname"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></div><footer class=footer><section class=container><div class="sns-shares sp-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f"><i class="fab fa-linkedin"></i></a></div><p>Enter a text here.</p>© 2020 · Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/naro143/hugo-coder-portfolio>CoderPortfolio</a>.</section></footer><div class=fixed-bar><section class=container><p id=privateTriggerText>¿Quieres conocerme mejor?→<a id=privateTrigger>Click!</a></p><div class="sns-shares pc-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fnginx%2f"><i class="fab fa-linkedin"></i></a></div></section></div></main><script src=https://www.alexrrinformatico.com/js/app.js></script><script>(function($){$(function(){$('#privateTrigger').on('click',function(){$('.private').slideToggle();$('#privateTriggerText').text("Dale click a los enlaces de la derecha→");});});})(jQuery);</script></body></html>

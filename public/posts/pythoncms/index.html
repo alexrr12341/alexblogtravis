@@ -1,138 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="author" content="Alejandro Rodríguez">
-    <meta name="description" content="https://www.alexrrinformatico.com">
-    <meta name="keywords" content="blog,developer,personal">
-
-    <meta property="og:site_name" content="Alexblog">
-    <meta property="og:title" content="
-  Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx - Alexblog
-">
-    <meta property="og:description" content="">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/pythoncms/">
-    <meta property="og:image" content="https://www.alexrrinformatico.com">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/pythoncms/">
-    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
-
-    <base href="https://www.alexrrinformatico.com/posts/pythoncms/">
-    <title>
-  Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx - Alexblog
-</title>
-
-    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/pythoncms/">
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    
-    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
-    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
-
-    
-
-    
-
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
-
-    
-      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexblog">
-      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexblog" />
-    
-
-    <meta name="generator" content="Hugo 0.57.2" />
-  </head>
-
-  <body class="">
-    <main class="wrapper">
-      <nav class="navigation">
-  <section class="container">
-    <a class="navigation-title" href="/">Alexblog</a>
-    <input type="checkbox" id="menu-control"/>
-    <label class="menu-mobile  float-right " for="menu-control">
-      <span class="btn-mobile  float-right ">&#9776;</span>
-      <ul class="navigation-list">
-        
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
-            </li>
-          
-            <li class="navigation-item  align-center ">
-              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
-            </li>
-          
-        
-        
-      </ul>
-    </label>
-  </section>
-</nav>
-
-
-      <div class="content">
-        
-  <section class="container post">
-  <article>
-    <header>
-      <h1 class="title">Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx</h1>
-      <h2 class="date">December 10, 2019</h2>
-
-      
-        <script type="text/javascript" async
-          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
-          MathJax.Hub.Config({
-            tex2jax: {
-              inlineMath: [['$','$']],
-              displayMath: [['$$','$$']],
-              processEscapes: true,
-              processEnvironments: true,
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
-            }
-          });
-          MathJax.Hub.Queue(function() {
-            
-            
-            
-            var all = MathJax.Hub.getAllJax(), i;
-            for(i = 0; i < all.length; i += 1) {
-                all[i].SourceElement().parentNode.className += ' has-jax';
-            }
-          });
-          </script>
-      
-    </header>
-
-    <p>Vamos primero a hacer nuestro entorno virtual</p>
-<div class="highlight"><pre class="chroma">python3 -m venv mezzanine
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Alejandro Rodríguez"><meta name=description content=https://www.alexrrinformatico.com><meta name=keywords content=blog,developer,personal><meta property=og:site_name content=Alexblog><meta property=og:title content="Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx - Alexblog"><meta property=og:description content><meta property=og:type content=website><meta property=og:url content=https://www.alexrrinformatico.com/posts/pythoncms/><meta property=og:image content=https://www.alexrrinformatico.com><meta name=twitter:card content=summary><meta name=twitter:site content=https://www.alexrrinformatico.com/posts/pythoncms/><meta name=twitter:image content=https://www.alexrrinformatico.com><base href=https://www.alexrrinformatico.com/posts/pythoncms/><title>Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx - Alexblog</title><link rel=canonical href=https://www.alexrrinformatico.com/posts/pythoncms/><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.2.0/css/all.css integrity=sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ crossorigin=anonymous><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700"><link rel=stylesheet href=https://www.alexrrinformatico.com/css/normalize.min.css><link rel=stylesheet href=https://www.alexrrinformatico.com/css/style.min.css><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=https://www.alexrrinformatico.com/images/favicon-16x16.png sizes=16x16><link rel=alternate href=https://www.alexrrinformatico.com/index.xml type=application/rss+xml title=Alexblog><link href=https://www.alexrrinformatico.com/index.xml rel=feed type=application/rss+xml title=Alexblog><meta name=generator content="Hugo 0.57.2"></head><body><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>Alexblog</a>
+<input type=checkbox id=menu-control>
+<label class="menu-mobile  float-right" for=menu-control><span class="btn-mobile  float-right">&#9776;</span><ul class=navigation-list><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/sobre>Sobre mi</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/posts>Blog</a></li><li class="navigation-item  align-center"><a class=navigation-link href=https://www.alexrrinformatico.com/contactar>Contactame</a></li></ul></label></section></nav><div class=content><section class="container post"><article><header><h1 class=title>Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx</h1><h2 class=date>December 10, 2019</h2><script type=text/javascript async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">MathJax.Hub.Config({tex2jax:{inlineMath:[['$','$']],displayMath:[['$$','$$']],processEscapes:true,processEnvironments:true,skipTags:['script','noscript','style','textarea','pre'],TeX:{extensions:["AMSmath.js","AMSsymbols.js"]}}});MathJax.Hub.Queue(function(){var all=MathJax.Hub.getAllJax(),i;for(i=0;i<all.length;i+=1){all[i].SourceElement().parentNode.className+=' has-jax';}});</script></header><p>Vamos primero a hacer nuestro entorno virtual</p><div class=highlight><pre class=chroma>python3 -m venv mezzanine
 alexrr@pc-alex:~/pythonvirtual$ source mezzanine/bin/activate
-(mezzanine) alexrr@pc-alex:~/pythonvirtual$ </pre></div>
-<p>Ahora vamos a instalar mezzanine con pip</p>
-<div class="highlight"><pre class="chroma">pip install mezzanine</pre></div>
-<p>Ahora vamos a movernos a una carpeta, por ejemplo mezzanine y nos vamos a hacer un requirements.txt</p>
-<div class="highlight"><pre class="chroma">pip freeze &gt; requirements.txt</pre></div>
-<p>Y borramos la línea del requirements.txt de pkg-resources:</p>
-<div class="highlight"><pre class="chroma">pkg-resources==0.0.0</pre></div>
-<p>Y ahora vamos a hacer el proyecto de mezzanine</p>
-<div class="highlight"><pre class="chroma">mezzanine-project pythoncms</pre></div>
-<p>Y vamos a crear la base de datos</p>
-<div class="highlight"><pre class="chroma">(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py migrate
+(mezzanine) alexrr@pc-alex:~/pythonvirtual$ </pre></div><p>Ahora vamos a instalar mezzanine con pip</p><div class=highlight><pre class=chroma>pip install mezzanine</pre></div><p>Ahora vamos a movernos a una carpeta, por ejemplo mezzanine y nos vamos a hacer un requirements.txt</p><div class=highlight><pre class=chroma>pip freeze &gt; requirements.txt</pre></div><p>Y borramos la línea del requirements.txt de pkg-resources:</p><div class=highlight><pre class=chroma>pkg-resources==0.0.0</pre></div><p>Y ahora vamos a hacer el proyecto de mezzanine</p><div class=highlight><pre class=chroma>mezzanine-project pythoncms</pre></div><p>Y vamos a crear la base de datos</p><div class=highlight><pre class=chroma>(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py migrate
 Operations to perform:
   Apply all migrations: admin, auth, blog, conf, contenttypes, core, django_comments, forms, galleries, generic, pages, redirects, sessions, sites, twitter
-...</pre></div>
-<p>Y creamos el super user</p>
-<div class="highlight"><pre class="chroma">(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py createsuperuser
+...</pre></div><p>Y creamos el super user</p><div class=highlight><pre class=chroma>(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py createsuperuser
 
 Creating default account ...
 
@@ -140,68 +13,22 @@ Username (leave blank to use &#39;alexrr&#39;):
 Email address: alexrodriguezrojas98@gmail.com
 Password: 
 Password (again): 
-Superuser created successfully.</pre></div>
-<p>Y ahora abrimos el servidor</p>
-<div class="highlight"><pre class="chroma">(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py runserver</pre></div>
-<p>Y miramos la página:</p>
-
-<p><img src="/images/mezzanine.png" alt="" /></p>
-
-<p>Cambiamos el nombre de la página:</p>
-
-<p><img src="/images/mezzanine2.png" alt="" /></p>
-
-<p>Vamos ahora a cambiar el tema de la página.</p>
-<div class="highlight"><pre class="chroma">git clone https://github.com/thecodinghouse/mezzanine-themes</pre></div>
-<p>Y en el settings.py ponemos</p>
-<div class="highlight"><pre class="chroma">INSTALLED_APPS = (
+Superuser created successfully.</pre></div><p>Y ahora abrimos el servidor</p><div class=highlight><pre class=chroma>(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py runserver</pre></div><p>Y miramos la página:</p><p><img src=/images/mezzanine.png alt></p><p>Cambiamos el nombre de la página:</p><p><img src=/images/mezzanine2.png alt></p><p>Vamos ahora a cambiar el tema de la página.</p><div class=highlight><pre class=chroma>git clone https://github.com/thecodinghouse/mezzanine-themes</pre></div><p>Y en el settings.py ponemos</p><div class=highlight><pre class=chroma>INSTALLED_APPS = (
 	&#34;flat&#34;,
 	...
-)</pre></div>
-<p><em>Importante poner la carpeta flat,nova,etc dentro de nuestra carpeta de desarrollo</em></p>
-
-<p><img src="/images/mezzanine3.png" alt="" /></p>
-
-<p>Ahora vamos a trasladarlo a nuestro entorno de producción.</p>
-
-<p>Vamos a guardar los archivos en un fichero .json</p>
-<div class="highlight"><pre class="chroma">(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py dumpdata &gt; db.json</pre></div>
-<p>Ahora lo vamos a subir a github</p>
-<div class="highlight"><pre class="chroma">git init
+)</pre></div><p><em>Importante poner la carpeta flat,nova,etc dentro de nuestra carpeta de desarrollo</em></p><p><img src=/images/mezzanine3.png alt></p><p>Ahora vamos a trasladarlo a nuestro entorno de producción.</p><p>Vamos a guardar los archivos en un fichero .json</p><div class=highlight><pre class=chroma>(mezzanine) alexrr@pc-alex:~/mezzanine/pythoncms$ python3 manage.py dumpdata &gt; db.json</pre></div><p>Ahora lo vamos a subir a github</p><div class=highlight><pre class=chroma>git init
 git add *
 git commit -m &#34;Añadir pythoncms&#34;
 git remote add origin git@github.com:alexrr12341/pythoncms.git
-git push -u origin master</pre></div>
-<p>-Realiza el despliegue de la aplicación en tu entorno de producción (servidor web y servidor de base de datos en el cloud). Utiliza un entorno virtual. Como servidor de aplicación puedes usar gunicorn o uwsgi (crea una unidad systemd para gestionar este servicio). La aplicación será accesible en la url python.tunombre.gonzalonazareno.org.</p>
-
-<p>Primero de todo vamos a clonar nuestro repositorio de pythoncms en nuestro /var/www</p>
-<div class="highlight"><pre class="chroma">[root@salmorejo www]# git clone https://github.com/alexrr12341/pythoncms</pre></div>
-<p>Ahora en la máquina croqueta vamos a añadir el registro DNS para python (/var/cache/bind/db.gonzalonazareno.org)</p>
-<div class="highlight"><pre class="chroma">python          IN      CNAME   salmorejo</pre></div>
-<p>Volvemos a salmorejo, necesitamos gunicorn para que funcione nuestro cms ya que estamos utilizando nginx, por lo que vamos a instalarlo.</p>
-
-<p>Primero necesitamos instalar python36</p>
-<div class="highlight"><pre class="chroma">dnf install python36 python36-devel</pre></div>
-<p>Y ponemos nuestro entorno virtual</p>
-<div class="highlight"><pre class="chroma">[root@salmorejo ~]# python3.6 -m venv entorno
+git push -u origin master</pre></div><p>-Realiza el despliegue de la aplicación en tu entorno de producción (servidor web y servidor de base de datos en el cloud). Utiliza un entorno virtual. Como servidor de aplicación puedes usar gunicorn o uwsgi (crea una unidad systemd para gestionar este servicio). La aplicación será accesible en la url python.tunombre.gonzalonazareno.org.</p><p>Primero de todo vamos a clonar nuestro repositorio de pythoncms en nuestro /var/www</p><div class=highlight><pre class=chroma>[root@salmorejo www]# git clone https://github.com/alexrr12341/pythoncms</pre></div><p>Ahora en la máquina croqueta vamos a añadir el registro DNS para python (/var/cache/bind/db.gonzalonazareno.org)</p><div class=highlight><pre class=chroma>python          IN      CNAME   salmorejo</pre></div><p>Volvemos a salmorejo, necesitamos gunicorn para que funcione nuestro cms ya que estamos utilizando nginx, por lo que vamos a instalarlo.</p><p>Primero necesitamos instalar python36</p><div class=highlight><pre class=chroma>dnf install python36 python36-devel</pre></div><p>Y ponemos nuestro entorno virtual</p><div class=highlight><pre class=chroma>[root@salmorejo ~]# python3.6 -m venv entorno
 
 [root@salmorejo ~]# source entorno/bin/activate
-(entorno) [root@salmorejo ~]# </pre></div>
-<p>Y instalamos los requirements.txt</p>
-<div class="highlight"><pre class="chroma">(entorno) [root@salmorejo pythoncms]# pip install -r requirements.txt </pre></div>
-<p>Ahora vamos a crear la base de datos en nuestra máquina tortilla y un usuario para que tenga privilegios sobre dicha base de datos</p>
-<div class="highlight"><pre class="chroma">MariaDB [(none)]&gt; CREATE DATABASE pythoncms;
+(entorno) [root@salmorejo ~]# </pre></div><p>Y instalamos los requirements.txt</p><div class=highlight><pre class=chroma>(entorno) [root@salmorejo pythoncms]# pip install -r requirements.txt </pre></div><p>Ahora vamos a crear la base de datos en nuestra máquina tortilla y un usuario para que tenga privilegios sobre dicha base de datos</p><div class=highlight><pre class=chroma>MariaDB [(none)]&gt; CREATE DATABASE pythoncms;
 MariaDB [(none)]&gt; CREATE USER python identified by &#39;python&#39;;
 MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON pythoncms.* to python;
-MariaDB [(none)]&gt; flush privileges;</pre></div>
-<p><em>Importante:</em>
-Si te salta un error de max size a la hora de hacer el migrate ponemos esto en la base de datos</p>
-<div class="highlight"><pre class="chroma">MariaDB [pythoncms]&gt; SET @@global.innodb_large_prefix = 1;
-MariaDB [pythoncms]&gt; set global innodb_default_row_format = DYNAMIC;</pre></div>
-<p>Ahora tenemos que modificar el settings.py para que coja nuestra base de datos mysql</p>
-
-<p>Metemos los datos de la base de datos en settings.py</p>
-<div class="highlight"><pre class="chroma">DATABASES = {
+MariaDB [(none)]&gt; flush privileges;</pre></div><p><em>Importante:</em>
+Si te salta un error de max size a la hora de hacer el migrate ponemos esto en la base de datos</p><div class=highlight><pre class=chroma>MariaDB [pythoncms]&gt; SET @@global.innodb_large_prefix = 1;
+MariaDB [pythoncms]&gt; set global innodb_default_row_format = DYNAMIC;</pre></div><p>Ahora tenemos que modificar el settings.py para que coja nuestra base de datos mysql</p><p>Metemos los datos de la base de datos en settings.py</p><div class=highlight><pre class=chroma>DATABASES = {
       &#39;default&#39;: {
           &#39;ENGINE&#39;: &#39;mysql.connector.django&#39;,
           &#39;NAME&#39;: &#39;pythoncms&#39;,
@@ -210,29 +37,15 @@ MariaDB [pythoncms]&gt; set global innodb_default_row_format = DYNAMIC;</pre></d
           &#39;HOST&#39;: &#39;tortillaint.alejandro.gonzalonazareno.org&#39;,
           &#39;PORT&#39;: &#39;&#39;,
       }
-  }</pre></div>
-<p>Vamos a configurar el host para que podamos acceder mediante el dns en settings.py</p>
-<div class="highlight"><pre class="chroma">ALLOWED_HOSTS = [&#39;python.alejandro.gonzalonazareno.org&#39;]</pre></div>
-<p>Vamos a instalar también el conector de mysql para python</p>
-<div class="highlight"><pre class="chroma">pip install mysql-connector-python</pre></div>
-<p>Vamos ahora a realizar la migración</p>
-<div class="highlight"><pre class="chroma">python3 manage.py migrate</pre></div>
-<p>Ahora vamos a cargar los datos en manage.py</p>
-<div class="highlight"><pre class="chroma">python36 manage.py loaddata db.json
-Installed 157 object(s) from 1 fixture(s)</pre></div>
-<p>Ahora vamos a instalar guicorn en pip</p>
-<div class="highlight"><pre class="chroma">pip install gunicorn</pre></div>
-<p>Vamos a crear el socket de gunicorn para poder ejecutarlo en nginx en /etc/systemd/system/gunicorn.socket</p>
-<div class="highlight"><pre class="chroma">[Unit]
+  }</pre></div><p>Vamos a configurar el host para que podamos acceder mediante el dns en settings.py</p><div class=highlight><pre class=chroma>ALLOWED_HOSTS = [&#39;python.alejandro.gonzalonazareno.org&#39;]</pre></div><p>Vamos a instalar también el conector de mysql para python</p><div class=highlight><pre class=chroma>pip install mysql-connector-python</pre></div><p>Vamos ahora a realizar la migración</p><div class=highlight><pre class=chroma>python3 manage.py migrate</pre></div><p>Ahora vamos a cargar los datos en manage.py</p><div class=highlight><pre class=chroma>python36 manage.py loaddata db.json
+Installed 157 object(s) from 1 fixture(s)</pre></div><p>Ahora vamos a instalar guicorn en pip</p><div class=highlight><pre class=chroma>pip install gunicorn</pre></div><p>Vamos a crear el socket de gunicorn para poder ejecutarlo en nginx en /etc/systemd/system/gunicorn.socket</p><div class=highlight><pre class=chroma>[Unit]
 Description=gunicorn socket
 
 [Socket]
 ListenStream=/run/gunicorn.sock
 
 [Install]
-WantedBy=sockets.target</pre></div>
-<p>Ahora vamos a crear la unidad systemd para guincorn en /etc/systemd/system/gunicorn.service</p>
-<div class="highlight"><pre class="chroma">sudo nano /etc/systemd/system/gunicorn.service
+WantedBy=sockets.target</pre></div><p>Ahora vamos a crear la unidad systemd para guincorn en /etc/systemd/system/gunicorn.service</p><div class=highlight><pre class=chroma>sudo nano /etc/systemd/system/gunicorn.service
 
 [Unit]
 Description=gunicorn daemon
@@ -245,38 +58,32 @@ ExecReload=/bin/bash /var/www/pythoncms/gunicorn_start
 RemainAfterExit=yes
 
 [Install]
-WantedBy=multi-user.target</pre></div>
-<p>Y el script que ejecutará será el siguiente</p>
-<div class="highlight"><pre class="chroma"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&#34;pythoncms&#34;</span>
-<span class="nv">DJANGODIR</span><span class="o">=</span>/var/www/pythoncms
-<span class="nv">USER</span><span class="o">=</span>nginx
-<span class="nv">GROUP</span><span class="o">=</span>nginx
-<span class="nv">WORKERS</span><span class="o">=</span><span class="m">3</span>
-<span class="nv">BIND</span><span class="o">=</span>unix:/run/gunicorn.sock
-<span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span>pythoncms.settings
-<span class="nv">DJANGO_WSGI_MODULE</span><span class="o">=</span>pythoncms.wsgi
-<span class="nv">LOGLEVEL</span><span class="o">=</span>error
+WantedBy=multi-user.target</pre></div><p>Y el script que ejecutará será el siguiente</p><div class=highlight><pre class=chroma><span class=cp>#!/bin/bash
+</span><span class=cp></span>
+<span class=nv>NAME</span><span class=o>=</span><span class=s2>&#34;pythoncms&#34;</span>
+<span class=nv>DJANGODIR</span><span class=o>=</span>/var/www/pythoncms
+<span class=nv>USER</span><span class=o>=</span>nginx
+<span class=nv>GROUP</span><span class=o>=</span>nginx
+<span class=nv>WORKERS</span><span class=o>=</span><span class=m>3</span>
+<span class=nv>BIND</span><span class=o>=</span>unix:/run/gunicorn.sock
+<span class=nv>DJANGO_SETTINGS_MODULE</span><span class=o>=</span>pythoncms.settings
+<span class=nv>DJANGO_WSGI_MODULE</span><span class=o>=</span>pythoncms.wsgi
+<span class=nv>LOGLEVEL</span><span class=o>=</span>error
 
-<span class="nb">cd</span> <span class="nv">$DJANGODIR</span>
-<span class="nb">source</span> /var/www/pythoncms/paquetes/bin/activate
+<span class=nb>cd</span> <span class=nv>$DJANGODIR</span>
+<span class=nb>source</span> /var/www/pythoncms/paquetes/bin/activate
 
-<span class="nb">export</span> <span class="nv">DJANGO_SETTINGS_MODULE</span><span class="o">=</span><span class="nv">$DJANGO_SETTINGS_MODULE</span>
-<span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$DJANGODIR</span>:<span class="nv">$PYTHONPATH</span>
+<span class=nb>export</span> <span class=nv>DJANGO_SETTINGS_MODULE</span><span class=o>=</span><span class=nv>$DJANGO_SETTINGS_MODULE</span>
+<span class=nb>export</span> <span class=nv>PYTHONPATH</span><span class=o>=</span><span class=nv>$DJANGODIR</span>:<span class=nv>$PYTHONPATH</span>
 
-<span class="nb">exec</span> /var/www/pythoncms/paquetes/bin/gunicorn <span class="si">${</span><span class="nv">DJANGO_WSGI_MODULE</span><span class="si">}</span>:application <span class="se">\
-</span><span class="se"></span>  --name <span class="nv">$NAME</span> <span class="se">\
-</span><span class="se"></span>  --workers <span class="nv">$WORKERS</span> <span class="se">\
-</span><span class="se"></span>  --user<span class="o">=</span><span class="nv">$USER</span> <span class="se">\
-</span><span class="se"></span>  --group<span class="o">=</span><span class="nv">$GROUP</span> <span class="se">\
-</span><span class="se"></span>  --bind<span class="o">=</span><span class="nv">$BIND</span> <span class="se">\
-</span><span class="se"></span>  --log-level<span class="o">=</span><span class="nv">$LOGLEVEL</span> <span class="se">\
-</span><span class="se"></span>  --log-file<span class="o">=</span>-</pre></div>
-<p>Vamos a habilitar las reglas de SELinux para la página</p>
-<div class="highlight"><pre class="chroma">chcon -t httpd_sys_rw_content_t /var/www/pythoncms -R</pre></div>
-<p>El virtual host de mezzanine sería el siguiente</p>
-<div class="highlight"><pre class="chroma">server {
+<span class=nb>exec</span> /var/www/pythoncms/paquetes/bin/gunicorn <span class=si>${</span><span class=nv>DJANGO_WSGI_MODULE</span><span class=si>}</span>:application <span class=se>\
+</span><span class=se></span>  --name <span class=nv>$NAME</span> <span class=se>\
+</span><span class=se></span>  --workers <span class=nv>$WORKERS</span> <span class=se>\
+</span><span class=se></span>  --user<span class=o>=</span><span class=nv>$USER</span> <span class=se>\
+</span><span class=se></span>  --group<span class=o>=</span><span class=nv>$GROUP</span> <span class=se>\
+</span><span class=se></span>  --bind<span class=o>=</span><span class=nv>$BIND</span> <span class=se>\
+</span><span class=se></span>  --log-level<span class=o>=</span><span class=nv>$LOGLEVEL</span> <span class=se>\
+</span><span class=se></span>  --log-file<span class=o>=</span>-</pre></div><p>Vamos a habilitar las reglas de SELinux para la página</p><div class=highlight><pre class=chroma>chcon -t httpd_sys_rw_content_t /var/www/pythoncms -R</pre></div><p>El virtual host de mezzanine sería el siguiente</p><div class=highlight><pre class=chroma>server {
         listen 80;
         server_name python.alejandro.gonzalonazareno.org;
         return 301 https://$server_name$request_uri;
@@ -300,108 +107,9 @@ server {
     location /static {
         alias /var/www/pythoncms/static;
     }
-}</pre></div>
-<p>Para que salga los static debemos hacer:</p>
-<div class="highlight"><pre class="chroma">chown -R centos:centos /var/www/pythoncms
+}</pre></div><p>Para que salga los static debemos hacer:</p><div class=highlight><pre class=chroma>chown -R centos:centos /var/www/pythoncms
 python3 manage.py collectstatic
-chown -R nginx:nginx /var/www/pythoncms</pre></div>
-<p>Y si tenemos un theme, meterlo dentro de la carpeta /static creada</p>
-
-<p><img src="/images/mezzaninecloud.png" alt="" />
-<img src="/images/mezzaninecloud1.png" alt="" />
-<img src="/images/mezzaninecloud3.png" alt="" /></p>
-
-  </article>
-
-  <br/>
-
-  
-      <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-  
-  
-</section>
-
-      </div>
-      
-        <footer class="footer">
-  <section class="container">
-    
-      <div class="sns-shares sp-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-    
-      <p>Enter a text here.</p>
-    
-     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
-
-  </section>
-</footer>
-<div class="fixed-bar">
-  <section class="container">
-    
-      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
-    
-    
-      <div class="sns-shares pc-sns-shares">
-        
-        
-          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
-        
-        
-        
-        
-          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f"><i class="fab fa-linkedin"></i></a>
-        
-      </div>
-    
-  </section>
-</div>
-
-      
-    </main>
-
-    
-
-  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
-  
-  <script>
-  (function($) {
-    $(function() {
-      $('#privateTrigger').on('click', function() {
-        $('.private').slideToggle();
-        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
-      });
-    });
-   })(jQuery);
-  </script>
-  
-  </body>
-</html>
+chown -R nginx:nginx /var/www/pythoncms</pre></div><p>Y si tenemos un theme, meterlo dentro de la carpeta /static creada</p><p><img src=/images/mezzaninecloud.png alt>
+<img src=/images/mezzaninecloud1.png alt>
+<img src=/images/mezzaninecloud3.png alt></p></article><br><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"yourdiscussshortname"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></div><footer class=footer><section class=container><div class="sns-shares sp-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f"><i class="fab fa-linkedin"></i></a></div><p>Enter a text here.</p>© 2020 · Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/naro143/hugo-coder-portfolio>CoderPortfolio</a>.</section></footer><div class=fixed-bar><section class=container><p id=privateTriggerText>¿Quieres conocerme mejor?→<a id=privateTrigger>Click!</a></p><div class="sns-shares pc-sns-shares"><a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f" onclick="window.open(this.href,'FBwindow','width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');return false;"><i class="fab fa-facebook-f"></i></a><a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fpythoncms%2f"><i class="fab fa-linkedin"></i></a></div></section></div></main><script src=https://www.alexrrinformatico.com/js/app.js></script><script>(function($){$(function(){$('#privateTrigger').on('click',function(){$('.private').slideToggle();$('#privateTriggerText').text("Dale click a los enlaces de la derecha→");});});})(jQuery);</script></body></html>
