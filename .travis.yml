@@ -1,7 +1,7 @@
 # Install the apt prerequisites
+dist: buster
 addons:
   apt:
-    update: true
     packages:
       - hugo
 # Clean and don't fail
@@ -10,7 +10,6 @@ install:
 
 # Build the website
 script:
-  - sudo pip install Pygments
   - hugo --theme=hugo-coder-portfolio
 
 # Deploy to GitHub pages
