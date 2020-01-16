@@ -2,6 +2,7 @@
 addons:
   apt:
     packages:
+      - python-pygments
       - hugo
 
 # Clean and don't fail
