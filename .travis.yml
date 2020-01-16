@@ -1,8 +1,8 @@
 # Install the apt prerequisites
- dist: xenial
-   addons:
-     snaps:
-       - hugo
+dist: xenial
+  addons:
+    snaps:
+      - hugo
 # Clean and don't fail
 install:
   - rm -rf public || exit 0
