@@ -11,10 +11,7 @@ Vamos a configurar dos máquinas Debian con un Oracle instalado en cada una de e
 
 Para configurar la interconexión primero debemos configurar el listener.ora de Oracle que está ubicado en /opt/oracle/product/12.2.0.1/dbhome_1/network/admin.
 Ip de la máquina:
-![](/images/Interconexion1.png)
-
-Ip de la máquina 2:
-![](/images/Interconexion6.png)
+![](/images/Interconexion1.png)	
 
 listener.ora:
 ![](/images/Interconexion2.png)
@@ -36,7 +33,7 @@ Ahora entramos al usuario alexrr
 ![](/images/Interconexion5.png)
 
 Ahora creamos el link:
-![](/images/Interconexion7.png)
+![](/images/Interconexion6.png)
 
 Y probamos un join de nuestras tablas con la base de datos remota
 ![](/images/Interconexion8.png)
