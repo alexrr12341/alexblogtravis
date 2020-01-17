@@ -138,6 +138,82 @@ Creamos el link ahora y miramos si podemos acceder a la base de datos pruebin.
 ![](/images/Interconexion24.png)
 
 
-create public database link enlaceapostgresql2
-connect to "pruebin" identified by "pruebin"
-using 'PSQLU';
+## Conexion de PostgreSQL a Oracle
+
+Ip PostgreSQL y Oracle:
+![](/images/Interconexion25.png)
+
+
+Lo primero que haremos será instalar el cliente de Oracle en nuestra máquina postgresql, para ello antes debemos de instalar los siguientes paquetes
+```
+apt install libaio1 libaio-dev alien
+```
+
+Y ahora instalamos el cliente
+```
+vagrant@bd:~$ ls
+oracle-instantclient19.5-basic-19.5.0.0.0-1.x86_64.rpm  oracle-instantclient19.5-sqlplus-19.5.0.0.0-1.x86_64.rpm
+oracle-instantclient19.5-devel-19.5.0.0.0-1.x86_64.rpm  oracle-instantclient19.5-tools-19.5.0.0.0-1.x86_64.rpm
+vagrant@bd:~$ sudo alien --to-deb --scripts *
+oracle-instantclient19.5-basic_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-devel_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-sqlplus_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-tools_19.5.0.0.0-2_amd64.deb generated
+
+
+vagrant@bd:~$ sudo dpkg -i *.deb
+```
+
+Ahora debemos configurar postgresql para conectarse con oracle, nos descargaremos una extensión de postgresql y la compilaremos.
+```
+git clone https://github.com/laurenz/oracle_fdw.git
+```
+
+Antes de compilar debemos configurar el Makefile y incluir las siguientes líneas
+```
+PG_CPPFLAGS = ... -I/usr/include/oracle/19.5/client64
+SHLIB_LINK = ... -L/usr/lib/oracle/19.5/client64/lib
+```
+
+Añadimos las siguientes variables de entorno para poder compilarlo
+```
+vagrant@bd:~$ export ORACLE_HOME="/usr/lib/oracle/19.5/client64"
+vagrant@bd:~$ export LD_LIBRARY_PATH="/usr/lib/oracle/19.5/client64/lib"
+vagrant@bd:~$ export PATH=$ORACLE_HOME:$PATH
+vagrant@bd:~$ export USE_PGXS=1
+```
+
+Ahora compilamos
+```
+vagrant@bd:~/oracle_fdw$ make
+You need to install postgresql-server-dev-NN for building a server-side extension or libpq-dev for building a client-side application.
+```
+
+Nos saltará este error, instalamos el siguiente paquete y no tendremos problemas al compilar
+```
+sudo apt install postgresql-server-dev-11
+```
+
+Ahora si podremos compilar postgresql
+```
+make
+sudo make install
+```
+
+Ahora vamos a entrar a postgres y crearemos la extension
+![](/images/Interconexion26.png)
+
+Ahora creamos la conexion con el servidor
+![](/images/Interconexion27.png)
+
+
+Y comprobamos que funcione nuestra conexión con postgresql, vamos a coger la tabla Viveros de nuestro Oracle para comprobarlo
+```
+CREATE FOREIGN TABLE oracleviveros (
+Codigo VARCHAR(10),
+Direccion VARCHAR(150),
+Telefono VARCHAR(9)
+)
+SERVER alexoracle OPTIONS (schema 'ALEXRR', table 'VIVEROS');
+```
+![](/images/Interconexion28.png)
