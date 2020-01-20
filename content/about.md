@@ -20,6 +20,3 @@ Amplios conocimientos en:
 * Sistemas Operativos(Debian y Windows)
 * Lenguaje de programación Python
 * Lenguajes de Marcas(Markdown,JSON,Html5)
-
-
-Holita
