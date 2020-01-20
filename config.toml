@@ -59,8 +59,12 @@ disqusShortname = "yourdiscussshortname"
     name = "LinkedIn"
     icon = "fab fa-linkedin"
     weight = 3
-    url = "https://www.linkedin.com/in/alejandro-rodr%C3%ADguez-rojas-16535117b/"
-
+    url = "https://www.linkedin.com/in/alexrodriguez98/"
+[[params.social]]
+    name = "PayPal"
+    icon = "fab fa-paypal"
+    weight = 3
+    url = "https://www.paypal.me/AlexRodriguezRojas"
 [languages]
     [languages.en]
         languagecode = "en"
