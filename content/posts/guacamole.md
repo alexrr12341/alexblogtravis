@@ -11,7 +11,7 @@ En este caso vamos a elegir el CMS Java Apache Guacamole, que lo desplegaremos u
 No necesita plugins de clientes ni softwares de clientes y además es de software libre.
 
 
-## Tomcat 9
+## Tomcat
 
 Para instalar tomcat necesitaremos primero de todo instalar el siguiente paquete
 
