@@ -179,17 +179,75 @@ Vamos a ver si podemos acceder al virtual host y entramos al panel para poder re
 ![](/images/Guacamole3.png)
 
 
-Ahora no podremos hacer login ya que necesitamos logearnos por una base de datos, por lo que tendremos que crear dicha base de datos, que la haremos en mariadb
+Guacamole también nos permite  logearnos por una base de datos, por lo que tendremos que crear dicha base de datos, que la haremos en postgresql
 ```
-apt install mariadb-server
+apt install postgresql
 ```
 
 Ahora debemos instalar en la página oficial https://guacamole.apache.org/releases/1.0.0/ el guacamole-auth-jdbc-1.0.0.tar.gz
 
 Extraemos y entramos al apartado mysql y realizamos lo siguiente
 ```
+mkdir /etc/guacamole/extensions
+root@java2:/home/vagrant/guacamole-auth-jdbc-1.0.0/postgresql# mv guacamole-auth-jdbc-postgresql-1.0.0.jar /etc/guacamole/extensions/
+```
+
+También debemos descargarnos el conector de postgresql oficial, nos lo descargaremos de la página https://jdbc.postgresql.org/download.html y elegimos la opción de nuestro java.
+```
+mkdir /etc/guacamole/lib
+mv postgresql-42.2.9.jar /etc/guacamole/lib/
+```
+
+
+## Creación de la base de datos
+
+Primero de todo debemos crear las tablas y el usuario administrador para la base de datos, por lo que entramos en postgresql
 
 ```
-	
+su postgres
+postgres@java2:~$ createdb guacamole_db
+postgres@java2:/home/vagrant/guacamole-auth-jdbc-1.0.0/postgresql$ cat schema/*.sql | psql -d guacamole_db -f -
+```
 
+Ahora entramos a la base de datos
+```
+psql -d guacamole_db
+CREATE USER guacamole_user WITH PASSWORD 'guacamole';
+GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;
+GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;
+```
 
+## Autentificación de Guacamole por base de datos
+
+Vamos ahora a /etc/guacamole/guacamole.properties y realizamos la siguiente configuración
+```
+# PostgreSQL properties
+postgresql-hostname: localhost
+postgresql-port: 5432
+postgresql-database: guacamole_db
+postgresql-username: guacamole_user
+postgresql-password: guacamole
+```
+
+## Administración de Guacamole
+
+Ahora podemos acceder a la cuenta de administración de Guacamole ya que tenemos una base de datos.
+
+Entramos al usuario guacadmin y vemos la interfaz de administración
+
+![](/images/Guacamole4.png)
+
+Vamos ahora a crear el usuario Alexrr que será el nuevo administrador.
+
+![](/images/Guacamole5.png)
+
+Y vamos a ver si podemos acceder y tenemos los privilegios
+
+![](/images/Guacamole6.png)
+
+Y en postgresql se nos ha creado un nuevo registro de usuario con la información que hemos puesto.
+
+```
+       2 |         2 | \xc7eefe57cef41860ee763fe832c6bb8c54d3f9efe2302f1806c34079176dcf01 | \x690291c4eb71b893611d1ee932841256d74eb50edda9b7e1a8d96a10374d36a1 | 2020-01-23 21:50:33.082+00    | f        | f       |                     |                   |            |             | Europe/Madrid | Alejandro Rodríguez Rojas | alexrodriguezrojas98@gmail.com | Alex ORG     | Jefe
+
+```
