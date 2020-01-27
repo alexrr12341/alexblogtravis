@@ -356,7 +356,7 @@ Y le damos a la opción de Añadir desde un fichero, y elegimos el fichero de co
 
 ![](/images/Networkmanager2.png)
 
-![](/images/Networkmanager3.png)
+![](/images/NetworkManager3.png)
 
 ```
 10: tun1: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 100
