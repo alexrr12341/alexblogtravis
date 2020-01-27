@@ -63,6 +63,16 @@ touch index.txt.attr
 echo 1000 > serial
 ```
 
+Hacemos las variables
+```
+countryName_default="ES" 
+stateOrProvinceName_default="Sevilla" 
+localityName_default="Dos Hermanas" 
+organizationName_default="Alejandro.org" 
+organizationalUnitName_default="Alejandro" 
+emailAddress_default="alexrodriguezrojas98@gmail.com" 
+```
+
 Hacemos el fichero de configuración
 ```
 DIR_CA="./" 
@@ -266,7 +276,7 @@ verb 3
 
 Y ahora firmamos el certificado a nuestro cliente y le pasamos el crt y el certificado.
 ```
-root@server:/home/vagrant# openssl x509 -req -in clientevpn.csr -CA /root/ca/certs/ca.cert.pem -CAkey /root/ca/private/ca.key.pem -CAcreateserial -out clientevpn.crt
+root@server:/home/vagrant# openssl x509 -req -in clientevpn.csr -CA /etc/openvpn/ca/certs/ca.cert.pem -CAkey /etc/openvpn/ca/private/ca.key.pem -CAcreateserial -out clientevpn.crt
 ```
 
 
@@ -281,3 +291,78 @@ systemctl start openvpn@servidor
 ```
 
 *Muy importante que los clientes estén en default via de la red interna*
+
+
+## Cliente
+
+Ahora en este caso vamos a actuar como clientes de la VPN, por lo que vamos a crear una clave privada y un csr para la ocasión.
+
+```
+openssl genrsa -out clientito.key 4096
+openssl req -new -key clientito.key -out clientito.csr
+```
+Le pasamos el csr y el servidor nos devolverá un clientito.crt y la CA.
+
+Y hacemos el fichero de cliente.
+
+```
+dev tun
+remote 172.22.0.56
+ifconfig 10.99.99.0 255.255.255.0
+pull
+tls-client
+ca /etc/openvpn/cert.crt
+cert /etc/openvpn/clientito.crt
+key /etc/openvpn/clientito.key
+comp-lzo
+keepalive 10 60
+verb 3
+```
+
+Y iniciamos el servicio
+```
+systemctl start openvpn@paquito
+```
+
+Miramos si tenemos la interfaz tun
+```
+9: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 100
+    link/none 
+    inet 10.99.99.6 peer 10.99.99.5/32 scope global tun0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::6c3b:e1e6:cb6c:e565/64 scope link stable-privacy 
+       valid_lft forever preferred_lft forever
+```
+
+Y intentamos hacer ping al cliente 192.168.1.2
+```
+root@pc-alex:/etc/openvpn# ping 192.168.1.2
+PING 192.168.1.2 (192.168.1.2) 56(84) bytes of data.
+64 bytes from 192.168.1.2: icmp_seq=1 ttl=63 time=2.01 ms
+64 bytes from 192.168.1.2: icmp_seq=2 ttl=63 time=1.72 ms
+64 bytes from 192.168.1.2: icmp_seq=3 ttl=63 time=1.50 ms
+64 bytes from 192.168.1.2: icmp_seq=4 ttl=63 time=1.48 ms
+```
+
+Si queremos que network-manager gestione la vpn, debemos primero instalar la extension
+```
+apt install network-manager-openvpn
+```
+
+Entramos en la configuración de Red de network-manager y nos saldrá una opción de VPN, le damos al +
+![](/images/Networkmanager.png)
+
+Y le damos a la opción de Añadir desde un fichero, y elegimos el fichero de configuración de antes y encendemos la VPN y volveremos a tener el tunel
+
+![](/images/Networkmanager2.png)
+
+![](/images/Networkmanager3.png)
+
+```
+10: tun1: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 100
+    link/none 
+    inet 10.99.99.6 peer 10.99.99.5/32 brd 10.99.99.6 scope global noprefixroute tun1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c9b5:78e5:f191:53ec/64 scope link stable-privacy 
+       valid_lft forever preferred_lft forever
+```
