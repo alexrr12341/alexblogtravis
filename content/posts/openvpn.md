@@ -46,14 +46,11 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 
 
-Hacemos el fichero diffie hellman
-```
-openssl dhparam -out /root/private/dh.pem 2048
-```
+
 
 Hacemos la CA
 ```
-mkdir /etc/openvpn/claves
+mkdir /root/ca
 DIR_CA="/root/ca" 
 cd $DIR_CA
 mkdir certs csr crl newcerts private
@@ -229,7 +226,10 @@ openssl req -config openssl.conf \
 -new -x509 -days 7300 -sha256 -extensions v3_ca \
 -out certs/ca.cert.pem
 ```
-
+Hacemos el fichero diffie hellman
+```
+openssl dhparam -out /root/private/dh.pem 2048
+```
 
 Movemos ahora los certificados a /etc/openvpn
 ```
@@ -366,3 +366,90 @@ Y le damos a la opción de Añadir desde un fichero, y elegimos el fichero de co
     inet6 fe80::c9b5:78e5:f191:53ec/64 scope link stable-privacy 
        valid_lft forever preferred_lft forever
 ```
+
+
+## OpenVPN Site to Site
+
+Para realizar este ejercicio, necesitamos dos máquinas servidores , que actuarán a su vez como el cliente del otro.
+
+Un servidor tendrá el direccionamiento 192.168.1.0/24 en su red interna y el otro con la 192.168.100.0/24 con sus respectivos clientes.
+
+Realizamos los mismos pasos anteriores para crear nuestros certificados en los servidores y nuestras claves privadas.
+
+Vamos a cambiarles el nombre a la CA y a la clave:
+
+```
+root@server:/etc/openvpn/ca/certs# mv ca.cert.pem alejandro.crt
+root@server:/etc/openvpn/ca/private# mv ca.key.pem alejandro.key
+```
+
+Ahora hacemos el fichero servidor.conf
+```
+#Dispositivo de túnel
+dev tun
+    
+#Direcciones IP virtuales
+server 10.99.99.0 255.255.255.0 
+
+#subred local
+push "route 192.168.1.0 255.255.255.0"
+
+# Rol de servidor
+tls-server
+
+#Parámetros Diffie-Hellman
+dh /etc/openvpn/ca/private/dh.pem
+
+#Certificado de la CA
+ca /etc/openvpn/ca/certs/alejandro.crt
+
+#Certificado local
+cert /etc/openvpn/ca/certs/alejandro.crt
+
+#Clave privada local
+key /etc/openvpn/ca/private/alejandro.key
+
+#Activar la compresión LZO
+comp-lzo
+
+#Detectar caídas de la conexión
+keepalive 10 60
+
+#Nivel de información
+verb 3
+
+# Contraseña
+askpass contra.txt
+```
+
+
+Ahora vamos a crear el csr para que nos lo firme el otro servidor, por lo que usamos el comando
+
+```
+root@server:/etc/openvpn/ca# openssl req -new -key private/alejandro.key -out certs/alejandrocliente.csr
+```
+
+Se lo pasamos y él nos la pasará a nosotros el suyo, lo firmamos y él nos firmará.
+
+```
+root@server:/home/vagrant# openssl x509 -req -in servercliente.csr -CA /etc/openvpn/ca/certs/alejandro.crt -CAkey /etc/openvpn/ca/private/alejandro.key -CAcreateserial -out servercliente.crt
+
+```
+
+Ahora vamos a hacer el fichero de cliente.conf
+```
+dev tun
+remote 172.22.1.236
+ifconfig 10.99.99.0 255.255.255.0
+pull
+tls-client
+ca /etc/openvpn/ca/certs/cert.crt
+cert /etc/openvpn/ca/certs/alejandrocliente.crt
+key /etc/openvpn/ca/private/alejandro.key
+comp-lzo
+keepalive 10 60
+verb 3
+```
+
+
+
