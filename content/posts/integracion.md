@@ -284,3 +284,5 @@ Vamos a preparar nuestro entorno de produccion haciendo los siguientes comandos:
 (envi) 11:34 ~/django_tutorial/.travis (master)$ ssh-keygen -t rsa -b 4096 -C 'hallo@example.com' -f deploy_key    
 
 ```
+
+No podemos seguir el ejercicio debido a que dicha función sólo esta realizada para usuarios que son de pago, en nuestro caso, nosotros somos usuarios gratuitos.
