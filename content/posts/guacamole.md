@@ -251,3 +251,96 @@ Y en postgresql se nos ha creado un nuevo registro de usuario con la informació
        2 |         2 | \xc7eefe57cef41860ee763fe832c6bb8c54d3f9efe2302f1806c34079176dcf01 | \x690291c4eb71b893611d1ee932841256d74eb50edda9b7e1a8d96a10374d36a1 | 2020-01-23 21:50:33.082+00    | f        | f       |                     |                   |            |             | Europe/Madrid | Alejandro Rodríguez Rojas | alexrodriguezrojas98@gmail.com | Alex ORG     | Jefe
 
 ```
+
+
+Ahora vamos a comprobar que funciona el ssh haciendo una conexión mediante la página
+
+![](/images/Guacamole7.png)
+![](/images/Guacamole8.png)
+
+Guardamos y entramos a la conexión creada
+
+![](/images/Guacamole9.png)
+
+
+Ahora vamos a comprobar una conexión VNC mediante nuestra página, para ello configuraremos en la página la conexión hacia nuestra máquina
+
+![](/images/Guacamole10.png)
+
+En nuestro cliente, debemos instalar VNC para ello hacemos
+
+```
+apt install tightvncserver
+apt install xfonts-100dpi-transcoded
+
+root@pc-alex:/home/alexrr/Hugo/alexblogtravis# vncserver
+
+You will require a password to access your desktops.
+
+Password: 
+Verify:   
+Would you like to enter a view-only password (y/n)? n 
+
+Warning: pc-alex:1 is taken because of /tmp/.X11-unix/X1
+Remove this file if there is no X server pc-alex:1
+
+New 'X' desktop is pc-alex:2
+
+Creating default startup script /root/.vnc/xstartup
+Starting applications specified in /root/.vnc/xstartup
+Log file is /root/.vnc/pc-alex:2.log
+
+
+```
+
+Ahora en nuestro cliente vamos a hacer que funcione de servidor vnc para que guacamole pueda conectarse.
+
+```
+nano .vnc/xstartup
+
+#!/bin/sh
+
+xrdb $HOME/.Xresources
+xsetroot -solid grey
+#x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" 
+#x-window-manager &
+# Fix to make GNOME work
+export XKL_XMODMAP_DISABLE=1
+/etc/X11/Xsession
+
+gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+
+```
+Entramos a guacamole y hacemos la conexión
+![](/images/Guacamole12.png)
+
+
+Y miramos si podemos acceder
+
+![](/images/Guacamole13.png)
+
+
+Y también queremos probar la opción de telnet, para ello creamos una nueva conexión.
+
+![](/images/Guacamole14.png)
+
+![](/images/Guacamole15.png)
+
+Entramos a la conexión:
+
+![](/images/Guacamole16.png)
+
+
+Y por último debemos probar la conexión RDP, para ello necesitamos un cliente windows.
+
+![](/images/Guacamole17.png)
+
+![](/images/Guacamole18.png)
+
+En windows vamos a Equipo->Propiedades->Acceso Remoto y permitimos las conexiones a nivel de red.
+
+![](/images/Guacamole19.png)
+W
