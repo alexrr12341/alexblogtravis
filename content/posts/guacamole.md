@@ -265,9 +265,9 @@ Guardamos y entramos a la conexión creada
 
 Ahora vamos a comprobar una conexión VNC mediante nuestra página, para ello configuraremos en la página la conexión hacia nuestra máquina
 
-![](/images/Guacamole10.png)
 
-En nuestro cliente, debemos instalar VNC para ello hacemos
+
+Primero,en nuestro cliente, debemos instalar VNC para ello hacemos
 
 ```
 apt install tightvncserver
