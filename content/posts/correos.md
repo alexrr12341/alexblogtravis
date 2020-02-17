@@ -104,7 +104,7 @@ Feb 13 17:08:24 alejandro postfix/qmgr[5070]: 6CA29218D4: removed
 
 ```
 
-Vemos que se conecta a babuino, y este delega el mensaje hacia mi dominio, ynos lo envia, estará en nuestro mailbox
+Vemos que se conecta a babuino, y este delega el mensaje hacia mi dominio, y nos lo envia, estará en nuestro mailbox
 
 debian@croqueta:~$ mail
 ```
@@ -122,3 +122,42 @@ Content-Transfer-Encoding: quoted-printable
 Hola, te respondo de vuelta, gracias.
 
 ```
+
+
+Tarea 3 (2 puntos)(Obligatorio): Documenta en redmine una prueba de funcionamiento, donde envíes desde tu cliente de correos al exterior. ¿Cómo se llama el servidor para enviar el correo? (Muestra la configuración).
+
+
+Ahora vamos a instalar tanto POP como IMAP en nuestro servidor de correos
+
+```
+apt install dovecot-imapd dovecot-pop3d dovecot-core
+```
+
+Ahora en /etc/postfix/main.cf editamos la siguiente línea
+
+```
+home_mailbox = Maildir/
+mailbox_command =
+
+
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/24 172.22.0.0/16
+
+```
+
+En /etc/dovecot/conf.d/10-mail.conf editamos esta línea
+```
+mail_location = maildir:~/Maildir
+```
+
+Ahora en nuestro DNS añadimos tanto pop como imap.
+
+```
+pop IN CNAME croqueta
+imap IN CNAME croqueta
+```
+
+Ahora vamos a Evolution y vamos a Archivo->Nuevo->Cuenta de Correo.
+
+
+
+
