@@ -1,5 +1,5 @@
 +++
-date = "2019-09-30"
+date = "2020-02-17"
 title = "Servidor de correos(Postfix)"
 math = "true"
 
