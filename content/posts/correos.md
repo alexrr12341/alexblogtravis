@@ -124,8 +124,6 @@ Hola, te respondo de vuelta, gracias.
 ```
 
 
-Tarea 3 (2 puntos)(Obligatorio): Documenta en redmine una prueba de funcionamiento, donde envíes desde tu cliente de correos al exterior. ¿Cómo se llama el servidor para enviar el correo? (Muestra la configuración).
-
 
 Ahora vamos a instalar tanto POP como IMAP en nuestro servidor de correos
 
@@ -144,6 +142,11 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/24 172.22.0.0
 
 ```
 
+En /etc/dovecot/conf.d/10-auth.conf edditamos la siguiente linea
+```
+disable_plaintext_auth = no
+```
+
 En /etc/dovecot/conf.d/10-mail.conf editamos esta línea
 ```
 mail_location = maildir:~/Maildir
@@ -156,8 +159,25 @@ pop IN CNAME croqueta
 imap IN CNAME croqueta
 ```
 
+*Muy importante tener habilitados los puertos IMAP y POP3*
+
 Ahora vamos a Evolution y vamos a Archivo->Nuevo->Cuenta de Correo.
 
+![](/images/Evolution1.png)
+
+![](/images/Evolution2.png)
+
+![](/images/Evolution3.png)
+
+Si enviamos un mensaje al exterior vemos que podemos realizarlo
+
+![](/images/Evolution4.png)
+
+![](/images/Evolution5.png)
+
+
+Como ya hemos configurado POP vamos a observar como funciona este método, para ello vamos a enviarnos desde gmail un correo a debian.
+![](/images/POP1.png)
 
 
 
