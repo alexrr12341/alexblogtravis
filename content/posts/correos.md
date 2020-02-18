@@ -142,7 +142,7 @@ mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/24 172.22.0.0
 
 ```
 
-En /etc/dovecot/conf.d/10-auth.conf edditamos la siguiente linea
+En /etc/dovecot/conf.d/10-auth.conf editamos la siguiente linea
 ```
 disable_plaintext_auth = no
 ```
@@ -178,6 +178,39 @@ Si enviamos un mensaje al exterior vemos que podemos realizarlo
 
 Como ya hemos configurado POP vamos a observar como funciona este método, para ello vamos a enviarnos desde gmail un correo a debian.
 ![](/images/POP1.png)
+![](/images/POP2.png)
+
+*Muy importante tener una contraseña en el usuario debian*
 
 
+Vemos que se borran los mensajes en el servidor, esto es propio del método POP
 
+```
+root@croqueta:/home/debian# ls Maildir/new/
+root@croqueta:/home/debian# 
+root@croqueta:/home/debian# ls Maildir/cur/
+root@croqueta:/home/debian# 
+
+```
+
+Vamos ahora a configurar Evolution con IMAP, en el servidor ya lo tenemos instalado
+
+![](/images/Evolution1.png)
+
+![](/images/Evolution6.png)
+![](/images/Evolution7.png)
+
+Vamos a enviarnos un correo desde gmail a nuestro servidor.
+![](/images/IMAP1.png)
+
+Lo recibimos en evolution y miramos el servidor.
+
+![](/images/Evolution8.png)
+
+
+Vemos que en el servidor se nos guarda el mensaje, esto es propio del método IMAP
+
+```
+root@croqueta:/home/debian# ls Maildir/cur/
+1582017293.Vfe01I21c06M329057.croqueta:2,S
+```
