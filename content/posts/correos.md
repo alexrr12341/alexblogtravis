@@ -214,3 +214,122 @@ Vemos que en el servidor se nos guarda el mensaje, esto es propio del método IM
 root@croqueta:/home/debian# ls Maildir/cur/
 1582017293.Vfe01I21c06M329057.croqueta:2,S
 ```
+
+### Crontab
+
+Ahora vamos a configurar una tarea cron que envie ciertos correos a root para informar de su estado.
+
+Vamos a ejecutar una tarea crontab
+```
+crontab -e
+```
+
+Y ponemos la línea:
+```
+MAILTO = root
+
+* * * * * /root/scriptls.sh
+```
+
+Dicho script solo hace un ls en /root.
+
+Vamos a probar que está funcionando y le llegan mensajes a root
+
+```
+root@croqueta:~/Maildir/new# cat 1582099141.Vfe01I218d5M780676.croqueta 
+Return-Path: <root@alejandro.gonzalonazareno.org>
+X-Original-To: root
+Delivered-To: root@alejandro.gonzalonazareno.org
+Received: by alejandro.gonzalonazareno.org (Postfix, from userid 0)
+	id A957A218D7; Wed, 19 Feb 2020 07:59:01 +0000 (UTC)
+From: root@alejandro.gonzalonazareno.org (Cron Daemon)
+To: root@alejandro.gonzalonazareno.org
+Subject: Cron <root@croqueta> /root/scriptls.sh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: <MAILTO=root>
+X-Cron-Env: <SHELL=/bin/sh>
+X-Cron-Env: <HOME=/root>
+X-Cron-Env: <PATH=/usr/bin:/bin>
+X-Cron-Env: <LOGNAME=root>
+Message-Id: <20200219075901.A957A218D7@alejandro.gonzalonazareno.org>
+Date: Wed, 19 Feb 2020 07:59:01 +0000 (UTC)
+
+certs
+dead.letter
+IESGonzaloNazareno.crt
+ldapsecure.ldif
+ldapssl.ldif
+ldapSSL.ldif
+ldapusers
+Mail
+Maildir
+newcerts.ldif
+salmorejo.alejandro.gonzalonazareno.org.crt
+salmorejo.alejandro.gonzalonazareno.org.key
+scriptls.sh
+sent
+```
+
+
+Ahora vamos a realizar una redirección para que dichos correos se envien a debian, para ello vamos a /etc/aliases y ponemos
+
+```
+root: debian
+
+```
+
+Y ejecutamos la siguiente instrucción
+```
+newaliases
+```
+
+Ahora vamos a comprobar que están llegando dichos correos a debian.
+
+```
+debian@croqueta:~/Maildir/new$ cat 1582099262.Vfe01I21bf0M338379.croqueta 
+Return-Path: <root@alejandro.gonzalonazareno.org>
+X-Original-To: root
+Delivered-To: root@alejandro.gonzalonazareno.org
+Received: by alejandro.gonzalonazareno.org (Postfix, from userid 0)
+	id 05D5221C03; Wed, 19 Feb 2020 08:01:01 +0000 (UTC)
+From: root@alejandro.gonzalonazareno.org (Cron Daemon)
+To: root@alejandro.gonzalonazareno.org
+Subject: Cron <root@croqueta> /root/scriptls.sh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: <MAILTO=root>
+X-Cron-Env: <SHELL=/bin/sh>
+X-Cron-Env: <HOME=/root>
+X-Cron-Env: <PATH=/usr/bin:/bin>
+X-Cron-Env: <LOGNAME=root>
+Message-Id: <20200219080102.05D5221C03@alejandro.gonzalonazareno.org>
+Date: Wed, 19 Feb 2020 08:01:01 +0000 (UTC)
+
+certs
+dead.letter
+IESGonzaloNazareno.crt
+ldapsecure.ldif
+ldapssl.ldif
+ldapSSL.ldif
+ldapusers
+Mail
+Maildir
+newcerts.ldif
+salmorejo.alejandro.gonzalonazareno.org.crt
+salmorejo.alejandro.gonzalonazareno.org.key
+scriptls.sh
+sent
+
+```
+
+Y vamos a crear ahora un fichero que estará en /home/debian/.forward que contendrá lo siguiente para que se envien los correos a nuestro correo de gmail
+```
+debian@croqueta:~$ cat .forward 
+alexrodriguezrojas98@gmail.com
+```
+
+![](/images/crontab.png)
+
