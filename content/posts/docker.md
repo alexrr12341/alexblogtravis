@@ -148,4 +148,36 @@ bf36aa451fd4e168b32cd8fdaeb24067cf2606b3189b74c6555c7f9e0c71b56f
 ![](/images/Bookmedik3.png)
 
 
+Ahora vamos a realizar el mismo ejercicio pero con una imagen de Php oficial
 
+Nuestro Dockerfile será el siguiente:
+```
+FROM php:apache-buster
+ENV MARIADB_USER bookmedik
+ENV MARIADB_PASS bookmedik
+ENV MARIADB_HOST servidor_mysql
+
+EXPOSE 80
+
+WORKDIR /var/www/html
+COPY ./bookmedik /var/www/html
+ADD script.sh /usr/local/bin/script.sh
+
+RUN chmod +x /usr/local/bin/script.sh
+
+CMD ["/usr/local/bin/script.sh"]
+
+```
+
+Vamos a realizar la imagen
+```
+docker build -t alexrr12341/bookmedikphp:v1 .
+```
+
+Y vamos a realizar la creación de los contenedores
+
+```
+docker run -d --name servidor_mysql2 --network bookmedik -v /opt/bbdd_mariadb:/var/lib/mysql -e MYSQL_DATABASE=bookmedik -e MYSQL_USER=bookmedik -e MYSQL_PASSWORD=bookmedik -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+
+docker run -d --name bookmedikphp --network bookmedik -v /opt/logs_apache2:/var/log/apache2 -p 80:80 alexrr12341/bookmedikphp:v1
+```

@@ -13,17 +13,15 @@ math = "true"
 
 Para ello vamos a ir a /var/cache/bind/db.gonzalonazareno.org que es el fichero donde tenemos nuestras configuraciones de DNS y añadimos las siguientes líneas
 ```
-...
-_kerberos IN TXT "ALEJANDRO.GONZALONAZARENO.ORG"
-_kerberos._udp IN      SRV     0       0       88      croqueta.alejandro.gonzalonazareno.org.
-_kerberos_adm._tcp     IN      SRV     0       0       749     croqueta.alejandro.gonzalonazareno.org.
-_ldap._tcp      IN      SRV     0       0       389     croqueta.alejandro.gonzalonazareno.org.
-...
-
 $ORIGIN alejandro.gonzalonazareno.org.
 ...
 kerberos IN CNAME croqueta
 ldap IN CNAME croqueta
+_kerberos               IN      TXT     "ALEJANDRO.GONZALONAZARENO.ORG"
+_kerberos._udp          IN      SRV     0 0 88   kerberos.alejandro.gonzalonazareno.org.
+_kerberos_adm._tcp      IN      SRV     0 0 749  kerberos.alejandro.gonzalonazareno.org.
+_ldap._tcp              IN      SRV     0 0 389  ldap.alejandro.gonzalonazareno.org.
+
 ```
 
 Vemos que se ha realizado bien el dns
@@ -54,10 +52,24 @@ Primero de todo tenemos que tener el servidor y el cliente en la misma hora, par
 apt install ntp
 ```
 
-Y añadimos el servidor de horas, en este caso papion
+Y en /etc/ntpd.conf añadimos
 ```
-root@croqueta:/var/cache/bind# ntpd -u papion.gonzalonazareno.org
-root@tortilla:/home/ubuntu# ntpd -u papion.gonzalonazareno.org
+server croqueta.alejandro.gonzalonazareno.org
+```
+
+Y añadimos el servidor de horas, en este caso el nuestro
+```
+root@croqueta:/var/cache/bind# ntpd -u croqueta.alejandro.gonzalonazareno.org
+root@tortilla:/home/ubuntu# ntpd -u croqueta.alejandro.gonzalonazareno.org
+```
+
+```
+root@croqueta:/home/debian# date
+Fri 21 Feb 2020 07:52:48 AM UTC
+
+root@tortilla:/home/ubuntu# date
+Fri Feb 21 07:52:48 UTC 2020
+
 ```
 
 ## Uso de OpenLDAP
@@ -91,11 +103,14 @@ root@croqueta:~# ldapadd -f inicio.ldif -x -D "cn=admin,dc=alejandro,dc=gonzalon
 adding new entry "cn=pruebagroup1,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org"
 
 adding new entry "uid=pruebauser1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org"
-
-
-
 ```
 
+En /etc/ldap/ldap.conf editamos:
+
+```
+BASE    dc=alejandro,dc=gonzalonazareno,dc=org
+URI     ldap://ldap.alejandro.gonzalonazareno.org
+```
 
 Como no tenemos el directorio de pruebau, vamos a crear su directorio
 
@@ -110,11 +125,11 @@ Vemos los permisos
 ```
 root@croqueta:/home/users/pruebau# ls -la
 total 20
-drwxr-xr-x 2 2100 2010 4096 Feb 19 18:40 .
+drwxr-xr-x 2 2101 2010 4096 Feb 19 18:40 .
 drwxr-xr-x 3 root root 4096 Feb 19 18:39 ..
--rw-r--r-- 1 2100 2010  220 Feb 19 18:40 .bash_logout
--rw-r--r-- 1 2100 2010 3526 Feb 19 18:40 .bashrc
--rw-r--r-- 1 2100 2010  807 Feb 19 18:40 .profile
+-rw-r--r-- 1 2101 2010  220 Feb 19 18:40 .bash_logout
+-rw-r--r-- 1 2101 2010 3526 Feb 19 18:40 .bashrc
+-rw-r--r-- 1 2101 2010  807 Feb 19 18:40 .profile
 
 ```
 
@@ -126,7 +141,7 @@ Para que podamos realizar la autentificación en kerberos, primero debemos insta
 apt install --no-install-recommends libnss-ldap
 ```
 
-Identificador del servidor: ldaps://ldap.alejandro.gonzalonazareno.org
+Identificador del servidor: ldap://ldap.alejandro.gonzalonazareno.org/
 DN base: dc=alejandro,dc=gonzalonazareno,dc=org
 Versión LDAP: 3
 Ignorar
@@ -144,8 +159,8 @@ rm -f /etc/libnss-ldap.secret
 
 Y en /etc/nsswitch.conf ponemos las siguientes líneas
 ```
-passwd:         files ldap
-group:          files ldap
+passwd:         ldap files
+group:          ldap files
 ```
 
 Vamos a probar su funcionamiento.
@@ -163,6 +178,12 @@ drwxr-xr-x 5 root        root        4096 Feb 19 19:31 ..
 ```
 root@croqueta:~# getent passwd pruebauser1
 pruebauser1:*:2101:2010:pruebauser1:/home/users/pruebauser1:/bin/bash
+```
+
+Si queremos que se cacheen las consultas de ldap hacemos
+
+```
+apt install nscd
 ```
 ## Instalación y configuración de Kerberos5
 
@@ -209,9 +230,10 @@ Como vemos, debemos desactivar el puerto 750 y desactivar kerberos4
         max_life = 10h 0m 0s
         max_renewable_life = 7d 0h 0m 0s
         master_key_type = des3-hmac-sha1
-        #supported_enctypes = aes256-cts:normal aes128-cts:normal
+        supported_enctypes = aes256-cts:normal aes128-cts:normal
         default_principal_flags = +preauth
     }
+
 
 
 ```
@@ -225,20 +247,15 @@ RUN_KRB524D = false
 Y en /etc/krb5.conf añadimos las siguientes líneas
 ```
 [libdefaults]
-        default_realm = ALEJANDRO.GONZALONAZARENO.ORG
-....
-
+	default_realm = ALEJANDRO.GONZALONAZARENO.ORG
 [realms]
-ALEJANDRO.GONZALONAZARENO.ORG = {
-                kdc = kerberos.alejandro.gonzalonazareno.org   
-                admin_server = kerberos.alejandro.gonzalonazareno.org
-                }
-....
-
-[ domain_realm ]
+	ALEJANDRO.GONZALONAZARENO.ORG = {
+		kdc = kerberos.alejandro.gonzalonazareno.org
+		admin_server = kerberos.alejandro.gonzalonazareno.org
+		}
+[domain_realm]
 	.alejandro.gonzalonazareno.org = ALEJANDRO.GONZALONAZARENO.ORG
-        alejandro.gonzalonazareno.org = ALEJANDRO.GONZALONAZARENO.ORG
-....
+	alejandro.gonzalonazareno.org = ALEJANDRO.GONZALONAZARENO.ORG
 
 ```
 
@@ -370,5 +387,58 @@ Esto sale ya que no hemos logeado aún.
 Si queremos logearnos a nuestro usuario, debemos realizar lo siguiente
 
 ```
+root@tortilla:/home/ubuntu# kinit pruebauser1
+Password for pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG: 
+root@tortilla:/home/ubuntu# klist -5
+Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+
+Valid starting     Expires            Service principal
+02/21/20 08:20:57  02/21/20 18:20:57  krbtgt/ALEJANDRO.GONZALONAZARENO.ORG@ALEJANDRO.GONZALONAZARENO.ORG
+	renew until 02/22/20 08:20:51
 
 ```
+
+(Tenemos que tener abiertos los puertos 749 tcp, 464 tcp, 464 udp y 88 udp)
+
+## SASL/GSSAPI
+
+Ahora vamos a autentificar con LDAP mediante una autentificación simple y segura, para ello hacemos
+
+```
+apt install libsasl2-modules-gssapi-mit
+```
+
+Para que ldap pueda acceder al fichero de configuración de kerberos vamos a editar los permisos de /etc/krb5.keytab
+```
+chmod 640 /etc/krb5.keytab
+chgrp openldap /etc/krb5.keytab
+```
+
+Y vamos a editar slapd para que se configure con nuestro realm de kerberos en /etc/ldap/slapd.d/cn\=config.ldif
+
+```
+oclSasl-realm: ALEJANDRO.GONZALONAZARENO.ORG
+olcAuthzRegexp: uid=(.*),cn=ALEJANDRO.GONZALONAZARENO.ORG,cn=gssapi,cn=auth uid=$1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+```
+
+Y creamos el fichero /etc/ldap/sasl2/slapd.conf y le añadimos
+
+```
+mech_list: GSSAPI
+```
+
+Y reiniciamos slapd
+```
+systemctl restart slapd
+```
+
+Y miramos si está funcionando
+```
+root@croqueta:~# ldapsearch -x -b "" -s base -LLL supportedSASLMechanisms
+dn:
+supportedSASLMechanisms: GSSAPI
+
+```
+
+
