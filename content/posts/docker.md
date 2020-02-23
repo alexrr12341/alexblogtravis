@@ -201,3 +201,74 @@ docker push {usuarioDocker}/{NombreImagen}:{Version}
 
 La imagen [https://hub.docker.com/repository/docker/alexrr12341/bookmedikphp](Docker) ya estaría subida.
 
+Si queremos hacerlo con docker-compose, primero deberíamos instalarlo
+
+```
+apt install docker-compose
+```
+
+Y hacemos el fichero docker-compose.yml
+
+```
+version: '3.1'
+
+services:
+  bookmedikphp:
+    container_name: bookmedikphp
+    image: php:7.4.3-apache
+    restart: always
+    environment:
+      MARIADB_USER: bookmedik
+      MARIADB_PASS: bookmedik
+      MARIADB_HOST: servidor_mysql2
+    ports:
+      - 80:80
+    volumes:
+      - /opt/logs_apache2:/var/log/apache2
+      - ./script.sh:/usr/local/bin/script.sh
+      - ./bookmedik:/var/www/html
+    command: >
+      bash /usr/local/bin/script.sh
+  servidor_mysql2:
+    container_name: servidor_mysql2
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: bookmedik
+      MYSQL_USER: bookmedik
+      MYSQL_PASSWORD: bookmedik
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+
+```
+
+El script que ejecutaré en este caso será el siguiente:
+
+```
+#!/bin/bash
+sed -i 's/$this->user="root";/$this->user="'${MARIADB_USER}'";/g' /var/www/html/core/controller/Database.php
+sed -i 's/$this->pass="";/$this->pass="'${MARIADB_PASS}'";/g' /var/www/html/core/controller/Database.php
+sed -i 's/$this->host="localhost";/$this->host="'${MARIADB_HOST}'";/g' /var/www/html/core/controller/Database.php
+docker-php-ext-install pdo pdo_mysql mysqli json
+apache2ctl -D FOREGROUND
+
+```
+
+Para ejecutarlos hacemos
+```
+docker-compose up -d
+```
+
+Y vemos que se están ejecutando los procesos y podemos entrar a la página
+```
+
+root@docker:~/practica2# docker-compose ps
+     Name                    Command               State         Ports       
+-----------------------------------------------------------------------------
+bookmedikphp      docker-php-entrypoint bash ...   Up      0.0.0.0:80->80/tcp
+servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp     
+
+```
+
+![](/images/Bookmedik5.png)
