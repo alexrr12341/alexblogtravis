@@ -152,13 +152,13 @@ Ahora vamos a realizar el mismo ejercicio pero con una imagen de Php oficial
 
 Nuestro Dockerfile será el siguiente:
 ```
-FROM php:apache-buster
+FROM php:7.4.3-apache
 ENV MARIADB_USER bookmedik
 ENV MARIADB_PASS bookmedik
-ENV MARIADB_HOST servidor_mysql
-
+ENV MARIADB_HOST servidor_mysql2
+RUN docker-php-ext-install pdo pdo_mysql mysqli json
+RUN a2enmod rewrite
 EXPOSE 80
-
 WORKDIR /var/www/html
 COPY ./bookmedik /var/www/html
 ADD script.sh /usr/local/bin/script.sh
@@ -168,6 +168,8 @@ RUN chmod +x /usr/local/bin/script.sh
 CMD ["/usr/local/bin/script.sh"]
 
 ```
+
+El script que ejecutaremos en este caso sería el mismo que el anterior.
 
 Vamos a realizar la imagen
 ```
@@ -181,3 +183,21 @@ docker run -d --name servidor_mysql2 --network bookmedik -v /opt/bbdd_mariadb:/v
 
 docker run -d --name bookmedikphp --network bookmedik -v /opt/logs_apache2:/var/log/apache2 -p 80:80 alexrr12341/bookmedikphp:v1
 ```
+
+Vemos que podemos acceder a la página.
+
+![](/images/Bookmedik4.png)
+
+Si queremos guardar la imagen en DockerHub realizamos el siguiente comando:
+
+```
+docker push alexrr12341/bookmedikphp:v1
+```
+
+La sintaxis sería:
+```
+docker push {usuarioDocker}/{NombreImagen}:{Version}
+```
+
+La imagen [https://hub.docker.com/repository/docker/alexrr12341/bookmedikphp](Docker) ya estaría subida.
+

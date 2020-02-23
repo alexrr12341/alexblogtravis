@@ -46,29 +46,23 @@ croqueta.alejandro.gonzalonazareno.org.	42136 IN A 172.22.200.96
 ```
 
 ## Configuracion de ntp (servidor de hora)
-Primero de todo tenemos que tener el servidor y el cliente en la misma hora, para ello vamos a llamar a instalar nuestro servidor de hora en nuestra máquina
+Primero de todo tenemos que tener el servidor y el cliente en la misma hora, para ello vamos a llamar a instalar en ambas máquinas ntp
 
 ```
 apt install ntp
 ```
 
-Y en /etc/ntpd.conf añadimos
+Y en /etc/ntpd.conf del cliente tortilla añadimos
 ```
 server croqueta.alejandro.gonzalonazareno.org
 ```
 
-Y añadimos el servidor de horas, en este caso el nuestro
-```
-root@croqueta:/var/cache/bind# ntpd -u croqueta.alejandro.gonzalonazareno.org
-root@tortilla:/home/ubuntu# ntpd -u croqueta.alejandro.gonzalonazareno.org
-```
 
 ```
-root@croqueta:/home/debian# date
-Fri 21 Feb 2020 07:52:48 AM UTC
 
-root@tortilla:/home/ubuntu# date
-Fri Feb 21 07:52:48 UTC 2020
+root@tortilla:/home/ubuntu# ntpq -np
+
+ 172.22.200.96   .INIT.          16 u    -   64    0    0.000    0.000   0.000
 
 ```
 
@@ -307,22 +301,22 @@ pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
 Llegados a este punto, debemos crear un principal para pruebauser1 por lo que en kadmin.local realizamos lo siguiente
 ```
 kadmin.local:  add_principal pruebauser1
-WARNING: no policy specified for pruebauser1@alejandro.gonzalonazareno.org; defaulting to no policy
-Enter password for principal "pruebauser1@alejandro.gonzalonazareno.org": 
-Re-enter password for principal "pruebauser1@alejandro.gonzalonazareno.org": 
-Principal "pruebauser1@alejandro.gonzalonazareno.org" created.
+WARNING: no policy specified for pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Enter password for principal "pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG": 
+Re-enter password for principal "pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG": 
+Principal "pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 kadmin.local:  add_principal -randkey host/croqueta.alejandro.gonzalonazareno.org
-WARNING: no policy specified for host/croqueta.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org; defaulting to no policy
-Principal "host/croqueta.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org" created.
+WARNING: no policy specified for host/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal "host/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 kadmin.local:  add_principal -randkey host/tortilla.alejandro.gonzalonazareno.org
-WARNING: no policy specified for host/tortilla.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org; defaulting to no policy
-Principal "host/tortilla.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org" created.
+WARNING: no policy specified for host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal "host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 kadmin.local:  add_principal -randkey ldap/croqueta.alejandro.gonzalonazareno.org
 WARNING: no policy specified for ldap/croqueta.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org; defaulting to no policy
-Principal "ldap/croqueta.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org" created.
+Principal "ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 ```
 
@@ -415,7 +409,7 @@ chmod 640 /etc/krb5.keytab
 chgrp openldap /etc/krb5.keytab
 ```
 
-Y vamos a editar slapd para que se configure con nuestro realm de kerberos en /etc/ldap/slapd.d/cn\=config.ldif
+Y vamos a editar slapd para que se configure con nuestro realm de kerberos en /etc/ldap/slapd.conf
 
 ```
 oclSasl-realm: ALEJANDRO.GONZALONAZARENO.ORG
@@ -440,5 +434,8 @@ dn:
 supportedSASLMechanisms: GSSAPI
 
 ```
+
+## PAM
+
 
 
