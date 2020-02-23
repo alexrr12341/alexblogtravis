@@ -68,7 +68,7 @@ root@tortilla:/home/ubuntu# ntpq -np
 
 ## Uso de OpenLDAP
 
-Como ya tenemos un servidor de LDAP funcionando, con la estructura Group y People, vamos a crear un usuario llamado pruebau y otro pruebag en inicio.ldif
+Como ya tenemos un servidor de LDAP funcionando, con la estructura Group y People, vamos a crear un usuario llamado pruebauser1 y un grupo llamado pruebagroup en inicio.ldif
 
 ```
 dn: cn=pruebagroup,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org

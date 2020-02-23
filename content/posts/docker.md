@@ -272,3 +272,10 @@ servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp
 ```
 
 ![](/images/Bookmedik5.png)
+
+Ahora vamos a crear un escenario con nginx(bookmedik)+php-fpm+mariadb, por lo que cada uno tendrá su propio contenedor, y compartirán información para que puedan conectarse entre ellos.
+Para ello vamos a crear un docker-compose que contenga toda la información:
+
+```
+
+```
