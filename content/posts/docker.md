@@ -199,7 +199,7 @@ La sintaxis sería:
 docker push {usuarioDocker}/{NombreImagen}:{Version}
 ```
 
-La imagen [https://hub.docker.com/repository/docker/alexrr12341/bookmedikphp](Docker) ya estaría subida.
+La imagen [Docker](https://hub.docker.com/repository/docker/alexrr12341/bookmedikphp) ya estaría subida.
 
 Si queremos hacerlo con docker-compose, primero deberíamos instalarlo
 
