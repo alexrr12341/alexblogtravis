@@ -495,7 +495,11 @@ rm -r /var/lib/roundcube/installer
 Vamos a realizar una prueba, para ello vamos a enviarnos un correo para ver si nos llega a roundcube.
 ![](/images/Roundcube6.png)
 
+![](/images/Roundcube9.png)
+
 Y probamos el envio
 ![](/images/Roundcube7.png)
 
 ![](/images/Roundcube8.png)
+
+
