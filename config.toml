@@ -69,7 +69,7 @@ disqusShortname = "yourdiscussshortname"
     [languages.en]
         languagecode = "en"
         languagename = "English" # The language name to be displayed in the selector.
-        title = "Alexblog"
+        title = "Alexrrblog"
 
         # You can configure the theme parameter for each language.
         [languages.en.params]
