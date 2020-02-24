@@ -503,3 +503,102 @@ Y probamos el envio
 ![](/images/Roundcube8.png)
 
 
+Ahora vamos a configurar un servicio de antispam en nuestro correo postfix, para ello instalamos:
+
+```
+apt install amavisd-new spamassassin clamav clamav-daemon
+```
+
+Escogemos la opción de Spain
+Las demás opciones las dejamos por defecto.
+
+Agregamos a los usuarios a los grupos de cada uno para que se puedan enviar información
+```
+adduser clamav amavis
+adduser amavis clamav
+```
+
+Ahora en /etc/default/spamassassin añadimos:
+
+```
+CRON=1
+ENABLED=1
+
+```
+Y reiniciamos el sistema
+```
+systemctl restart spamassassin
+```
+
+En /etc/amavis/conf.d/15-content_filter_mode hacemos:
+
+```
+use strict;
+ 
+# You can modify this file to re-enable SPAM checking through spamassassin
+# and to re-enable antivirus checking.
+ 
+#
+# Default antivirus checking mode
+# Please note, that anti-virus checking is DISABLED by
+# default.
+# If You wish to enable it, please uncomment the following lines:
+ 
+ 
+@bypass_virus_checks_maps = (
+   \%bypass_virus_checks, \@bypass_virus_checks_acl, \$bypass_virus_checks_re);
+ 
+ 
+#
+# Default SPAM checking mode
+# Please note, that anti-spam checking is DISABLED by
+# default.
+# If You wish to enable it, please uncomment the following lines:
+ 
+ 
+@bypass_spam_checks_maps = (
+   \%bypass_spam_checks, \@bypass_spam_checks_acl, \$bypass_spam_checks_re);
+ 
+1;  # ensure a defined return
+```
+
+Reiniciamos el servicio
+```
+systemctl restart amavis
+```
+
+Ahora vamos a configurar postfix, para ello vamos a /etc/postfix/main.cf y configuramos
+
+```
+postconf -e "content_filter = smtp-amavis:[127.0.0.1]:10024"
+postconf -e 'receive_override_options = no_address_mappings'
+```
+
+Y en /etc/postfix/master.cf añadimos las siguientes lineas
+```
+amavis unix - - - - 2 smtp
+        -o smtp_data_done_timeout=1200
+        -o smtp_send_xforward_command=yes
+
+127.0.0.1:10025 inet n - - - - smtpd
+        -o content_filter=
+        -o local_recipient_maps=
+        -o relay_recipient_maps=
+        -o smtpd_restriction_classes=
+        -o smtpd_client_restrictions=
+        -o smtpd_helo_restrictions=
+        -o smtpd_sender_restrictions=
+        -o smtpd_recipient_restrictions=permit_mynetworks,reject
+        -o mynetworks=127.0.0.0/8
+        -o strict_rfc821_envelopes=yes
+        -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
+        -o smtpd_bind_address=127.0.0.1
+```
+
+Y reiniciamos postfix y clamav
+```
+systemctl restart postfix
+systemctl restart clamav-daemon
+```
+
+
