@@ -391,8 +391,8 @@ Y en /etc/roundcube/config.inc.php realizamos la siguiente configuración
 $config['default_host'] = array("imap.alejandro.gonzalonazareno.org");
 $config['smtp_server'] = 'correo.alejandro.gonzalonazareno.org';
 $config['smtp_port'] = 25;
-$config['smtp_user'] = '%u';
-$config['smtp_pass'] = '%p';
+$config['smtp_user'] = '';
+$config['smtp_pass'] = '';
 $config['product_name'] = 'Roundcube Webmail';
 $config['default_port'] = 143;
 $config['smtp_auth_type'] = 'LOGIN';
@@ -494,3 +494,8 @@ rm -r /var/lib/roundcube/installer
 
 Vamos a realizar una prueba, para ello vamos a enviarnos un correo para ver si nos llega a roundcube.
 ![](/images/Roundcube6.png)
+
+Y probamos el envio
+![](/images/Roundcube7.png)
+
+![](/images/Roundcube8.png)
