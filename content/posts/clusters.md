@@ -223,3 +223,199 @@ root@nodo1:/var/www/html# rm -r wordpress/
 ```
 
 ![](/images/Wordpress1.png)
+
+
+Ahora vamos a configurar la base de datos, para ello vamos a instalar mariadb en ambos servidores
+```
+root@nodo1:/var/www/html# apt install mariadb-server
+root@nodo2:/home/vagrant# apt install mariadb-server
+
+```
+
+Cambiamos la contraseña al root de ambas mariadb
+```
+set password = password("root");
+
+```
+
+Ahora instalaremos rsync en ambos nodos
+```
+root@nodo1:/var/www/html# apt install rsync
+root@nodo2:/home/vagrant# apt install rsync
+
+```
+
+*Como es vagrant ya lo tenemos instalado*
+
+
+Ahora vamos a configurar galera en el primer nodo, para ello vamos creamos /etc/mysql/conf.d/galera.cnf y realizamos:
+```
+[mysqld]
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+# Galera Provider Configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Galera Cluster Configuration
+wsrep_cluster_name="cluster_mariadb"
+wsrep_cluster_address="gcomm://10.1.1.101,10.1.1.102"
+
+# Galera Synchronization Configuration
+wsrep_sst_method=rsync
+
+# Galera Node Configuration
+wsrep_node_address="10.1.1.101"
+wsrep_node_name="nodo1"
+
+```
+
+En el nodo2 haremos el mismo fichero pero con esta información
+```
+[mysqld]
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+# Galera Provider Configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Galera Cluster Configuration
+wsrep_cluster_name="cluster_mariadb"
+wsrep_cluster_address="gcomm://10.1.1.101,10.1.1.102"
+
+# Galera Synchronization Configuration
+wsrep_sst_method=rsync
+
+# Galera Node Configuration
+wsrep_node_address="10.1.1.102"
+wsrep_node_name="nodo2"
+```
+
+Ahora vamos a parar mariadb en ambos nodos
+```
+systemctl stop mysql
+```
+
+Ahora en el nodo1 lanzamos el cluster
+```
+root@nodo1:/var/www/html# galera_new_cluster
+
+```
+
+Ahora verificamos si está lanzado el cluster
+```
+root@nodo1:/var/www/html# mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+Enter password: 
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| wsrep_cluster_size | 1     |
++--------------------+-------+
+
+```
+
+Ahora iniciamos el segundo nodo y miramos de vuelta el comando
+
+```
+root@nodo2:/home/vagrant# systemctl restart mysql
+
+
+root@nodo2:/home/vagrant# mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+Enter password: 
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| wsrep_cluster_size | 2     |
++--------------------+-------+
+
+```
+
+Vamos a comprobar la replicación para eso vamos a crear una base de datos llamada wordpress en el nodo1 y también un usuario igual, y vamos a observar que en nodo2 está realizada
+
+```
+root@nodo1:/var/www/html# mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 14
+Server version: 10.3.22-MariaDB-0+deb10u1 Debian 10
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> create database wordpress;
+Query OK, 1 row affected (0.020 sec)
+
+MariaDB [(none)]> create user wordpress identified by 'wordpress';
+Query OK, 0 rows affected (0.031 sec)
+
+MariaDB [(none)]> grant all privileges on wordpress.* to wordpress;
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [(none)]> flush privileges;
+Query OK, 0 rows affected (0.009 sec)
+
+
+root@nodo2:/home/vagrant# mysql -u wordpress -p wordpress
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 14
+Server version: 10.3.22-MariaDB-0+deb10u1 Debian 10
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [wordpress]> 
+
+```
+
+Como ya tenemos la base de datos wordpress, vamos a acceder a wordpress y configurar el config.php
+```
+root@nodo1:/var/www/html# cp wp-config-sample.php wp-config.php
+root@nodo1:/var/www/html# nano wp-config.php
+
+define('DB_NAME', 'wordpress');
+define('DB_USER', 'wordpress');
+define('DB_PASSWORD', 'wordpress');
+
+
+```
+
+Ahora entramos a wordpress
+
+![](/images/Wordpress2.png)
+
+Vamos a añadir un post para que comprobemos que la base de datos se replica.
+
+![](/images/Wordpress3.png)
+
+
+Ahora vamos a tirar la maquina nodo1 y vamos a comprobar que se monta en nodo2 y sigue la base de datos funcionando
+
+```
+(ansible) alexrr@pc-alex:~/git/escenarios-HA/05-HA-IPFailover-Apache2+DRBD$ vagrant halt nodo1
+
+```
+
+Miramos el nodo2
+
+```
+root@nodo2:/home/vagrant# lsblk -f
+NAME    FSTYPE LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINT
+sda                                                                      
+├─sda1  ext4         0355bc72-bb92-4894-90fa-d2ccd87e7dd6   15.4G    11% /
+├─sda2                                                                   
+└─sda5  swap         0147b768-52ec-4267-bf05-7a5aea8451a2                [SWAP]
+sdb     drbd         cd2aa0fae1bdc02a                                    
+└─drbd1                                                    432.4M    15% /var/www/html
+
+```
+
+![](/images/Wordpress4.png)
