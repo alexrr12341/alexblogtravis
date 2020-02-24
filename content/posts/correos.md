@@ -333,3 +333,164 @@ alexrodriguezrojas98@gmail.com
 
 ![](/images/crontab.png)
 
+
+Ahora vamos a instalar un webmail para nuestro servidor de correos, para ello, instalaremos roundcube.
+
+```
+apt install roundcube
+```
+
+En las opciones le damos a:
+
+```
+1-No
+2-Yes
+3-imap.alejandro.gonzalonazareno.org
+4-Ok
+5-Yes
+6-Native
+7-Slight
+8-Automatic
+9-No
+```
+
+Y creamos su base de datos
+```
+MariaDB [(none)]> create database roundcube;
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]> create user roundcube identified by 'roundcube';
+Query OK, 0 rows affected (0.07 sec)
+
+MariaDB [(none)]> grant all privileges on roundcube.* to roundcube;
+Query OK, 0 rows affected (0.02 sec)
+
+MariaDB [(none)]> flush privileges;
+Query OK, 0 rows affected (0.06 sec)
+
+```
+
+Ahora vamos a instalar roundcube-mysql para que podamos enviar la información a nuestra base de datos en tortilla
+```
+apt install roundcube-mysql
+```
+
+Y configuramos la base de datos en /etc/dbconfig-common/roundcube.conf
+```
+dbc_dbuser='roundcube'
+dbc_dbpass='roundcube'
+dbc_dbserver='tortillaint.alejandro.gonzalonazareno.org'
+dbc_dbport='3306'
+dbc_dbname='roundcube'
+dbc_dbadmin='root'
+
+```
+
+Y en /etc/roundcube/config.inc.php realizamos la siguiente configuración
+```
+$config['default_host'] = array("imap.alejandro.gonzalonazareno.org");
+$config['smtp_server'] = 'correo.alejandro.gonzalonazareno.org';
+$config['smtp_port'] = 25;
+$config['smtp_user'] = '%u';
+$config['smtp_pass'] = '%p';
+$config['product_name'] = 'Roundcube Webmail';
+$config['default_port'] = 143;
+$config['smtp_auth_type'] = 'LOGIN';
+$config['smtp_helo_host'] = 'correo.alejandro.gonzalonazareno.org';
+$config['mail_domain'] = 'alejandro.gonzalonazareno.org';
+$config['useragent'] = 'Server World Webmail';
+
+$config['imap_conn_options'] = array(
+  'ssl'         => array(
+    'verify_peer' => true,
+    'CN_match' => 'alejandro.gonzalonazareno.org',
+    'allow_self_signed' => true,
+    'ciphers' => 'HIGH:!SSLv2:!SSLv3',
+  ),
+);
+$config['smtp_conn_options'] = array(
+  'ssl'         => array(
+    'verify_peer' => true,
+    'CN_match' => 'alejandro.gonzalonazareno.org',
+    'allow_self_signed' => true,
+    'ciphers' => 'HIGH:!SSLv2:!SSLv3',
+  ),
+);
+```
+
+Y en /etc/apache2/conf-enabled/roundcube.conf hacemos
+```
+    Alias /roundcube /var/lib/roundcube
+
+```
+
+Y reiniciamos apache2
+```
+systemctl restart apache2
+```
+
+Insertamos también los datos de la base de datos roundcube
+
+```
+mysql -u roundcube -p roundcube -h tortillaint.alejandro.gonzalonazareno.org < /usr/share/roundcube/SQL/mysql.initial.sql 
+
+MariaDB [roundcube]> show tables;
++---------------------+
+| Tables_in_roundcube |
++---------------------+
+| cache               |
+| cache_index         |
+| cache_messages      |
+| cache_shared        |
+| cache_thread        |
+| contactgroupmembers |
+| contactgroups       |
+| contacts            |
+| dictionary          |
+| identities          |
+| searches            |
+| session             |
+| system              |
+| users               |
++---------------------+
+
+```
+
+Y ponemos la base de datos en configuracion en /etc/roundcube/defaults.inc.php
+```
+$config['db_dsnw'] = 'mysql://roundcube:roundcube@tortillaint/roundcube';
+```
+
+Ahora vamos a configurar el instalador, para ello hacemos:
+
+```
+cp -r /usr/share/roundcube/installer/ /var/lib/roundcube/
+```
+
+Y en /etc/roundcube/config.inc.php añadimos la linea
+```
+$config['enable_installer'] = true;
+```
+
+![](/images/Roundcube.png)
+
+Como podemos observar hay una línea que no está, por lo que vamos a instalarla
+
+```
+apt install php-net-idna2
+```
+
+![](/images/Roundcube2.png)
+
+
+![](/images/Roundcube3.png)
+![](/images/Roundcube4.png)
+
+Ahora borramos el instalador y entramos en http://{servidor}/roundcube y ponemos usuario debian/debian
+```
+rm -r /var/lib/roundcube/installer
+```
+![](/images/Roundcube5.png)
+
+Vamos a realizar una prueba, para ello vamos a enviarnos un correo para ver si nos llega a roundcube.
+![](/images/Roundcube6.png)

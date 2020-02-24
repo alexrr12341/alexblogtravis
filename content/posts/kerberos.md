@@ -96,7 +96,7 @@ root@croqueta:~# ldapadd -f inicio.ldif -x -D "cn=admin,dc=alejandro,dc=gonzalon
 
 adding new entry "cn=pruebagroup1,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org"
 
-adding new entry "uid=pruebauser1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org"
+adding new entry "uid=pruebauser1,ou=People,dc=alejandro,dcdocker-compose loop=gonzalonazareno,dc=org"
 ```
 
 En /etc/ldap/ldap.conf editamos:
