@@ -509,6 +509,11 @@ Ahora vamos a configurar un servicio de antispam en nuestro correo postfix, para
 apt install amavisd-new spamassassin clamav clamav-daemon
 ```
 
+Instalamos los descompresores y utilidades
+```
+apt install unrar-free unzip bzip2 libnet-ph-perl libnet-snpp-perl libnet-telnet-perl nomarch lzop
+```
+
 Escogemos la opción de Spain
 Las demás opciones las dejamos por defecto.
 
@@ -561,24 +566,31 @@ use strict;
  
 1;  # ensure a defined return
 ```
+Y en /etc/amavis/conf.d/20-debian_defaults ponemos
+```
+$final_spam_destiny = D_PASS;
+```
 
 Reiniciamos el servicio
 ```
 systemctl restart amavis
 ```
 
-Ahora vamos a configurar postfix, para ello vamos a /etc/postfix/main.cf y configuramos
+Ahora vamos a configurar postfix, para ello ejecutamos en la terminal:
 
 ```
-postconf -e "content_filter = smtp-amavis:[127.0.0.1]:10024"
+postconf -e 'content_filter = amavis:[127.0.0.1]:10024'
 postconf -e 'receive_override_options = no_address_mappings'
+
 ```
+
+Esto lo que hará es añadir dichas líneas de amavis en /etc/postfix/main.cf
 
 Y en /etc/postfix/master.cf añadimos las siguientes lineas
 ```
 amavis unix - - - - 2 smtp
         -o smtp_data_done_timeout=1200
-        -o smtp_send_xforward_command=yes
+        -o smtp_send_xforward_command=yes	
 
 127.0.0.1:10025 inet n - - - - smtpd
         -o content_filter=
@@ -595,10 +607,17 @@ amavis unix - - - - 2 smtp
         -o smtpd_bind_address=127.0.0.1
 ```
 
-Y reiniciamos postfix y clamav
+Y reiniciamos postfix
 ```
 systemctl restart postfix
+```
+
+Y vamos a actualizar el antivirus
+```
+systemctl restart clamav-freshclam
 systemctl restart clamav-daemon
 ```
+
+Ahora vamos a comprobar el ejemplo de anti spam con el siguiente [https://spamassassin.apache.org/gtube/gtube.txt](ejemplo)
 
 

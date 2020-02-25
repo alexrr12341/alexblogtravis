@@ -277,5 +277,94 @@ Ahora vamos a crear un escenario con nginx(bookmedik)+php-fpm+mariadb, por lo qu
 Para ello vamos a crear un docker-compose que contenga toda la información:
 
 ```
+version: '3.1'
+services:
+  bookmedik:
+    image: nginx:latest
+    container_name: bookmedik
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./bookmedik:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+  php:
+    image: php:7.4.3-fpm-buster
+    container_name: php-fpm
+    restart: always
+    environment:
+      MARIADB_USER: bookmedik
+      MARIADB_PASS: bookmedik
+      MARIADB_HOST: servidor_mysql2
+    volumes:
+      - ./bookmedik:/var/www/html
+      - ./script.sh:/usr/local/bin/script.sh
+    command: bash /usr/local/bin/script.sh
+  servidor_mysql2:
+    image: mariadb
+    container_name: servidor_mysql2
+    restart: always
+    environment:
+      MYSQL_DATABASE: bookmedik
+      MYSQL_USER: bookmedik
+      MYSQL_PASSWORD: bookmedik
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+```
+
+Y el script que ejecutaremos en php-fpm será el siguiente:
 
 ```
+#!/bin/bash
+sed -i 's/$this->user="root";/$this->user="'${MARIADB_USER}'";/g' /var/www/html/core/controller/Database.php
+sed -i 's/$this->pass="";/$this->pass="'${MARIADB_PASS}'";/g' /var/www/html/core/controller/Database.php
+sed -i 's/$this->host="localhost";/$this->host="'${MARIADB_HOST}'";/g' /var/www/html/core/controller/Database.php
+docker-php-ext-install pdo pdo_mysql mysqli json
+php-fpm
+```
+
+El default.conf que copiaremos será el siguiente:
+```
+server {
+    index index.php index.html;
+    server_name php-docker.local;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/html;
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php-fpm:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}
+```
+
+Ejecutamos docker-compose
+```
+root@docker:~/practica3# docker-compose up -d
+Starting php-fpm         ... done
+Starting servidor_mysql2 ... done
+Starting bookmedik       ... done
+
+```
+
+Vemos que todos están escuchando en los puertos correspondientes
+```
+root@docker:~/practica3# docker-compose ps
+     Name                    Command               State         Ports       
+-----------------------------------------------------------------------------
+bookmedik         nginx -g daemon off;             Up      0.0.0.0:80->80/tcp
+php-fpm           docker-php-entrypoint bash ...   Up      9000/tcp          
+servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp   
+```
+
+Y que podemos acceder.
+
+![](/images/Bookmedikfpm.png)
+

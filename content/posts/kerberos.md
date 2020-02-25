@@ -315,7 +315,7 @@ WARNING: no policy specified for host/tortilla.alejandro.gonzalonazareno.org@ALE
 Principal "host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 kadmin.local:  add_principal -randkey ldap/croqueta.alejandro.gonzalonazareno.org
-WARNING: no policy specified for ldap/croqueta.alejandro.gonzalonazareno.org@alejandro.gonzalonazareno.org; defaulting to no policy
+WARNING: no policy specified for ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
 Principal "ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
 
 ```
@@ -409,17 +409,19 @@ chmod 640 /etc/krb5.keytab
 chgrp openldap /etc/krb5.keytab
 ```
 
-Y vamos a editar slapd para que se configure con nuestro realm de kerberos en /etc/ldap/slapd.conf
-
-```
-oclSasl-realm: ALEJANDRO.GONZALONAZARENO.ORG
-olcAuthzRegexp: uid=(.*),cn=ALEJANDRO.GONZALONAZARENO.ORG,cn=gssapi,cn=auth uid=$1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
-```
-
 Y creamos el fichero /etc/ldap/sasl2/slapd.conf y le añadimos
 
 ```
 mech_list: GSSAPI
+```
+
+Y en /etc/ldap/ldap.conf realizamos:
+
+```
+SASL_MECH GSSAPI
+SASL_REALM ALEJANDRO.GONZALONAZARENO.ORG
+SASL_NOCANON ON
+
 ```
 
 Y reiniciamos slapd
@@ -435,7 +437,98 @@ supportedSASLMechanisms: GSSAPI
 
 ```
 
+Observamos en el cliente
+```
+ubuntu@tortilla:~$ ldapsearch "uidNumber=2101"
+SASL/GSSAPI authentication started
+SASL username: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+SASL SSF: 56
+SASL data security layer installed.
+# extended LDIF
+#
+# LDAPv3
+# base <dc=alejandro,dc=gonzalonazareno,dc=org> (default) with scope subtree
+# filter: uidNumber=2101
+# requesting: ALL
+#
+
+# pruebauser1, People, alejandro.gonzalonazareno.org
+dn: uid=pruebauser1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+cn: pruebauser1
+uid: pruebauser1
+loginShell: /bin/bash
+uidNumber: 2101
+gidNumber: 2010
+homeDirectory: /home/users/pruebauser1
+
+# search result
+search: 4
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+```
+
+```
+root@croqueta:/etc/ldap# ldapwhoami
+SASL/GSSAPI authentication started
+SASL username: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+SASL SSF: 256
+SASL data security layer installed.
+dn:uid=pruebauser1,cn=gssapi,cn=auth
+
+```
+
 ## PAM
 
+Ahora vamos a hacer que pam pueda acceder mediante kerberos, por lo que vamos a instalar:
+```
+root@tortilla:~# apt install libpam-krb5
+root@croqueta:~# apt install libpam-krb5
+
+```
+
+Como vamos a tocar el PAM, vamos a guardar una copia:
+
+```
+cp -r /etc/pam.d /etc/pam.d.old
+```
+
+Ahora vamos a configurar los ficheros common-*
+
+common-auth
+```
+auth	sufficient	pam_krb5.so	minimum_uid=2000	
+auth	required	pam_unix.so	try_first_pass	nullok_secure
+
+```
+common-session
+```
+session	optional	pam_krb5.so	minimum_uid=2000
+session	required	pam_unix.so
+
+```
+
+common-account
+```
+account	sufficient	pam_krb5.so	minimum_uid=2000
+account	required	pam_unix.so
+
+```
+common-password
+```
+password  sufficient  pam_krb5.so minimum_uid=1000
+password  required    pam_unix.so nullok obscure sha512
 
 
+
+```
+
+Ahora vamos a comprobar el login
+
+```
+
+```
