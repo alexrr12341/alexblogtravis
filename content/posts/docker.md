@@ -368,3 +368,86 @@ Y que podemos acceder.
 
 ![](/images/Bookmedikfpm.png)
 
+
+Ahora vamos a realizar un contenedor que contenga Drupal, que estará en una imagen base de debian y otro contenedor que contenga la base de datos mariadb
+
+Primero de todo nos descargamos drupal en nuestro ordenador.
+
+```
+wget https://www.drupal.org/download-latest/zip
+```
+
+```
+unzip zip
+```
+
+Tendremos una carpeta drupal
+```
+root@docker:~/practica4# ls
+Dockerfile  drupal-8.8.2  zip
+```
+
+Y para crear el contenedor crearemos un dockerfile con la siguiente información:
+
+```
+FROM debian
+RUN apt-get update && apt-get install -y apache2 libapache2-mod-php7.3 php7.3 php7.3-mysql php-dom php-xml php-gd php-mbstring && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN rm /var/www/html/index.html
+EXPOSE 80
+COPY ./drupal-8.8.2 /var/www/html
+ADD script.sh /usr/local/bin/script.sh
+RUN chmod +x /usr/local/bin/script.sh
+RUN chmod a+w /var/www/html/sites/default/files
+RUN cp /var/www/html/sites/default/default.settings.php /var/www/html/sites/default/settings.php
+RUN chmod a+w /var/www/html/sites/default/settings.php
+RUN a2enmod rewrite 
+CMD ["/usr/local/bin/script.sh"]
+
+```
+
+El script que ejecutaremos será el siguiente
+```
+#!/bin/bash
+sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+apache2ctl -D FOREGROUND
+```
+
+Ahora creamos una red para conectar la base de datos con drupal
+```
+root@docker:~/practica4# docker network create drupal
+```
+
+Creamos la imagen:
+
+```
+docker build -t alexrr12341/drupal:v1 .
+```
+
+Vamos a lanzar la base de datos
+```
+docker run -d --name servidor_mysql4 --network drupal -v /opt/bbdd_drupal2:/var/lib/mysql -e MYSQL_DATABASE=drupal -e MYSQL_USER=drupal -e MYSQL_PASSWORD=drupal -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+```
+
+Y lanzamos la aplicación drupal
+```
+docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 alexrr12341/drupal:v1
+```
+
+Vamos ahora a instalar drupal mediante el panel web
+
+![](/images/Drupal.png)
+![](/images/Drupal2.png)
+
+Vamos a borrar los contenedores y vamos a comprobar que drupal sigue con la información:
+
+```
+docker rm -f servidor_mysql4
+docker rm -f drupal
+```
+
+Y iniciamos los servicios
+```
+docker run -d --name servidor_mysql4 --network drupal -v /opt/bbdd_drupal2:/var/lib/mysql -e MYSQL_DATABASE=drupal -e MYSQL_USER=drupal -e MYSQL_PASSWORD=drupal -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 alexrr12341/drupal:v1
+```
+![](/images/Drupal3.png)
