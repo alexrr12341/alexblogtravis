@@ -709,11 +709,9 @@ Añadimos el esquema a ldap
 
 ```
 mkdir /tmp/borrame.d
-```
 
-```
 nano /tmp/borrame.conf
-```
+
 include /etc/ldap/schema/core.schema
 include /etc/ldap/schema/cosine.schema
 include /etc/ldap/schema/nis.schema
