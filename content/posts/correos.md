@@ -639,3 +639,256 @@ Feb 26 09:04:46 croqueta postfix/qmgr[2641]: E52312222F: removed
 ```
 
 
+### Usuarios Virtuales con LDAP
+
+Primero de todo vamos a configurar un usuario ldap para que contenga la información del correo
+
+
+Para ello primero vamos a instalar:
+```
+apt install postfix-ldap
+```
+
+Vamos a crear la unidad organizativa para postfix
+
+```
+dn:ou=postfix,dc=alejandro,dc=gonzalonazareno,dc=org
+ou: postfix
+objectClass: organizationalUnit
+
+```
+
+La añadimos a ldap
+```
+root@croqueta:~# ldapadd -f postfix.ldif -x -D "cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org" -W
+Enter LDAP Password: 
+adding new entry "ou=postfix,dc=alejandro,dc=gonzalonazareno,dc=org"
+```
+
+La estructura de correos estará bajo el directorio /home/vmail/{usuario} por lo que vamos a crearlo
+
+
+Primero creamos el grupo
+
+grouppostfix.ldif
+```
+dn:cn=vmail,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org
+cn: vmail
+gidNumber: 10004
+objectClass: top
+objectClass: posixGroup
+```
+
+
+Añadimos el grupo
+```
+root@croqueta:~# ldapadd -f grouppostfix.ldif -x -D "cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org" -W
+Enter LDAP Password: 
+adding new entry "cn=vmail,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org"
+```
+
+Hacemos la carpeta
+```
+mkdir -p /home/vmail/alexrr
+chown 10001:10004 /home/vmail/alexrr
+chmod 2755 /home/vmail/alexrr
+```	
+
+
+Instalamos el paquete courier-authlib-ldap
+```
+apt install courier-authlib-ldap
+```
+
+Y añadimos el esquema
+```
+cp /usr/share/doc/courier-authlib-ldap/authldap.schema /etc/ldap/schema/authldap.schema
+```
+
+Añadimos el esquema a ldap
+
+```
+mkdir /tmp/borrame.d
+```
+
+```
+nano /tmp/borrame.conf
+```
+include /etc/ldap/schema/core.schema
+include /etc/ldap/schema/cosine.schema
+include /etc/ldap/schema/nis.schema
+include /etc/ldap/schema/inetorgperson.schema
+include /etc/ldap/schema/authldap.schema
+```
+Hacemos el esquema
+```
+slaptest -f /tmp/borrame.conf -F /tmp/borrame.d
+```
+
+
+Añadimos el esquema a slapd
+```
+root@croqueta:~# cp /tmp/borrame.d/cn\=config/cn\=schema/cn\=\{4\}authldap.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema/
+root@croqueta:~# chown openldap:openldap /etc/ldap/slapd.d/cn\=config/cn\=schema/cn\=\{4\}authldap.ldif 
+root@croqueta:~# systemctl restart slapd
+
+```
+
+Añadimos al usuario ahora
+```
+dn:uid=alexrr,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+uid: alexrr
+cn: Alejandro
+sn: Rodríguez Rojas
+userPassword:{CRYPT}mdkQsdBAQepDU
+uidNumber: 10001
+gidNumber: 10004
+homeDirectory: /home/vmail/alexrr
+objectClass: top
+objectClass: person
+objectClass: posixAccount
+objectClass: CourierMailAccount
+mail: alexrr@alejandro.gonzalonazareno.org
+mailbox: alexrr/
+quota: 0
+```
+
+```
+root@croqueta:~# ldapadd -f alexrr.ldif -x -D "cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org" -W
+Enter LDAP Password: 
+adding new entry "uid=alexrr,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org"
+```
+
+
+Ahora vamos a /etc/postfix/main.cf y añadimos las siguientes líneas
+```
+virtual_mailbox_domains = alejandro.gonzalonazareno.org
+virtual_mailbox_base = /home/vmail
+virtual_minimum_uid = 100
+
+#Virtual User
+
+virtual_mailbox_maps = ldap:vuser
+
+vuser_server_host = 127.0.0.1
+vuser_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+vuser_query_filter = (&(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+vuser_result_attribute = mailbox
+vuser_bind = no
+
+#Virtual User uid
+
+virtual_uid_maps = ldap:uidldap
+
+uidldap_server_host = 127.0.0.1
+uidldap_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+uidldap_query_filter = (&(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+uidldap_result_attribute = uidNumber
+uidldap_bind = no
+
+#Virtual User gid
+
+virtual_gid_maps = ldap:gidldap
+
+gidldap_server_host = 127.0.0.1
+gidldap_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+gidldap_query_filter = (&(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+gidldap_result_attribute = gidNumber
+gidldap_bind = no
+```
+
+Vamos a enviar un email
+
+![](/images/postfixLDAP.png)
+
+
+
+Y vemos que llega la información y es enviada al usuario ldap.
+
+```
+Feb 26 11:15:00 croqueta postfix/qmgr[11640]: D64C32381F: from=<alexrodriguezrojas98@gmail.com>, size=2888, nrcpt=1 (queue active)
+Feb 26 11:15:00 croqueta postfix/smtpd[11676]: disconnect from babuino-smtp.gonzalonazareno.org[192.168.203.3] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: connect from localhost[127.0.0.1]
+Feb 26 11:15:03 croqueta postfix/trivial-rewrite[11680]: warning: do not list domain alejandro.gonzalonazareno.org in BOTH mydestination and virtual_mailbox_domains
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: 37ABA23820: client=localhost[127.0.0.1]
+Feb 26 11:15:03 croqueta postfix/cleanup[11681]: 37ABA23820: message-id=<CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com>
+Feb 26 11:15:03 croqueta postfix/qmgr[11640]: 37ABA23820: from=<alexrodriguezrojas98@gmail.com>, size=3420, nrcpt=1 (queue active)
+Feb 26 11:15:03 croqueta postfix/trivial-rewrite[11680]: warning: do not list domain alejandro.gonzalonazareno.org in BOTH mydestination and virtual_mailbox_domains
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: disconnect from localhost[127.0.0.1] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 11:15:03 croqueta amavis[3492]: (03492-02) Passed CLEAN {RelayedInbound}, [192.168.203.3]:55548 [209.85.166.42] <alexrodriguezrojas98@gmail.com> -> <alexrr@alejandro.gonzalonazareno.org>, Queue-ID: D64C32381F, Message-ID: <CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com>, mail_id: y56hSa8ZL3DA, Hits: 0.052, size: 2888, queued_as: 37ABA23820, 2342 ms
+Feb 26 11:15:03 croqueta postfix/smtp[11682]: D64C32381F: to=<alexrr@alejandro.gonzalonazareno.org>, relay=127.0.0.1[127.0.0.1]:10024, delay=2.4, delays=0.04/0.01/0/2.3, dsn=2.0.0, status=sent (250 2.0.0 from MTA(smtp:[127.0.0.1]:10025): 250 2.0.0 Ok: queued as 37ABA23820)
+Feb 26 11:15:03 croqueta postfix/qmgr[11640]: D64C32381F: removed
+Feb 26 11:15:03 croqueta postfix/local[11698]: 37ABA23820: to=<alexrr@alejandro.gonzalonazareno.org>, relay=local, delay=0.05, delays=0.01/0.03/0/0.01, dsn=2.0.0, status=sent (delivered to maildir)
+```
+
+
+Vemos que el correo ha llegado
+```
+root@croqueta:/home/vmail/alexrr/Maildir/new# ls
+1582715703.Vfe01I60105M268039.croqueta.alejandro.gonzalonazareno.org
+root@croqueta:/home/vmail/alexrr/Maildir/new# cat 1582715703.Vfe01I60105M268039.croqueta.alejandro.gonzalonazareno.org 
+Return-Path: <alexrodriguezrojas98@gmail.com>
+X-Original-To: alexrr@alejandro.gonzalonazareno.org
+Delivered-To: alexrr@alejandro.gonzalonazareno.org
+Received: from localhost (localhost [127.0.0.1])
+	by alejandro.gonzalonazareno.org (Postfix) with ESMTP id 37ABA23820
+	for <alexrr@alejandro.gonzalonazareno.org>; Wed, 26 Feb 2020 11:15:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at alejandro.gonzalonazareno.org
+Received: from alejandro.gonzalonazareno.org ([127.0.0.1])
+	by localhost (alejandro.gonzalonazareno.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id y56hSa8ZL3DA for <alexrr@alejandro.gonzalonazareno.org>;
+	Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: from babuino-smtp.gonzalonazareno.org (babuino-smtp.gonzalonazareno.org [192.168.203.3])
+	by alejandro.gonzalonazareno.org (Postfix) with ESMTP id D64C32381F
+	for <alexrr@alejandro.gonzalonazareno.org>; Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	by babuino-smtp.gonzalonazareno.org (Postfix) with ESMTPS id 9CC63C9D58
+	for <alexrr@alejandro.gonzalonazareno.org>; Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: by mail-io1-f42.google.com with SMTP id m25so2891673ioo.8
+        for <alexrr@alejandro.gonzalonazareno.org>; Wed, 26 Feb 2020 03:15:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=14DaWJPDIvc1Labl5BH74k7de9aCaM2tSI6nfSeboVk=;
+        b=gqd/pUli6lJ7FA6SFUT3YTc4YAJh5vSAZbPAcBoYL4pRJrRtAJb2+EwIevZsRbcxl0
+         tGtTsljFE8uSwy6xGCDZtZ3rkEpmbtssFadt6bQAKTZWUoQ39gY2zmglX/U3j6Fpyftr
+         Y6PLN8jGeskHdIrHZM50RJaHbu/WwzjE+nK+rM3mTf/75GJEr95HIpllOrGcrywX3Lom
+         IenoDnTc8qgcDkm1t/YRbfb7tXoIIx4n/7+WsSCJS6nH2dSfuZhuNTco+LrVfXQ7sXAO
+         MAFPnnnnvLkG/JBi1GDjct9cxD/+iS2U16oR/RWuLxXQ2LXTqlBBZiwHGvc71MVUD46O
+         nbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=14DaWJPDIvc1Labl5BH74k7de9aCaM2tSI6nfSeboVk=;
+        b=RcEk4YXrX0pvejaJB9o4AZOrO3SVF0r4MakohjBmutc0SCDNfr8sKdH0hz/xxmBizk
+         M0OzdqRFyNb/PPwU4Tfa66wwlg5ADSoDoslZ9NE5gGaPVZCa97Iuu/b4XznDmlDgb+Pg
+         30OsPuZvLcv2d2yShIBti/dPkKazRSQqbUkDAhkeRfts1/JEPjGcciylruP/YFiofkZS
+         xrIBpDcGUN0c+6zcNSmZ7IKkJjJLcxpIY2KgN6WdvP0tvTrQ4nFUaj9wnwL+MTKI43LD
+         FlRYdo8QkbtrRRu+TeLmYT80rL6hj8t2qj3BS9XzUvWGXM0QFLHa4EKPzB+aq1ki0Sgb
+         vwQA==
+X-Gm-Message-State: APjAAAWDQgr0IIBupFfUCWc5U42t3Q8qit9LT5UBruI0gnu0Jn6dbGgZ
+	/3mJjOd3e3zEOCSv125rHuTDp1MunayPQQ/2FPnyDA==
+X-Google-Smtp-Source: APXvYqyujYh+9EBR/opZ/uBVeks4vc2u85MU9AehD0kF9qaP9F9ciuf4r18BBfuUc2YXVbdWBYGkPgyyIAy9OOF9ino=
+X-Received: by 2002:a6b:ea05:: with SMTP id m5mr1935606ioc.191.1582715698378;
+ Wed, 26 Feb 2020 03:14:58 -0800 (PST)
+MIME-Version: 1.0
+From: Alejandro Rodriguez Rojas <alexrodriguezrojas98@gmail.com>
+Date: Wed, 26 Feb 2020 12:14:46 +0100
+Message-ID: <CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com>
+Subject: Prueba ldap
+To: alexrr@alejandro.gonzalonazareno.org
+Content-Type: multipart/alternative; boundary="000000000000fb7ccb059f78b629"
+
+--000000000000fb7ccb059f78b629
+Content-Type: text/plain; charset="UTF-8"
+
+Hola esto es una prueba
+
+--000000000000fb7ccb059f78b629
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">Hola esto es una prueba<br></div>
+
+--000000000000fb7ccb059f78b629--
+
+```
