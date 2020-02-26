@@ -568,7 +568,7 @@ use strict;
 ```
 Y en /etc/amavis/conf.d/20-debian_defaults ponemos
 ```
-$final_spam_destiny = D_PASS;
+$final_spam_destiny = D_DISCARD;
 ```
 
 Reiniciamos el servicio
@@ -614,10 +614,26 @@ systemctl restart postfix
 
 Y vamos a actualizar el antivirus
 ```
-systemctl restart clamav-freshclam
-systemctl restart clamav-daemon
+systemctl stop clamav-freshclam
+freshclam
+systemctl stop clamav-daemon
+clamd
+systemctl start clamav-daemon
+systemctl start clamav-freshclam
 ```
 
-Ahora vamos a comprobar el ejemplo de anti spam con el siguiente [https://spamassassin.apache.org/gtube/gtube.txt](ejemplo)
+Ahora vamos a comprobar el ejemplo de anti spam con el siguiente [ejemplo](https://spamassassin.apache.org/gtube/gtube.txt)
+
+Nos enviamos un correo con spam
+![](/images/AntiSpam.png)
 
 
+Vamos a comprobar los logs de emails
+```
+Feb 26 09:04:44 croqueta postfix/qmgr[2641]: E52312222F: from=<alexrodriguezrojas98@gmail.com>, size=2997, nrcpt=1 (queue active)
+Feb 26 09:04:44 croqueta postfix/smtpd[3558]: disconnect from babuino-smtp.gonzalonazareno.org[192.168.203.3] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 09:04:46 croqueta amavis[3491]: (03491-01) Blocked SPAM {DiscardedInbound,Quarantined}, [192.168.203.3]:47508 [209.85.166.194] <alexrodriguezrojas98@gmail.com> -> <debian@alejandro.gonzalonazareno.org>, quarantine: W/spam-WK3LMJCskwci.gz, Queue-ID: E52312222F, Message-ID: <CAPN2xJTcpDLpWPjvhtGsWeSuWFWtj+Tfv2cuevh4VKUh2+TNEw@mail.gmail.com>, mail_id: WK3LMJCskwci, Hits: 1000.053, size: 2997, 1093 ms
+Feb 26 09:04:46 croqueta postfix/smtp[3562]: E52312222F: to=<debian@alejandro.gonzalonazareno.org>, relay=127.0.0.1[127.0.0.1]:10024, delay=1.1, delays=0.03/0.01/0.01/1.1, dsn=2.7.0, status=sent (250 2.7.0 Ok, discarded, id=03491-01 - spam)
+Feb 26 09:04:46 croqueta postfix/qmgr[2641]: E52312222F: removed
+
+```

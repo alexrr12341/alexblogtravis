@@ -451,3 +451,46 @@ docker run -d --name servidor_mysql4 --network drupal -v /opt/bbdd_drupal2:/var/
 docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 alexrr12341/drupal:v1
 ```
 ![](/images/Drupal3.png)
+
+
+Vamos ahora a instalar un nextcloud mediante la imagen oficial
+
+Para ello instalamos nextcloud
+```
+docker pull nextcloud
+```
+
+
+Vamos a realizar la creación de la red
+
+```
+docker network create nextcloud
+```
+
+Creamos la imagen de nextcloud
+```
+docker run -d \
+    --network nextcloud \
+    --name nextcloud \
+    -p 80:80 \
+    -e MYSQL_DATABASE=nextcloud \
+    -e MYSQL_USER=nextcloud \
+    -e MYSQL_PASSWORD=nextcloud \
+    -e MYSQL_HOST=mariadb_nextcloud \
+    -e NEXTCLOUD_ADMIN_USER=Alexrr \
+    -e NEXTCLOUD_ADMIN_PASSWORD=alex \
+    -v /opt/nextcloud:/var/www/html \
+    -v /opt/nextcloud/apps:/var/www/html/custom_apps \
+    -v /opt/nextcloud/config:/var/www/html/config \
+    -v /opt/nextcloud/data:/var/www/html/data \
+    nextcloud
+```
+
+Creamos también la base de datos
+
+```
+docker run -d --name mariadb_nextcloud --network nextcloud -v /opt/bbdd_nextcloud:/var/lib/mysql -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=nextcloud -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+```
+
+
+![](/images/Nextcloud.png)
