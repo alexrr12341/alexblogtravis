@@ -333,3 +333,188 @@ Vemos que el parametro cookie ahora es:
 ```
 Cookie:PHPSESSID=EL_UNO~98pm9cphn1i3ui30lundf6dar4
 ```
+
+## Proxy inverso
+
+Vamos a utilizar el escenario anterior pero vamos a deshabilitar haproxy, para ello lo desinstalamos
+```
+apt purge haproxy
+```
+
+
+Vamos ahora a configurar en balanceador un nginx que actuará como proxy inverso, para ello lo instalamos
+```
+vagrant@balanceador:~$ sudo apt install nginx
+
+```
+
+Nos vamos a descargar la siguiente [plantilla](https://es.000webhost.com/plantillas/animales_mascotas/animal-shelter)
+
+
+Metemos la hoja de estilo en la carpeta de vagrant y hacemos un rsync
+```
+alexrr@pc-alex:~/vagrant/escenarioBalanceador$ ls -al
+total 4916
+drwxr-xr-x  3 alexrr alexrr    4096 mar  3 10:50 .
+drwxr-xr-x 32 alexrr alexrr    4096 mar  3 09:36 ..
+-rw-r--r--  1 alexrr alexrr 4999402 mar  3 10:35 animal-shelter.zip
+-rw-r--r--  1 alexrr alexrr     191 feb 16 20:30 index1.html
+-rw-r--r--  1 alexrr alexrr     191 feb 16 20:30 index2.html
+-rw-r--r--  1 alexrr alexrr     560 feb 16 20:31 sesion.php
+drwxr-xr-x  4 alexrr alexrr    4096 mar  3 09:37 .vagrant
+-rw-r--r--  1 alexrr alexrr    1722 feb 16 20:45 Vagrantfile
+-rw-r--r--  1 alexrr alexrr    1849 mar  3 09:36 vagrant.zip
+
+```
+
+```
+vagrant rsync
+```
+
+Y estará nuestra hoja de estilo en /vagrant de las máquinas
+```
+root@apache1:/vagrant# ls
+animal-shelter.zip  index1.html  index2.html  sesion.php  Vagrantfile  vagrant.zip
+
+```
+
+Y descomprimimos la hoja de estilo en ambas máquinas.
+
+```
+root@apache1:/var/www/html# unzip animal-shelter.zip 
+
+root@apache2:/var/www/html# unzip animal-shelter.zip 
+
+```
+
+```
+root@apache2:/var/www/html# ls
+ about.html		 blog-home.html     contact.html   elements.html   index.html   scss
+'Animal Shelter - Doc'	 blog-single.html   css		   fonts	   js	        volunteer.html
+ animal-shelter.zip	 cats.html	    dogs.html	   img		   mail.php
+
+root@apache1:/var/www/html# ls
+ about.html		 blog-home.html     contact.html   elements.html   index.html   scss
+'Animal Shelter - Doc'	 blog-single.html   css		   fonts	   js	        volunteer.html
+ animal-shelter.zip	 cats.html	    dogs.html	   img		   mail.php
+
+```
+
+Ahora vamos a configurar dos virtual host en nginx que hagan su proxy inverso en el puerto 8080, para ello vamos a hacer que ambos apaches escuchen por el puerto 8080
+
+```
+<VirtualHost *:8080>
+...
+
+```
+
+/etc/apache2/ports.conf
+```
+Listen 8080
+```
+
+
+Hacemos un virtual host para la app1
+/etc/nginx/sites-available/app1
+```
+upstream proxy {
+    server 10.10.10.11:8080;
+    keepalive 64;
+}
+
+server {
+	listen 80;
+	server_name www.app1.org;
+	location / {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://proxy;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection "keep-alive";
+		proxy_store off;
+	}
+}
+```
+
+Y para la app2
+
+/etc/nginx/sites-available/app2
+```
+upstream proxy2 {
+    server 10.10.10.22:8080;
+    keepalive 64;
+}
+
+server {
+	listen 80;
+	server_name www.app2.org;
+	location / {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://proxy2;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection "keep-alive";
+		proxy_store off;
+	}
+}
+```
+
+Hacemos el enlace simbolico y reiniciamos nginx
+```
+root@balanceador:/etc/nginx/sites-available# ln -s /etc/nginx/sites-available/app1 /etc/nginx/sites-enabled/
+root@balanceador:/etc/nginx/sites-available# ln -s /etc/nginx/sites-available/app2 /etc/nginx/sites-enabled/
+root@balanceador:/etc/nginx/sites-available# systemctl restart nginx
+```
+
+Apache1
+
+![](/images/Inverso.png)
+![](/images/Inverso2.png)
+
+
+Apache2
+![](/images/Inverso3.png)
+![](/images/Inverso4.png)
+
+Ahora vamos a hacerlo con un único virtualhost que será www.servidor.org, /app1 para el primer apache y /app2 para el segundo.
+
+```
+server {
+	listen 80;
+	server_name www.servidor.org;
+
+	location /app1/ {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://10.10.10.11:8080/;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection "keep-alive";
+		proxy_store off;
+	}
+        location /app2/ {
+                proxy_set_header X-Forwarded-Host $host;
+                proxy_set_header X-Forwarded-Server $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://10.10.10.22:8080/;
+                proxy_http_version 1.1;
+                proxy_pass_request_headers on;
+                proxy_set_header Connection "keep-alive";
+                proxy_store off;
+        }
+}
+
+```
+
+Apache1
+![](/images/Inverso5.png)
+![](/images/Inverso6.png)
+
+Apache2
+![](/images/Inverso7.png)
+![](/images/Inverso8.png)
