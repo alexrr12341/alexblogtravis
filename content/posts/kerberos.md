@@ -153,8 +153,9 @@ rm -f /etc/libnss-ldap.secret
 
 Y en /etc/nsswitch.conf ponemos las siguientes líneas
 ```
-passwd:         ldap files
-group:          ldap files
+passwd:         files ldap
+group:          files ldap
+
 ```
 
 Vamos a probar su funcionamiento.
@@ -420,8 +421,6 @@ Y en /etc/ldap/ldap.conf realizamos:
 ```
 SASL_MECH GSSAPI
 SASL_REALM ALEJANDRO.GONZALONAZARENO.ORG
-SASL_NOCANON ON
-
 ```
 
 Y reiniciamos slapd
@@ -520,15 +519,25 @@ account	required	pam_unix.so
 ```
 common-password
 ```
-password  sufficient  pam_krb5.so minimum_uid=1000
-password  required    pam_unix.so nullok obscure sha512
-
-
+password  sufficient  pam_krb5.so minimum_uid=2000
+password  required    pam_unix.so nullok obscure min=4 max=8 md5 sha512
 
 ```
 
 Ahora vamos a comprobar el login
 
 ```
+root@croqueta:~# login pruebauser1
+Password: 
+Last login: Wed Feb 26 18:38:51 UTC 2020 on pts/0
+Linux croqueta.alejandro.gonzalonazareno.org 4.19.0-8-cloud-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+pruebauser1@croqueta:~$ 
 
 ```
