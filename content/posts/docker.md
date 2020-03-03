@@ -7,6 +7,9 @@ math = "true"
 
 ## Implantación de aplicaciones web PHP en Docker
 
+
+### Ejecución de una aplicación web PHP en docke
+
 Vamos a implantar una aplicación web basada en citas médicas, escrita en php.
 
 Primero vamos a realizar la instalación de docker
@@ -147,6 +150,7 @@ bf36aa451fd4e168b32cd8fdaeb24067cf2606b3189b74c6555c7f9e0c71b56f
 
 ![](/images/Bookmedik3.png)
 
+### Ejecución de una aplicación web PHP en docker
 
 Ahora vamos a realizar el mismo ejercicio pero con una imagen de Php oficial
 
@@ -273,6 +277,8 @@ servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp
 
 ![](/images/Bookmedik5.png)
 
+### Ejecución de una aplicación PHP en docker
+
 Ahora vamos a crear un escenario con nginx(bookmedik)+php-fpm+mariadb, por lo que cada uno tendrá su propio contenedor, y compartirán información para que puedan conectarse entre ellos.
 Para ello vamos a crear un docker-compose que contenga toda la información:
 
@@ -369,6 +375,8 @@ Y que podemos acceder.
 ![](/images/Bookmedikfpm.png)
 
 
+### Ejecución de un CMS en docker
+
 Ahora vamos a realizar un contenedor que contenga Drupal, que estará en una imagen base de debian y otro contenedor que contenga la base de datos mariadb
 
 Primero de todo nos descargamos drupal en nuestro ordenador.
@@ -453,6 +461,8 @@ docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 a
 ![](/images/Drupal3.png)
 
 
+### Ejecución de un CMS en docker(Imágen oficial)
+
 Vamos ahora a instalar un nextcloud mediante la imagen oficial
 
 Para ello instalamos nextcloud
@@ -460,37 +470,55 @@ Para ello instalamos nextcloud
 docker pull nextcloud
 ```
 
+Creamos el docker-compose para ambos contenedores
+```
+version: '3.1'
+services:
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+      POSTGRES_HOST: postgres_next
+    volumes:
+      - /opt/nextcloud:/var/www/html
+  postgres_next:
+    image: postgres
+    container_name: postgres_next
+    restart: always
+    environment:
+      POSTGRES_USER: nextcloud
+      POSTGRES_DB: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+    volumes:
+      - /opt/bbdd_nextcloud:/var/lib/postgresql
 
-Vamos a realizar la creación de la red
 
 ```
-docker network create nextcloud
+
+Y activamos el docker-compose
+```
+root@docker:~/practica5# docker-compose up -d
+
+
+root@docker:~/practica5# docker-compose ps
+    Name                   Command               State         Ports       
+---------------------------------------------------------------------------
+nextcloud       /entrypoint.sh apache2-for ...   Up      0.0.0.0:80->80/tcp
+postgres_next   docker-entrypoint.sh postgres    Up      5432/tcp 
 ```
 
-Creamos la imagen de nextcloud
-```
-docker run -d \
-    --network nextcloud \
-    --name nextcloud \
-    -p 80:80 \
-    -e MYSQL_DATABASE=nextcloud \
-    -e MYSQL_USER=nextcloud \
-    -e MYSQL_PASSWORD=nextcloud \
-    -e MYSQL_HOST=mariadb_nextcloud \
-    -e NEXTCLOUD_ADMIN_USER=Alexrr \
-    -e NEXTCLOUD_ADMIN_PASSWORD=alex \
-    -v /opt/nextcloud:/var/www/html \
-    -v /opt/nextcloud/apps:/var/www/html/custom_apps \
-    -v /opt/nextcloud/config:/var/www/html/config \
-    -v /opt/nextcloud/data:/var/www/html/data \
-    nextcloud
-```
 
-Creamos también la base de datos
-
-```
-docker run -d --name mariadb_nextcloud --network nextcloud -v /opt/bbdd_nextcloud:/var/lib/mysql -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=nextcloud -e MYSQL_ROOT_PASSWORD=asdasd mariadb
-```
-
+Como tenemos las variables de entorno configuradas solo tenemos que introducir el usuario con privilegios para nextcloud y su contraseña
 
 ![](/images/Nextcloud.png)
+
+![](/images/Nextcloud2.png)
+
+![](/images/Nextcloud3.png)
+
