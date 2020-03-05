@@ -541,3 +541,161 @@ permitted by applicable law.
 pruebauser1@croqueta:~$ 
 
 ```
+
+## Network File System 4 (NFS4)
+
+Como croqueta funcionará como servidor NFS, tenemos que instalar el paquete correspondiente
+```
+apt install nfs-kernel-server
+```
+
+Ahora vamos a configurarlo para que utilice el GSSAPI de kerberos
+
+/etc/default/nfs-common
+```
+NEED IDMAPD=yes
+
+NEED_GSSD=yes
+
+```
+
+
+/etc/default/nfs-kernel-server
+```
+NEED_SVCGSSD="yes"
+```
+
+/etc/idmapd.conf
+```
+Domain = alejandro.gonzalonazareno.org
+
+```
+
+Ahora crearemos los principales en kerberos, siendo el principal de tortilla en un directorio temporal para pasarselo acto seguido.
+```
+root@croqueta:~# kadmin.local
+
+Authenticating as principal pruebauser1/admin@ALEJANDRO.GONZALONAZARENO.ORG with password.
+kadmin.local:  add_principal -randkey nfs/croqueta.alejandro.gonzalonazareno.org
+WARNING: no policy specified for nfs/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal "nfs/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
+
+kadmin.local:  add_principal -randkey nfs/tortilla.alejandro.gonzalonazareno.org
+WARNING: no policy specified for nfs/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal "nfs/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG" created.
+
+kadmin.local:  ktadd nfs/croqueta.alejandro.gonzalonazareno.org
+Entry for principal nfs/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+Entry for principal nfs/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+
+kadmin.local:  ktadd -k /tmp/krb5.keytab nfs/tortilla.alejandro.gonzalonazareno.org
+Entry for principal nfs/tortilla.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab WRFILE:/tmp/krb5.keytab.
+Entry for principal nfs/tortilla.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab WRFILE:/tmp/krb5.keytab.
+
+```
+
+Pasamos los ficheros a tortilla con scp
+```
+root@croqueta:~/.ssh# scp /tmp/krb5.keytab root@tortilla.alejandro.gonzalonazareno.org:/etc/krb5.keytab
+krb5.keytab                                                           100%  248   136.3KB/s   00:00  
+root@croqueta:~/.ssh# rm /tmp/krb5.keytab 
+
+```
+
+Ahora vamos a montar un directorio en /srv/nfs4/homes donde colgaran todos los homes de los usuarios del sistema.
+
+```
+root@croqueta:~# mkdir -p /srv/nfs4/homes
+root@croqueta:/srv/nfs4/homes# mount --bind /home /srv/nfs4/homes
+
+```
+
+Para definir las exportaciones iremos al fichero /etc/exports y haremos lo siguiente:
+
+```
+/srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+/srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+```
+
+Y reiniciamos los servicios
+```
+root@croqueta:/srv/nfs4/homes# systemctl restart nfs-kernel-server
+root@croqueta:/srv/nfs4/homes# systemctl restart nfs-common
+
+```
+
+Si no podemos reiniciar nfs-common, es debido a que está enmascarado, para ello hacemos:
+```
+rm /lib/systemd/system/nfs-common.service
+systemctl daemon-reload
+```
+
+Miramos si están montados
+```
+root@croqueta:~# showmount -e
+Export list for croqueta.alejandro.gonzalonazareno.org:
+/srv/nfs4/homes gss/krb5i
+/srv/nfs4       gss/krb5i
+
+```
+
+
+En tortilla ahora vamos a configurar el cliente, por lo que vamos a instalar el paquete nfs-common
+```
+root@tortilla:~# apt install nfs-common
+
+```
+
+Lo configuramos->
+
+/etc/default/nfs-common
+```
+NEED_GSSD=yes
+NEED_IDMAPD=yes
+
+```
+
+/etc/idmapd.conf
+```
+Domain = alejandro.gonzalonazareno.org
+
+```
+
+Y reiniciamos el servicio
+```
+systemctl restart nfs-common
+```
+
+Montamos y comprobamos(tenemos que activar el puerto 2049 udp y tcp)
+
+
+Para ello editaremos el fstab de ambos:
+
+Croqueta(Servidor):
+
+```
+/home	/srv/nfs4/homes	none	rw,bind	0	0
+
+```
+
+Tortilla(Cliente):
+
+```
+croqueta.alejandro.gonzalonazareno.org:/homes     /home/nfs4   nfs4    rw,sec=krb5i 0 0
+```
+
+
+Aqui podemos demostrar que se ha montado
+```
+root@tortilla:/home/nfs4/users/pruebauser1# ls -al
+total 28
+drwxr-xr-x 3 nobody 4294967294 4096 Feb 26 18:35 .
+drwxr-xr-x 5 root   root       4096 Mar  5 08:56 ..
+-rw------- 1 nobody 4294967294  308 Mar  4 12:22 .bash_history
+-rw-r--r-- 1 nobody 4294967294  220 Feb 19 19:31 .bash_logout
+-rw-r--r-- 1 nobody 4294967294 3526 Feb 19 19:31 .bashrc
+drwx------ 3 nobody 4294967294 4096 Feb 26 18:35 .gnupg
+-rw-r--r-- 1 nobody 4294967294  807 Feb 19 19:31 .profile
+root@tortilla:/home/nfs4/users/pruebauser1# 
+
+```
