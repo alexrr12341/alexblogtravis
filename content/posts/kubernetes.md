@@ -51,6 +51,15 @@ end
 
 En mi caso voy a usar las instancias de openstack debido a que mi ordenador no soporta el peso de instalación de kubeadm, por lo que tendremos una máquina kubeadm, que es la master y nodo1 y nodo2 que serán los slaves, en mi caso las máquinas serán Debian Buster 10.3.
 
+Antes de la instalación, debemos cambiar las reglas de iptables a iptables legacy, para ello hacemos:
+```
+sudo apt-get install -y iptables arptables ebtables
+
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+sudo update-alternatives --set arptables /usr/sbin/arptables-legacy
+sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+```
 
 Vamos a instalar docker.io en todas las máquinas
 ```
@@ -143,58 +152,38 @@ nodo2     Ready    <none>   65s   v1.17.3
 Ahora que tenemos ya kubeadm configurado, vamos a instalar un wordpress en un pod, y un mariadb en otro, por lo que vamos a hacer la configuración necesaria para instalarlo
 
 
-## Creación de volúmenes persistentes para mariadb y wordpress
+## Creación del namespace
 
-Vamos a crear la carpeta para guardar los volúmenes
-```
-root@kubeadm:~# mkdir -p /kubernetes/vol
-```
+Vamos a trabajar con un namespace que se llamará wordpress.
 
-Vamos a crear el fichero vols.yaml de la siguiente manera
+Para ello crearemos el siguiente fichero:
+
+wordpress-name.yml
 ```
 apiVersion: v1
-kind: PersistentVolume
+kind: Namespace
 metadata:
-    name: wordpress-vol
-    labels:
-      type: local
-spec:
-   capacity:
-     storage: 2Gi
-   accessModes:
-     - ReadWriteMany
-   hostPath:
-     path: /kubernetes/vol/wordpress-vol
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-   name: mariadb-vol
-   labels:
-     type: local
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: /kubernetes/vol/mariadb-vol
+  name: wordpress
 ```
 
-Vamos a crear los volumenes
+Y lo ejecutaremos con kubectl
 ```
-debian@kubeadm:~$ kubectl apply -f vols.yaml
-persistentvolume/wordpress-vol created
-persistentvolume/mariadb-vol created
-
+kubectl create -f wordpress-name.yml 
+namespace/wordpress created
 
 ```
 
-## Creación de la base de datos Mariadb
 
-Vamos ahora a crear un objeto secreto, que sirve para que no podamos enviar la contraseña de mariadb en claro a otros usuarios, y poder utilizarla con kubernetes, para ello realizamos lo siguiente:
+## Uso de secretos 
+
+Los secretos sirven para que las variables no se envien de forma clara, aunque el método de encriptación es de base64, sirve para ciertas páginas web de gestión de versiones donde no podemos enviar la contraseña en claro.
+Para ello hacemos el fichero con el siguiente comando
+
 ```
-kubectl create secret generic mysql-pass --from-literal=password="{contraseña}"
-secret/mysql-pass created
-
+kubectl create secret generic mariadb-secret --namespace=wordpress \
+                            --from-literal=dbuser=wordpress \
+                            --from-literal=dbname=wordpress \
+                            --from-literal=dbpassword=wordpress \
+                            --from-literal=dbrootpassword=root \
+                            -o yaml --dry-run > maria-secreto.yaml
 ```

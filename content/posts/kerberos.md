@@ -681,7 +681,8 @@ Croqueta(Servidor):
 Tortilla(Cliente):
 
 ```
-croqueta.alejandro.gonzalonazareno.org:/homes     /home/nfs4   nfs4    rw,sec=krb5i 0 0
+croqueta.alejandro.gonzalonazareno.org:/homes     /home   nfs4    rw,sec=krb5i 0 0
+
 ```
 
 
@@ -699,3 +700,41 @@ drwx------ 3 nobody 4294967294 4096 Feb 26 18:35 .gnupg
 root@tortilla:/home/nfs4/users/pruebauser1# 
 
 ```
+
+Por último, vamos a instalar libnss en tortilla
+```
+apt install libnss-ldap
+```
+
+
+Y comprobamos que hay login en croqueta y tortilla
+
+```
+root@tortilla:~# login pruebauser1
+Password: 
+Last login: Thu Mar  5 13:06:57 UTC 2020 from 172.22.200.96 on pts/1
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-88-generic x86_64)
+
+pruebauser1@tortilla:~$ pwd
+/home/users/pruebauser1
+pruebauser1@tortilla:~$ ssh croqueta
+pruebauser1@croqueta's password: 
+Linux croqueta.alejandro.gonzalonazareno.org 4.19.0-8-cloud-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Mar  5 13:06:52 2020 from 172.22.200.110
+pruebauser1@croqueta:~$ pwd
+/home/users/pruebauser1
+
+pruebauser1@croqueta:~$ ssh tortilla
+pruebauser1@tortilla's password: 
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-88-generic x86_64)
+pruebauser1@tortilla:~$ 
+
+```
+
