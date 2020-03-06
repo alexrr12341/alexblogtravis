@@ -119,7 +119,7 @@ debian@kubeadm:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Ahora con Calico vamos a permitir la comunicación de kubernetes con otros nodos, por lo que vamos a instalarlo para configurar todos los nodos
 ```
-debian@kubeadm:~$ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+debian@kubeadm:~$ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
 ```
 
@@ -377,4 +377,4 @@ Y ahora realizamos el deploy en kubernetes
 kubectl create -f wordpress-deploy.yml
 ```
 
-
+![](/images/Kubernetes.png)
