@@ -676,7 +676,6 @@ Tortilla(Cliente):
 ```
 croqueta.alejandro.gonzalonazareno.org:/homes/users     /home/users   nfs4    rw,sec=krb5i 0 0
 
-
 ```
 
 
