@@ -602,19 +602,12 @@ root@croqueta:~/.ssh# rm /tmp/krb5.keytab
 
 ```
 
-Ahora vamos a montar un directorio en /srv/nfs4/homes donde colgaran todos los homes de los usuarios del sistema.
-
-```
-root@croqueta:~# mkdir -p /srv/nfs4/homes
-root@croqueta:/srv/nfs4/homes# mount --bind /home /srv/nfs4/homes
-
-```
 
 Para definir las exportaciones iremos al fichero /etc/exports y haremos lo siguiente:
 
 ```
 /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
-/srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+/srv/nfs4/homes/users  gss/krb5i(rw,sync,no_subtree_check,no_root_squash)
 ```
 
 Y reiniciamos los servicios
@@ -681,7 +674,8 @@ Croqueta(Servidor):
 Tortilla(Cliente):
 
 ```
-croqueta.alejandro.gonzalonazareno.org:/homes     /home   nfs4    rw,sec=krb5i 0 0
+croqueta.alejandro.gonzalonazareno.org:/homes/users     /home/users   nfs4    rw,sec=krb5i 0 0
+
 
 ```
 
@@ -703,7 +697,7 @@ root@tortilla:/home/nfs4/users/pruebauser1#
 
 Por último, vamos a instalar libnss en tortilla
 ```
-apt install libnss-ldap
+apt install --no-install-recommends libnss-ldap
 ```
 
 
@@ -738,3 +732,8 @@ pruebauser1@tortilla:~$
 
 ```
 
+Si queremos que en ssh no se nos pida contraseña, vamos a /etc/ssh/sshd_config y ponemos
+```
+GSSAPIAuthentication yes
+
+```

@@ -187,3 +187,194 @@ kubectl create secret generic mariadb-secret --namespace=wordpress \
                             --from-literal=dbrootpassword=root \
                             -o yaml --dry-run > maria-secreto.yaml
 ```
+
+Vamos a añadir el secreto:
+```
+kubectl create -f maria-secreto.yaml 
+```
+
+Vamos a crear ahora el servicio de clusterIP para que las máquinas se puedan comunicar, para ello hacemos un fichero mariadb-service.yml
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: database
+spec:
+  selector:
+    app: wordpress
+    type: database
+  ports:
+  - port: 3306
+    targetPort: db-port
+  type: ClusterIP 
+```
+
+Y lo añadimos a kubectl
+```
+kubectl create -f mariadb-service.yml 
+```
+
+Ahora vamos a realizar el deploy de mariadb, para ello hacemos un fichero mariadb-deploy.yml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: database
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: database
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          ports:
+            - containerPort: 3306
+              name: db-port
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbrootpassword
+```
+
+Vamos ahora a hacer el deploy de mariadb, para ello
+```
+kubectl create -f mariadb-deploy.yml 
+```
+
+Miramos que están correctamente creados
+```
+debian@kubeadm:~$ kubectl get deploy,service,pods -n wordpress
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mariadb-deployment   0/1     1            0           19s
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/mariadb-service   ClusterIP   10.103.114.107   <none>        3306/TCP   5m20s
+
+NAME                                      READY   STATUS              RESTARTS   AGE
+pod/mariadb-deployment-7bdff7c967-w4hmw   0/1     ContainerCreating   0          19s
+```
+
+
+Ahora vamos a realizar el wordpress, por lo que como antes, vamos a realizar el servicio de Nodeport, que hará que podamos conectarnos a él desde el exterior.
+
+wordpress-service.yml
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  selector:
+    app: wordpress
+    type: frontend
+  ports:
+  - name: http-sv-port 
+    port: 80
+    targetPort: http-port
+  - name: https-sv-port
+    port: 443
+    targetPort: https-port
+  type: NodePort 
+```
+
+Ahora lanzamos el wordpreess.
+```
+kubectl create -f wordpress-service.yml
+```
+
+Ahora vamos a realizar el deploy de wordpress, para ello:
+
+wordpress-deploy.yml
+```
+
+apiVersion: apps/v1     
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  replicas: 1      
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: frontend
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress
+          ports:
+            - containerPort: 80
+              name: http-port
+            - containerPort: 443
+              name: https-port
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: mariadb-service
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: WORDPRESS_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+
+
+```
+
+Y ahora realizamos el deploy en kubernetes
+```
+kubectl create -f wordpress-deploy.yml
+```
+
+
