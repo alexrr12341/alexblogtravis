@@ -9,56 +9,7 @@ math = "true"
 
 Vamos a preparar un escenario que se basará en 3 máquinas, 1 máquina será el instalador, otra será el controlador y otra será el computador, por lo que vamos a empezar a realizar las siguientes configuraciones:
 
-### Nodo instalador
 
-Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución
-
-```
-alexrr@pc-alex:~$ source pythonvirtual/openstack/bin/activate
-(openstack) alexrr@pc-alex:~$ pip install -U pip
-apt install python-dev libffi-dev gcc libssl-dev python-selinux sshpass python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
-(openstack) alexrr@pc-alex:~$ pip install -U ansible
-``` 
-
-Ahora instalamos kolla-ansible
-```
-(openstack) alexrr@pc-alex:~$ pip install -U kolla-ansible
-```
-
-Creamos el directorio /etc/kolla
-```
-sudo mkdir -p /etc/kolla
-sudo chown $USER:$USER /etc/kolla
-```
-
-Copiamos los ficheros necesarios para el despliegue de openstack
-
-```
-(openstack) alexrr@pc-alex:~$ cp -r pythonvirtual/openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
-```
-
-Y también el directorio desde el que vamos a trabajar el inventario para el multinodo
-```
-(openstack) alexrr@pc-alex:~$ mkdir openstack
-
-(openstack) alexrr@pc-alex:~/openstack$ cp ~/pythonvirtual/openstack/share/kolla-ansible/ansible/inventory/* .
-```
-
-### Ansible
-
-Ahora vamos a crear el fichero /etc/ansible/ansible.cfg
-
-```
-sudo mkdir /etc/ansible
-sudo nano /etc/ansible/ansible.cfg
-
-[defaults]
-host_key_checking=False
-pipelining=True
-forks=100
-
-sudo chown -R $USER:$USER /etc/ansible
-```
 
 
 ### Configuración inicial
@@ -143,6 +94,57 @@ En nuestro /etc/hosts añadimos la siguiente información
 ```
 172.22.0.142    master
 172.22.7.111    compute 
+```
+
+### Nodo instalador
+
+Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución
+
+```
+ubuntu@instalador:~$ source pythonvirtual/openstack/bin/activate
+(openstack) ubuntu@instalador:~$ pip install -U pip
+apt install python-dev libffi-dev gcc libssl-dev python-selinux sshpass python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
+(openstack) ubuntu@instalador:~$ pip install -U ansible
+``` 
+
+Ahora instalamos kolla-ansible
+```
+(openstack) ubuntu@instalador:~$ pip install -U kolla-ansible
+```
+
+Creamos el directorio /etc/kolla
+```
+sudo mkdir -p /etc/kolla
+sudo chown $USER:$USER /etc/kolla
+```
+
+Copiamos los ficheros necesarios para el despliegue de openstack
+
+```
+(openstack) ubuntu@instalador:~$ cp -r pythonvirtual/openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
+```
+
+Y también el directorio desde el que vamos a trabajar el inventario para el multinodo
+```
+(openstack) ubuntu@instalador:~$ mkdir openstack
+
+(openstack) ubuntu@instalador:~/openstack$ cp ~/pythonvirtual/openstack/share/kolla-ansible/ansible/inventory/* .
+```
+
+### Ansible
+
+Ahora vamos a crear el fichero /etc/ansible/ansible.cfg
+
+```
+sudo mkdir /etc/ansible
+sudo nano /etc/ansible/ansible.cfg
+
+[defaults]
+host_key_checking=False
+pipelining=True
+forks=100
+
+sudo chown -R $USER:$USER /etc/ansible
 ```
 
 Ahora vamos a nuestra carpeta de openstack y vamos al fichero multinode y realizamos lo siguiente
