@@ -11,7 +11,7 @@ Vamos a preparar un escenario que se basará en 3 máquinas, 1 máquina será el
 
 ### Nodo instalador
 
-Nuestro nodo instalador se basará en una máquina Debian Buster, por lo que vamos a empezar instalando las siguientes dependencias:
+Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución
 
 ```
 alexrr@pc-alex:~$ source pythonvirtual/openstack/bin/activate
@@ -60,74 +60,41 @@ forks=100
 sudo chown -R $USER:$USER /etc/ansible
 ```
 
-## Bridges
-
-En nuestro /etc/network/interfaces vamos a crear un bridge 1 y un bridge 0, por lo que el bridge 1 contendrá la ip interna de openstack y el bridge 0 tendrá la ip externa y estará conectada a nuestra red ethernet
-```
-auto br0
-iface br0 inet dhcp
-        bridge_ports enp7s0
-
-auto br1
-iface br1 inet static
-    address 10.10.10.2
-    network 10.10.10.0
-    netmask 255.255.255.0
-    broadcast 10.10.10.255
-    gateway 10.10.10.1
-    bridge_ports enp7s0
-	
-```
-
-Vemos que están ambos bridges
-```
-8: br0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
-    link/ether 8c:16:45:ea:a4:a0 brd ff:ff:ff:ff:ff:ff
-    inet 172.22.3.216/16 brd 172.22.255.255 scope global dynamic br0
-       valid_lft 9724sec preferred_lft 9724sec
-    inet6 fe80::8e16:45ff:feea:a4a0/64 scope link 
-       valid_lft forever preferred_lft forever
-11: br1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/ether 22:5a:fb:33:30:9e brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.2/24 brd 10.10.10.255 scope global br1
-       valid_lft forever preferred_lft forever
-    inet6 fe80::205a:fbff:fe33:309e/64 scope link 
-       valid_lft forever preferred_lft forever
-
-```
 
 ### Configuración inicial
 
 Vamos primero a hacer nuestras dos máquinas master y compute para la instalación (ambas máquinas tienen que tener instaladas python-dev, también añadirle contraseña a root y editar el fichero /etc/ssh/sshd_config)
 ```
 Vagrant.configure("2") do |config|
-
+  config.vm.define :instalador do |instalador|
+    instalador.vm.box = "ubuntu/bionic64"
+    instalador.vm.hostname = "instalador"
+    instalador.vm.network :public_network, :bridge=>"enp7s0"
+  end
   config.vm.define :master do |master|
     master.vm.box = "ubuntu/bionic64"
     master.vm.hostname = "master"
-    master.vm.synced_folder '.', '/vagrant', :disabled => true
-    master.vm.network :public_network, :bridge => 'br0', type: "dhcp"
-    master.vm.network :public_network, :bridge => 'br1', type: "dhcp"
-    master.vm.network :public_network, :bridge => 'br0', auto_config: false
-    master.vm.provider :virtualbox do |v|
-                    v.customize ["modifyvm", :id, "--memory", 2048]
-            end
+    master.vm.network :public_network, :bridge=>"enp7s0"
+    master.vm.network :private_network, ip: "10.10.1.2", virtualbox__intnet: "redinterna"
+    master.vm.network :public_network, :bridge=>"enp7s0"
+    master.vm.provider "virtualbox" do |mv|
+      mv.customize ["modifyvm", :id, "--memory", "5120"]
+    end
   end
   config.vm.define :compute do |compute|
     compute.vm.box = "ubuntu/bionic64"
     compute.vm.hostname = "compute"
-    compute.vm.synced_folder '.', '/vagrant', :disabled => true
-    compute.vm.network :public_network, :bridge => 'br0'
-    compute.vm.network :public_network, :bridge => 'br1'
-    compute.vm.provider :virtualbox do |v|
-                    v.customize ["modifyvm", :id, "--memory", 2048]
-            end
+    compute.vm.network :public_network, :bridge=>"enp7s0"
+    compute.vm.network :private_network, ip: "10.10.1.3", virtualbox__intnet: "redinterna"
+    compute.vm.provider "virtualbox" do |mv|
+      mv.customize ["modifyvm", :id, "--memory", "3072"]
+    end
   end
 end
 
 
 ```
-
+s
 Máquina master:
 ```
 3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
