@@ -21,6 +21,7 @@ Vagrant.configure("2") do |config|
     instalador.vm.box = "ubuntu/bionic64"
     instalador.vm.hostname = "instalador"
     instalador.vm.network :public_network, :bridge=>"enp7s0"
+    instalador.vm.network :private_network, ip: "10.10.1.4", virtualbox__intnet: "redinterna"
   end
   config.vm.define :master do |master|
     master.vm.box = "ubuntu/bionic64"
@@ -45,42 +46,50 @@ end
 
 
 ```
-s
+
 Máquina master:
 ```
 3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:fd:cc:1f brd ff:ff:ff:ff:ff:ff
-    inet 172.22.0.142/16 brd 172.22.255.255 scope global dynamic enp0s8
-       valid_lft 1715sec preferred_lft 1715sec
-    inet6 fe80::a00:27ff:fefd:cc1f/64 scope link 
+    link/ether 08:00:27:0e:0d:7c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.144/24 brd 192.168.1.255 scope global dynamic enp0s8
+       valid_lft 85844sec preferred_lft 85844sec
+    inet6 2a01:c50e:be4a:4300:a00:27ff:fe0e:d7c/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1781sec preferred_lft 581sec
+    inet6 fe80::a00:27ff:fe0e:d7c/64 scope link 
        valid_lft forever preferred_lft forever
 4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:13:c3:6f brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.3/24 scope global enp0s9
+    link/ether 08:00:27:18:74:2d brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.2/24 brd 10.10.1.255 scope global enp0s9
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:27ff:fe13:c36f/64 scope link 
+    inet6 fe80::a00:27ff:fe18:742d/64 scope link 
        valid_lft forever preferred_lft forever
 5: enp0s10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:7f:25:b9 brd ff:ff:ff:ff:ff:ff
-    inet6 fe80::a00:27ff:fe7f:25b9/64 scope link tentative 
+    link/ether 08:00:27:bf:3e:94 brd ff:ff:ff:ff:ff:ff
+    inet6 2a01:c50e:be4a:4300:a00:27ff:febf:3e94/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1781sec preferred_lft 581sec
+    inet6 fe80::a00:27ff:febf:3e94/64 scope link 
        valid_lft forever preferred_lft forever
+
 
 ```
 
 Máquina compute:
 ```
 3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:6c:32:58 brd ff:ff:ff:ff:ff:ff
-    inet 172.22.7.111/16 brd 172.22.255.255 scope global dynamic enp0s8
-       valid_lft 1771sec preferred_lft 1771sec
-    inet6 fe80::a00:27ff:fe6c:3258/64 scope link 
+    link/ether 08:00:27:25:76:ad brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.10/24 brd 192.168.1.255 scope global dynamic enp0s8
+       valid_lft 86052sec preferred_lft 86052sec
+    inet6 2a01:c50e:be4a:4300:a00:27ff:fe25:76ad/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1758sec preferred_lft 558sec
+    inet6 fe80::a00:27ff:fe25:76ad/64 scope link 
        valid_lft forever preferred_lft forever
 4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:d1:69:af brd ff:ff:ff:ff:ff:ff
-    inet 10.10.10.4/24 scope global enp0s9
+    link/ether 08:00:27:5f:25:94 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.3/24 brd 10.10.1.255 scope global enp0s9
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:27ff:fed1:69af/64 scope link 
+    inet6 fe80::a00:27ff:fe5f:2594/64 scope link 
        valid_lft forever preferred_lft forever
+
 
 ```
 
@@ -92,8 +101,9 @@ PasswordAuthentication yes
 
 En nuestro /etc/hosts añadimos la siguiente información
 ```
-172.22.0.142    master
-172.22.7.111    compute 
+192.168.1.144    master
+192.168.1.10    compute
+
 ```
 
 ### Nodo instalador
@@ -101,15 +111,15 @@ En nuestro /etc/hosts añadimos la siguiente información
 Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución
 
 ```
-ubuntu@instalador:~$ source pythonvirtual/openstack/bin/activate
-(openstack) ubuntu@instalador:~$ pip install -U pip
+vagrant@instalador:~$ source pythonvirtual/openstack/bin/activate
+(openstack) vagrant@instalador:~$ pip install -U pip
 apt install python-dev libffi-dev gcc libssl-dev python-selinux sshpass python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
-(openstack) ubuntu@instalador:~$ pip install -U ansible
+(openstack) vagrant@instalador:~$ pip install -U ansible
 ``` 
 
 Ahora instalamos kolla-ansible
 ```
-(openstack) ubuntu@instalador:~$ pip install -U kolla-ansible
+(openstack) vagrant@instalador:~$ pip install -U kolla-ansible
 ```
 
 Creamos el directorio /etc/kolla
@@ -121,14 +131,14 @@ sudo chown $USER:$USER /etc/kolla
 Copiamos los ficheros necesarios para el despliegue de openstack
 
 ```
-(openstack) ubuntu@instalador:~$ cp -r pythonvirtual/openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
+(openstack) vagrant@instalador:~$ cp -r pythonvirtual/openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
 ```
 
 Y también el directorio desde el que vamos a trabajar el inventario para el multinodo
 ```
-(openstack) ubuntu@instalador:~$ mkdir openstack
+(openstack) vagrant@instalador:~$ mkdir openstack
 
-(openstack) ubuntu@instalador:~/openstack$ cp ~/pythonvirtual/openstack/share/kolla-ansible/ansible/inventory/* .
+(openstack) vagrant@instalador:~/openstack$ cp ~/pythonvirtual/openstack/share/kolla-ansible/ansible/inventory/* .
 ```
 
 ### Ansible
@@ -147,7 +157,7 @@ forks=100
 sudo chown -R $USER:$USER /etc/ansible
 ```
 
-Ahora vamos a nuestra carpeta de openstack y vamos al fichero multinode y realizamos lo siguiente
+Ahora vamos a nuestra carpeta de openstack y vamos al fichero multinode y realizamos lo siguiente (muy importante sólo cambiar las lineas dadas, no borrar el fichero entero)
 ```
 [control]
 master ansible_user=root ansible_password=password
@@ -171,7 +181,7 @@ localhost ansible_connection=local
 
 Miramos si podemos hacerle ping
 ```
-(openstack) alexrr@pc-alex:~/openstack$ ansible -i multinode all -m ping
+(openstack) vagrant@instalador:~/openstack$ ansible -i multinode all -m ping
 localhost | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python"
@@ -223,10 +233,15 @@ kolla_install_type: "binary" # Para repositorios apt
 
 openstack_release: "train" # Version de openstack
 network_interface: "enp0s9" # Interfaz interna
-neutron_external_interface: "enp0s10" # Interfaz externa que está conectada a br0 sin ip
-kolla_internal_vip_address: "10.10.10.254" # Ip para gestionar interfaz interna
-kolla_external_vip_address: "172.22.153.1" # Ip para gestionar interfaz externa
+kolla_internal_vip_address: "10.10.1.254" # Ip para gestionar interfaz interna
+kolla_external_vip_address: "192.168.1.200"
+kolla_external_vip_interface: "enp0s10" # Interfaz que no tiene ip
+neutron_external_interface: "enp0s10"
+
 enable_cinder: "yes"
+enable_cinder_backup: "yes"
+enable_cinder_backend_hnas_nfs: "yes"
+enable_cinder_backend_nfs: "yes"
 
 
 ```
@@ -238,9 +253,54 @@ Y vamos a preparar el deploy, para ello primero preparamos las dependencias en l
 kolla-ansible -i multinode bootstrap-servers
 ```
 
+Nos saltará un error de pip3, para ello instalamos en las máquinas
+```
+apt install python3-pip
+```
+
 Comprobamos que todo está listo:
 ```
 kolla-ansible -i multinode prechecks
 ```
 
-Continuará.
+Y hacemos el deploy
+```
+kolla-ansible -i ./multinode deploy
+```
+
+Al hacer el deploy nos saltará un error porque hemos activado el nfs backend de cinder, para ello vamos a instalar nfs
+```
+apt install nfs-kernel-server
+```
+
+En /etc/exports ponemos:
+```
+/kolla_nfs 10.10.1.0/24(rw,sync,no_root_squash)
+```
+
+Creamos la carpeta kolla_nfs
+```
+mkdir /kolla_nfs
+```
+
+Reiniciamos:
+```
+systemctl restart nfs-kernel-server
+```
+
+Y hacemos un fichero /etc/kolla/config/nfs_shares que contenga lo siguiente:
+```
+storage01:/kolla_nfs
+storage02:/kolla_nfs
+```
+Y volvemos a iniciar el deploy.
+
+Cuando el deploy termine, realizamos una evaluación para que todo esté correcto
+```
+kolla-ansible post-deploy
+. /etc/kolla/admin-openrc.sh
+```
+
+La contraseña y el usuario lo podemos ver en el fichero /etc/kolla/admin-source.sh
+
+![](/images/Openstack.png)
