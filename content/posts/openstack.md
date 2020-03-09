@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
     master.vm.network :private_network, ip: "10.10.1.2", virtualbox__intnet: "redinterna"
     master.vm.network :public_network, :bridge=>"enp7s0"
     master.vm.provider "virtualbox" do |mv|
-      mv.customize ["modifyvm", :id, "--memory", "5120"]
+      mv.customize ["modifyvm", :id, "--memory", "6144"]
     end
   end
   config.vm.define :compute do |compute|
@@ -111,7 +111,7 @@ En nuestro /etc/hosts añadimos la siguiente información
 Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución
 
 ```
-vagrant@instalador:~$ source pythonvirtual/openstack/bin/activate
+vagrant@instalador:~$ source openstack/bin/activate
 (openstack) vagrant@instalador:~$ pip install -U pip
 apt install python-dev libffi-dev gcc libssl-dev python-selinux sshpass python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
 (openstack) vagrant@instalador:~$ pip install -U ansible
@@ -131,14 +131,13 @@ sudo chown $USER:$USER /etc/kolla
 Copiamos los ficheros necesarios para el despliegue de openstack
 
 ```
-(openstack) vagrant@instalador:~$ cp -r pythonvirtual/openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
+(openstack) vagrant@instalador:~$ cp -r openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
 ```
 
 Y también el directorio desde el que vamos a trabajar el inventario para el multinodo
 ```
-(openstack) vagrant@instalador:~$ mkdir openstack
 
-(openstack) vagrant@instalador:~/openstack$ cp ~/pythonvirtual/openstack/share/kolla-ansible/ansible/inventory/* .
+(openstack) vagrant@instalador:~/openstack$ cp openstack/share/kolla-ansible/ansible/inventory/* .
 ```
 
 ### Ansible
@@ -181,7 +180,7 @@ localhost ansible_connection=local
 
 Miramos si podemos hacerle ping
 ```
-(openstack) vagrant@instalador:~/openstack$ ansible -i multinode all -m ping
+(openstack) vagrant@instalador:~$ ansible -i multinode all -m ping
 localhost | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python"
@@ -243,6 +242,7 @@ enable_cinder_backup: "yes"
 enable_cinder_backend_hnas_nfs: "yes"
 enable_cinder_backend_nfs: "yes"
 
+nova_compute_virt_type: "qemu"
 
 ```
 
@@ -304,3 +304,17 @@ kolla-ansible post-deploy
 La contraseña y el usuario lo podemos ver en el fichero /etc/kolla/admin-source.sh
 
 ![](/images/Openstack.png)
+
+Como hay ejemplos de imágenes,reds,etc en openstack vamos a ejecutar el siguiente comando:
+```
+(openstack) root@instalador:~# pip install python-openstackclient
+
+(openstack) root@instalador:~# openstack/share/kolla-ansible/init-runonce 
+
+```
+
+Siendo openstack nuestro entorno virtual
+
+![](/images/Openstack2.png)
+
+![](/images/Openstack3.png)
