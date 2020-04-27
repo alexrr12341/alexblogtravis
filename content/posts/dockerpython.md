@@ -294,6 +294,21 @@ services:
 
 Y observamos que va correctamente la página.
 
+```
+ Name                Command               State         Ports       
+---------------------------------------------------------------------
+iesgn     nginx -g daemon off;             Up      0.0.0.0:80->80/tcp
+mariadb   docker-entrypoint.sh mysqld      Up      3306/tcp          
+uwsgi     uwsgi --http-socket :8080  ...   Up      8080/tcp  
+```
+
 ![](/images/dockerpython5.png)
 
 ![](/images/dockerpython6.png)
+
+
+
+
+### Parte 4
+
+
