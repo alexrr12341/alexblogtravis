@@ -210,7 +210,7 @@ mariadb   docker-entrypoint.sh mysqld      Up      3306/tcp
 
 Ahora vamos a hacer un docker compose que contenga:
 - La imagen Nginx con nuestra aplicación
-- Una imagen con gunicorn 
+- Una imagen con uwsgi 
 - Una imagen con la base de datos mariadb
 
 
@@ -311,4 +311,39 @@ uwsgi     uwsgi --http-socket :8080  ...   Up      8080/tcp
 
 ### Parte 4
 
+Ahora vamos a crear una imagen con el CMS "django CMS", ejecutaremos el contenedor y observaremos si funciona correctamente.
 
+Vamos primero a instalarnos el cms django en nuestro ordenador para copiarlo en el nuevo contenedor, para ello hacemos:
+
+
+Para ello haremos el siguiente Dockerfile:
+
+```
+FROM python:3
+WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y python3-mysqldb zlib1g-dev libjpeg62-turbo-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN pip3 install mysql-connector-python
+RUN pip3 install djangocms-installer
+EXPOSE 8000
+RUN djangocms mysite
+RUN pip3 install -r /usr/src/app/mysite/requirements.txt
+COPY ./script.sh /tmp
+RUN chmod +x /tmp/script.sh
+RUN /tmp/script.sh
+CMD ["python3", "/usr/src/app/mysite/manage.py", "migrate"]
+CMD ["python3", "/usr/src/app/mysite/manage.py", "runserver", "0.0.0.0:8000"]
+``` 
+
+El script que ejecutaremos en este caso será el siguiente:
+
+```
+#!/bin/bash
+sed -i 's/project.db/mysite\/project.db/g' /usr/src/app/mysite/mysite/settings.py
+sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \["192.168.1.38"\]/g' /usr/src/app/mysite/mysite/settings.py
+
+```
+
+Comprobamos el funcionamiento de la página:
+
+![](/images/dockerpython7.png)
+![](/images/dockerpython8.png)
