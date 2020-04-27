@@ -347,3 +347,71 @@ Comprobamos el funcionamiento de la página:
 
 ![](/images/dockerpython7.png)
 ![](/images/dockerpython8.png)
+
+### Parte 5
+
+Por último vamos a insertarle una base de datos mariadb.
+
+Para ello vamos a crear una red
+
+```
+docker network create django
+```
+
+
+Vamos a ejecutar el contenedor de mariadb
+```
+docker run -d --name djangodb --network django -v /opt/bbdd_django:/var/lib/mysql -e MYSQL_DATABASE=django -e MYSQL_USER=django -e MYSQL_PASSWORD=django -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+```
+
+Usaremos casi la misma imagen que la parte 5, simplemente cambiaremos el script que se ejecutará y un parámetro de la imagen.
+
+Dockerfile:
+```
+FROM python:3
+WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y python3-mysqldb zlib1g-dev libjpeg62-turbo-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN pip3 install djangocms-installer
+EXPOSE 8000
+RUN djangocms mysite
+RUN pip3 install -r /usr/src/app/mysite/requirements.txt
+RUN pip3 install pymysql
+RUN pip3 install mysqlclient
+COPY ./script.sh /tmp
+RUN chmod +x /tmp/script.sh
+RUN /tmp/script.sh
+CMD ["python3", "/usr/src/app/mysite/manage.py", "migrate"]
+CMD ["python3", "/usr/src/app/mysite/manage.py", "runserver", "0.0.0.0:8000"]
+```
+
+script.sh:
+```
+#!/bin/bash
+sed -i 's/project.db/django/g' /usr/src/app/mysite/mysite/settings.py
+sed -i 's/django.db.backends.sqlite3/django.db.backends.mysql/g' /usr/src/app/mysite/mysite/settings.py
+sed -i 's/localhost/djangodb/g' /usr/src/app/mysite/mysite/settings.py
+sed -i "s/'PASSWORD': '',/'PASSWORD': 'django',/g" /usr/src/app/mysite/mysite/settings.py
+sed -i "s/'USER': ''/'USER': 'django'/g" /usr/src/app/mysite/mysite/settings.py
+sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \["192.168.1.38"\]/g' /usr/src/app/mysite/mysite/settings.py
+```
+
+Observamos que la página está funcionando y están los dos contenedores
+
+```
+root@docker:~/escenario4# docker ps
+CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                    NAMES
+f1311bfc12a8        alexrr12341/djangocms:v1   "python3 /usr/src/ap…"   35 seconds ago      Up 34 seconds       0.0.0.0:8000->8000/tcp   djangocms
+6fe3f5b42130        mariadb                    "docker-entrypoint.s…"   About an hour ago   Up About an hour    3306/tcp                 djangodb
+```
+
+
+![](/images/dockerpython9.png)
+
+![](/images/dockerpython10.png)
+
+Vemos como las tablas se han importado correctamente
+
+```
+root@docker:/opt/bbdd_django# ls
+aria_log.00000001  aria_log_control  django  ib_buffer_pool  ibdata1  ib_logfile0  ib_logfile1	ibtmp1	multi-master.info  mysql  performance_schema
+```
