@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  OpenVPN con TLS/SSL - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/openvpn/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/openvpn/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/openvpn/">
+    <title>
+  OpenVPN con TLS/SSL - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/openvpn/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">OpenVPN con TLS/SSL</h1>
+      <h2 class="date">January 27, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="vpn-de-acceso-remoto-con-openvpn-y-certificados-x509">VPN de acceso remoto con OpenVPN y certificados x509</h2>
+<h2 id="práctica-vpn">Práctica VPN</h2>
+<p>Vamos a preparar el escenario vagrant</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Vagrant.configure(&#34;2&#34;) do |config|
+
+  config.vm.define :server do |server|
+    server.vm.box = &#34;debian/buster64&#34;
+    server.vm.hostname = &#34;server&#34;
+    server.vm.synced_folder &#39;.&#39;, &#39;/vagrant&#39;
+    server.vm.network :public_network, :bridge =&gt; &#39;enp7s0&#39;
+    server.vm.network :private_network, ip: &#34;192.168.1.1&#34;, virtualbox__intnet: &#34;lolitofdez&#34;
+
+  end
+  config.vm.define :cliente do |cliente|
+    cliente.vm.box = &#34;debian/buster64&#34;
+    cliente.vm.hostname = &#34;local&#34;
+    cliente.vm.synced_folder &#39;.&#39;, &#39;/vagrant&#39;
+    cliente.vm.network :private_network, ip: &#34;192.168.1.2&#34;, virtualbox__intnet: &#34;lolitofdez&#34;
+  end
+  config.vm.define :clientevpn do |clientevpn|
+    clientevpn.vm.box = &#34;debian/buster64&#34;
+    clientevpn.vm.hostname = &#34;clientevpn&#34;
+    clientevpn.vm.synced_folder &#39;.&#39;, &#39;/vagrant&#39;
+    clientevpn.vm.network :public_network, :bridge =&gt; &#39;enp7s0&#39;
+  end
+end
+</code></pre></div><h2 id="servidor">Servidor</h2>
+<p>Primero vamos a activar el bit de forward</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+</code></pre></div><p>Hacemos la CA</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /root/ca
+DIR_CA=&#34;/root/ca&#34; 
+cd $DIR_CA
+mkdir certs csr crl newcerts private
+chmod 700 private
+touch index.txt
+touch index.txt.attr
+echo 1000 &gt; serial
+</code></pre></div><p>Hacemos las variables</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">countryName_default=&#34;ES&#34; 
+stateOrProvinceName_default=&#34;Sevilla&#34; 
+localityName_default=&#34;Dos Hermanas&#34; 
+organizationName_default=&#34;Alejandro.org&#34; 
+organizationalUnitName_default=&#34;Alejandro&#34; 
+emailAddress_default=&#34;alexrodriguezrojas98@gmail.com&#34; 
+</code></pre></div><p>Hacemos el fichero de configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">DIR_CA=&#34;./&#34; 
+cat &lt;&lt;EOF&gt;$DIR_CA/openssl.conf
+[ ca ]
+# man ca
+default_ca = CA_default
+
+[ CA_default ]
+# Directory and file locations.
+dir               = ${DIR_CA}
+certs             = ${DIR_CA}certs
+crl_dir           = ${DIR_CA}crl
+new_certs_dir     = ${DIR_CA}newcerts
+database          = ${DIR_CA}index.txt
+serial            = ${DIR_CA}serial
+RANDFILE          = ${DIR_CA}private/.rand
+
+# The root key and root certificate.
+private_key       = ${DIR_CA}private/ca.key.pem
+certificate       = ${DIR_CA}certs/ca.cert.pem
+
+# For certificate revocation lists.
+crlnumber         = ${DIR_CA}crlnumber
+crl               = ${DIR_CA}crl/ca.crl.pem
+crl_extensions    = crl_ext
+default_crl_days  = 30
+
+# SHA-1 is deprecated, so use SHA-2 instead.
+default_md        = sha256
+
+name_opt          = ca_default
+cert_opt          = ca_default
+default_days      = 375
+preserve          = no
+policy            = policy_strict
+
+[ policy_strict ]
+# The root CA should only sign intermediate certificates that match.
+# See the POLICY FORMAT section of man ca.
+countryName             = match
+stateOrProvinceName     = match
+organizationName        = match
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ policy_loose ]
+# Allow the intermediate CA to sign a more diverse range of certificates.
+# See the POLICY FORMAT section of the ca man page.
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+# Options for the req tool (man req).
+default_bits        = 2048
+distinguished_name  = req_distinguished_name
+string_mask         = utf8only
+# SHA-1 is deprecated, so use SHA-2 instead.
+default_md          = sha256
+# Extension to add when the -x509 option is used.
+x509_extensions     = v3_ca
+# Extension for SANs
+req_extensions      = v3_req
+
+[ v3_req ]
+# Extensions to add to a certificate request
+# Before invoke openssl use: export SAN=DNS:value1,DNS:value2
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+xxxsubjectAltNamexxx =
+
+[ req_distinguished_name ]
+# See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;.
+countryName                     = Country Name (2 letter code)
+stateOrProvinceName             = State or Province Name
+localityName                    = Locality Name
+0.organizationName              = Organization Name
+organizationalUnitName          = Organizational Unit Name
+commonName                      = Common Name
+emailAddress                    = Email Address
+
+# Optionally, specify some defaults.
+countryName_default             = $countryName_default
+stateOrProvinceName_default     = $stateOrProvinceName_default
+localityName_default            = $localityName_default
+0.organizationName_default      = $organizationName_default
+organizationalUnitName_default  = $organizationalUnitName_default
+emailAddress_default            = $emailAddress_default
+
+[ v3_ca ]
+# Extensions for a typical CA (man x509v3_config).
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[ v3_intermediate_ca ]
+# Extensions for a typical intermediate CA (man x509v3_config).
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[ usr_cert ]
+# Extensions for client certificates (man x509v3_config).
+basicConstraints = CA:FALSE
+nsCertType = client, email
+nsComment = &#34;OpenSSL Generated Client Certificate&#34; 
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, emailProtection
+
+[ server_cert ]
+# Extensions for server certificates (man x509v3_config).
+basicConstraints = CA:FALSE
+nsCertType = server
+nsComment = &#34;OpenSSL Generated Server Certificate&#34; 
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer:always
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[ crl_ext ]
+# Extension for CRLs (man x509v3_config).
+authorityKeyIdentifier=keyid:always
+
+[ ocsp ]
+# Extension for OCSP signing certificates (man ocsp).
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage = critical, digitalSignature
+extendedKeyUsage = critical, OCSPSigning
+EOF
+</code></pre></div><p>Ahora creamos la clave privada</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">openssl genrsa -aes256 -out ${DIR_CA}private/ca.key.pem 4096
+chmod 400 ${DIR_CA}private/ca.key.pem
+</code></pre></div><p>Y hacemos el certificado para la unidad certificadora</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">openssl req -config openssl.conf \
+-key private/ca.key.pem \
+-new -x509 -days 7300 -sha256 -extensions v3_ca \
+-out certs/ca.cert.pem
+</code></pre></div><p>Hacemos el fichero diffie hellman</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">openssl dhparam -out /root/private/dh.pem 2048
+</code></pre></div><p>El fichero diffie hellman es un protocolo criptográfico</p>
+<p>Movemos ahora los certificados a /etc/openvpn</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mv /root/ca /etc/openvpn
+</code></pre></div><p>Ahora hacemos el archivo servidor.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">#Dispositivo de túnel
+dev tun
+    
+#Direcciones IP virtuales
+server 10.99.99.0 255.255.255.0 
+
+#subred local
+push &#34;route 192.168.1.0 255.255.255.0&#34;
+
+# Rol de servidor
+tls-server
+
+#Parámetros Diffie-Hellman
+dh /etc/openvpn/ca/private/dh.pem
+
+#Certificado de la CA
+ca /etc/openvpn/ca/certs/ca.cert.pem
+
+#Certificado local
+cert /etc/openvpn/ca/certs/ca.cert.pem
+
+#Clave privada local
+key /etc/openvpn/ca/private/ca.key.pem
+
+#Activar la compresión LZO
+comp-lzo
+
+#Detectar caídas de la conexión
+keepalive 10 60
+
+#Nivel de información
+verb 3
+
+</code></pre></div><p>Y ahora firmamos el certificado a nuestro cliente y le pasamos el crt y el certificado.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@server:/home/vagrant# openssl x509 -req -in clientevpn.csr -CA /etc/openvpn/ca/certs/ca.cert.pem -CAkey /etc/openvpn/ca/private/ca.key.pem -CAcreateserial -out clientevpn.crt
+</code></pre></div><p>Ahora vamos a hacer en /etc/openvpn un fichero llamado contra.txt que tendrá la contraseña de nuestra clave privada, y en servidor.conf añadimos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">askpass contra.txt
+</code></pre></div><p>Y iniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl start openvpn@servidor
+</code></pre></div><p><em>Muy importante que los clientes estén en default via de la red interna</em></p>
+<h2 id="cliente">Cliente</h2>
+<p>Ahora en este caso vamos a actuar como clientes de la VPN, por lo que vamos a crear una clave privada y un csr para la ocasión.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">openssl genrsa -out clientito.key 4096
+openssl req -new -key clientito.key -out clientito.csr
+</code></pre></div><p>Le pasamos el csr y el servidor nos devolverá un clientito.crt y la CA.</p>
+<p>Y hacemos el fichero de cliente.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dev tun
+remote 172.22.0.56
+ifconfig 10.99.99.0 255.255.255.0
+pull
+tls-client
+ca /etc/openvpn/cert.crt
+cert /etc/openvpn/clientito.crt
+key /etc/openvpn/clientito.key
+comp-lzo
+keepalive 10 60
+verb 3
+</code></pre></div><p>Y iniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl start openvpn@paquito
+</code></pre></div><p>Miramos si tenemos la interfaz tun</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">9: tun0: &lt;POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 100
+    link/none 
+    inet 10.99.99.6 peer 10.99.99.5/32 scope global tun0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::6c3b:e1e6:cb6c:e565/64 scope link stable-privacy 
+       valid_lft forever preferred_lft forever
+</code></pre></div><p>Y intentamos hacer ping al cliente 192.168.1.2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@pc-alex:/etc/openvpn# ping 192.168.1.2
+PING 192.168.1.2 (192.168.1.2) 56(84) bytes of data.
+64 bytes from 192.168.1.2: icmp_seq=1 ttl=63 time=2.01 ms
+64 bytes from 192.168.1.2: icmp_seq=2 ttl=63 time=1.72 ms
+64 bytes from 192.168.1.2: icmp_seq=3 ttl=63 time=1.50 ms
+64 bytes from 192.168.1.2: icmp_seq=4 ttl=63 time=1.48 ms
+</code></pre></div><p>Si queremos que network-manager gestione la vpn, debemos primero instalar la extension</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install network-manager-openvpn
+</code></pre></div><p>Entramos en la configuración de Red de network-manager y nos saldrá una opción de VPN, le damos al +
+<img src="/images/Networkmanager.png" alt=""></p>
+<p>Y le damos a la opción de Añadir desde un fichero, y elegimos el fichero de configuración de antes y encendemos la VPN y volveremos a tener el tunel</p>
+<p><img src="/images/Networkmanager2.png" alt=""></p>
+<p><img src="/images/NetworkManager3.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">10: tun1: &lt;POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 100
+    link/none 
+    inet 10.99.99.6 peer 10.99.99.5/32 brd 10.99.99.6 scope global noprefixroute tun1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c9b5:78e5:f191:53ec/64 scope link stable-privacy 
+       valid_lft forever preferred_lft forever
+</code></pre></div><h2 id="openvpn-site-to-site">OpenVPN Site to Site</h2>
+<p>Para realizar este ejercicio, necesitamos dos máquinas servidores , que actuarán a su vez como el cliente del otro.</p>
+<p>Un servidor tendrá el direccionamiento 192.168.1.0/24 en su red interna y el otro con la 192.168.100.0/24 con sus respectivos clientes.</p>
+<p>Ahora vamos a usar la herramienta easy-rsa para realizar este ejercicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install openssl
+</code></pre></div><p>Hacemos una carpeta easy-rsa en openvpn y copiamos el contenido de easy-rsa en ella</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /etc/openvpn/easy-rsa
+
+cp -r /usr/share/easy-rsa/* /etc/openvpn/easy-rsa
+</code></pre></div><p>Ahora hacemos una copia del vars.example y debajo del todo ponemos esta configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp vars.example vars
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">export EASY_RSA=&#34;`pwd`&#34;
+ 
+export OPENSSL=&#34;openssl&#34;
+export PKCS11TOOL=&#34;pkcs11-tool&#34;
+export GREP=&#34;grep&#34;
+ 
+export KEY_CONFIG=`$EASY_RSA/whichopensslcnf $EASY_RSA`
+ 
+export KEY_DIR=&#34;$EASY_RSA/keys&#34;
+ 
+echo NOTE: If you run ./clean-all, I will be doing a rm -rf on $KEY_DIR
+ 
+export PKCS11_MODULE_PATH=&#34;/usr/lib/changeme.so&#34;
+export PKCS11_PIN=vagrant
+ 
+export KEY_SIZE=2048
+export CA_EXPIRE=365
+export KEY_EXPIRE=365
+ 
+export KEY_COUNTRY=&#34;ES&#34;
+export KEY_PROVINCE=&#34;Sevilla&#34;
+export KEY_CITY=&#34;Dos Hermanas&#34;
+export KEY_ORG=&#34;alejandro.org&#34;
+export KEY_EMAIL=&#34;admin@alejandro.com&#34;
+export KEY_OU=&#34;OpenVPN&#34;
+ 
+export KEY_NAME=openVPN
+ 
+export KEY_CN=alejandro.org
+</code></pre></div><p>Hacemos un source para cargar las variables</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">source vars
+</code></pre></div><p>Hacemos el diffie hellman y la unidad certificadora</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@server:/etc/openvpn/easy-rsa# ./easyrsa gen-dh
+root@server:/etc/openvpn/easy-rsa# ./easyrsa build-ca
+</code></pre></div><p>Creamos los parametros para el servidor</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@server:/etc/openvpn/easy-rsa# ./easyrsa build-server-full server
+</code></pre></div><p>Y creamos los parametros para el host/cliente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@server:/etc/openvpn/easy-rsa# ./easyrsa build-server-client-full host
+</code></pre></div><p>Ahora hacemos el fichero servidor.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># nombre de la interfaz
+dev tun
+# Direcciones IP virtuales
+ifconfig 10.99.99.1 10.99.99.2
+# Subred eth1 de la maquina destino 
+route 192.168.100.0 255.255.255.0
+# Rol de Servidor
+tls-server
+# Parámetros Diffie-Hellman
+dh /etc/openvpn/easy-rsa/pki/dh.pem
+# #Certificado de la CA
+ca /etc/openvpn/easy-rsa/pki/ca.crt
+# Certificado Servidor
+cert /etc/openvpn/easy-rsa/pki/issued/server.crt
+# Clave privada servidor
+key /etc/openvpn/easy-rsa/pki/private/server.key
+# Compresión LZO
+comp-lzo
+# Tiempo de vida
+keepalive 10 60
+# Fichero de log
+log /var/log/server.log
+# Nivel de Depuración
+verb 6
+askpass contra.txt
+</code></pre></div><p>Ahora le pasamos al host/cliente los siguientes archivos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">host.key
+host.crt
+ca.crt
+</code></pre></div><p>Y el host/cliente tendrá la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dev tun
+ifconfig 10.99.99.2 10.99.99.1
+#Ip eth0 servidor
+remote 172.22.8.84
+# Subred eth1 de la maquina destino 
+route 192.168.1.0 255.255.255.0
+tls-client
+ca /etc/openvpn/ca.crt
+cert /etc/openvpn/host.crt
+key /etc/openvpn/host.key
+comp-lzo
+keepalive 10 60
+log /var/log/host.log
+verb 6
+askpass pass.txt
+</code></pre></div><p>Comprobamos que el cliente1 puede hacer ping al cliente 2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@local:~$ ip a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 84128sec preferred_lft 84128sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:ac:7e:28 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.2/24 brd 192.168.1.255 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:feac:7e28/64 scope link 
+       valid_lft forever preferred_lft forever
+vagrant@local:~$ ping 192.168.100.2
+PING 192.168.100.2 (192.168.100.2) 56(84) bytes of data.
+64 bytes from 192.168.100.2: icmp_seq=1 ttl=62 time=2.48 ms
+64 bytes from 192.168.100.2: icmp_seq=2 ttl=62 time=2.73 ms
+64 bytes from 192.168.100.2: icmp_seq=3 ttl=62 time=2.55 ms
+
+</code></pre></div><p>Y que el cliente2 puede hacer ping al cliente1</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@cliente:~# ip a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 82285sec preferred_lft 82285sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:ec:b7:25 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.2/24 brd 192.168.100.255 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:feec:b725/64 scope link 
+       valid_lft forever preferred_lft forever
+root@cliente:~# ping 192.168.1.2
+PING 192.168.1.2 (192.168.1.2) 56(84) bytes of data.
+64 bytes from 192.168.1.2: icmp_seq=1 ttl=62 time=2.91 ms
+64 bytes from 192.168.1.2: icmp_seq=2 ttl=62 time=2.85 ms
+^C
+--- 192.168.1.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 2ms
+rtt min/avg/max/mdev = 2.852/2.880/2.909/0.060 ms
+</code></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenvpn%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenvpn%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenvpn%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenvpn%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

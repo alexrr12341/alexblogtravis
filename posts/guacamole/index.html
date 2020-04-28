@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Despliegue de CMS Java (Apache Guacamole) - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/guacamole/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/guacamole/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/guacamole/">
+    <title>
+  Despliegue de CMS Java (Apache Guacamole) - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/guacamole/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Despliegue de CMS Java (Apache Guacamole)</h1>
+      <h2 class="date">January 23, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="guacamole">Guacamole</h2>
+<p>En este caso vamos a elegir el CMS Java Apache Guacamole, que lo desplegaremos utilizando tomcat 9, esta aplicación nos permitirá acceder a servidores remotamente utilizando solo un navegador web.
+No necesita plugins de clientes ni softwares de clientes y además es de software libre.</p>
+<h2 id="tomcat">Tomcat</h2>
+<p>Para instalar tomcat necesitaremos primero de todo instalar el siguiente paquete</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install tomcat8
+</code></pre></div><h2 id="dependencias-de-apache-guacamole">Dependencias de Apache Guacamole</h2>
+<p>También para poder instalar el CMS necesitaremos instalar varias dependencias, algunas son requeridas y otras opcionales, en este caso vamos a instalar todas</p>
+<p>Dependencias Obligatorias:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install libcairo2-dev libjpeg62-turbo-dev libpng-dev libossp-uuid-dev libtool
+</code></pre></div><p>Dependencias Opcionales:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install libavcodec-dev libavutil-dev libswscale-dev libpango1.0-dev libssh2-1-dev libtelnet-dev libvncserver-dev libpulse-dev libssl-dev libvorbis-dev libwebp-dev libfreerdp-dev
+</code></pre></div><h2 id="instalación-de-guacamole-server">Instalación de Guacamole Server</h2>
+<p>Vamos a descargar ahora la version de guacamole-server y guacamole-client para poder utilizar guacamole, por lo que lo descargamos de la página <a href="https://guacamole.apache.org/releases/1.0.0/">https://guacamole.apache.org/releases/1.0.0/</a> y compilaremos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">tar -xvf guacamole-server-1.0.0.tar.gz
+root@java2:/home/vagrant/guacamole-server-1.0.0# ./configure --with-init-dir=/etc/init.d
+</code></pre></div><p>Y compilamos y instalamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@java2:/home/vagrant/guacamole-server-1.0.0# make
+root@java2:/home/vagrant/guacamole-server-1.0.0# make install
+root@java2:/home/vagrant/guacamole-server-1.0.0# ldconfig
+</code></pre></div><h2 id="guacamole-client-guacamolewar">Guacamole Client (Guacamole.war)</h2>
+<p>Ahora vamos a instalar guacamole para la web, que nos lo descargaremos en la página web, con la última versión estable (1.0.0)</p>
+<p><a href="https://guacamole.apache.org/releases/1.0.0/">https://guacamole.apache.org/releases/1.0.0/</a></p>
+<p>Ya lo tenemos descargado en nuestro sistema:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@java2:/home/vagrant# ls
+guacamole-client-1.0.0.war
+</code></pre></div><p>Ahora vamos a copiarlo en /var/lib/tomcat9/webapps</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp guacamole-1.0.0.war /var/lib/tomcat9/webapps
+</code></pre></div><p>Y miramos que ocurre cuando accedemos a la url
+<img src="/images/Guacamole.png" alt=""></p>
+<h2 id="configuración-de-guacamole-server">Configuración de Guacamole server</h2>
+<p>Vamos ahora a realizar una pequeña configuración de guacamole server, para ello hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /etc/guacamole /usr/share/tomcat8/.guacamole
+</code></pre></div><p>Hacemos ahora el fichero /etc/guacamole/guacamole.properties y ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">guacd-hostname: localhost
+guacd-port: 4822
+user-mapping: /etc/guacamole/user-mapping.xml
+auth-provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider
+basic-user-mapping: /etc/guacamole/user-mapping.xml
+</code></pre></div><p>Hacemos el enlace simbólico</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ln -s guacamole.properties /usr/share/tomcat8/.guacamole/
+</code></pre></div><p>Y hacemos el mapeado de usuarios en /etc/guacamole/user-mapping.xml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;user-mapping&gt;
+        &lt;authorize 
+         username=&#34;vagrant&#34; 
+         password=&#34;63623900c8bbf21c706c45dcb7a2c083&#34; 
+         encoding=&#34;md5&#34;&gt;
+                &lt;connection name=&#34;SSH&#34;&gt;
+                        &lt;protocol&gt;ssh&lt;/protocol&gt;
+                        &lt;param name=&#34;hostname&#34;&gt;192.168.1.129&lt;/param&gt;
+                        &lt;param name=&#34;port&#34;&gt;22&lt;/param&gt;
+                        &lt;param name=&#34;username&#34;&gt;alexrr&lt;/param&gt;
+                &lt;/connection&gt;
+                &lt;connection name=&#34;Remote Desktop&#34;&gt;
+                        &lt;protocol&gt;rdp&lt;/protocol&gt;
+                        &lt;param name=&#34;hostname&#34;&gt;192.168.1.1&lt;/param&gt;
+                        &lt;param name=&#34;port&#34;&gt;3389&lt;/param&gt;
+                &lt;/connection&gt;
+        &lt;/authorize&gt;
+&lt;/user-mapping&gt;
+
+</code></pre></div><p>Y le damos los permisos a tomcat</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">chmod 600 user-mapping.xml
+chown tomcat8:tomcat8 user-mapping.xml
+</code></pre></div><p>Ahora vamos a proporcionar el proxy inverso para apache2, y apache será el que gestione guacamole, por lo que primero debemos instalarlo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install apache2
+</code></pre></div><p>Según la página web de guacamole, esta no soporta apache2 con AJP, por lo que vamos a hacer que guacamole pase hacia el puerto http, primero debemos configurar el conector que debería estar así en el fichero /var/lib/tomcat8/conf/server.xml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;Connector port=&#34;8080&#34; protocol=&#34;HTTP/1.1&#34;
+               connectionTimeout=&#34;20000&#34;
+               URIEncoding=&#34;UTF-8&#34;
+               redirectPort=&#34;8443&#34; /&gt;
+
+</code></pre></div><p>Ahora vamos a configurar la ip remota, ya que lo necesitamos para que funcione Tomcat y Guacamole, vamos a /var/lib/tomcat8/conf/server.xml y ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;Valve className=&#34;org.apache.catalina.valves.RemoteIpValve&#34;
+               internalProxies=&#34;127.0.0.1&#34;
+               remoteIpHeader=&#34;x-forwarded-for&#34;
+               remoteIpProxiesHeader=&#34;x-forwarded-by&#34;
+               protocolHeader=&#34;x-forwarded-proto&#34; /&gt;
+</code></pre></div><h2 id="mod_proxy-de-apache2">Mod_proxy de apache2</h2>
+<p>Vamos a habilitar mod_proxy de apache2 con los siguientes comandos, así podremos habilitar el proxy inverso para guacamole</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">a2enmod proxy
+a2enmod proxy_http
+a2enmod proxy_balancer
+a2enmod lbmethod_byrequests
+a2enmod proxy_wstunnel
+</code></pre></div><p>Ahora vamos a realizar el virtualhost para configurar el proxy inverso.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;VirtualHost *:80&gt;
+    ProxyPreserveHost On
+    ProxyRequests Off
+    ServerName guacamole.alejandro.gonzalonazareno.org
+    ProxyPass / http://localhost:8080/guacamole-1.0.0
+    ProxyPassReverse / http://localhost:8080/guacamole-1.0.0
+&lt;/VirtualHost&gt;
+</code></pre></div><p>Vamos a ver si podemos acceder al virtual host y entramos al panel para poder realizar una conexión SSH.
+<img src="/images/Guacamole2.png" alt=""></p>
+<p><img src="/images/Guacamole3.png" alt=""></p>
+<p>Guacamole también nos permite  logearnos por una base de datos, por lo que tendremos que crear dicha base de datos, que la haremos en postgresql</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install postgresql
+</code></pre></div><p>Ahora debemos instalar en la página oficial <a href="https://guacamole.apache.org/releases/1.0.0/">https://guacamole.apache.org/releases/1.0.0/</a> el guacamole-auth-jdbc-1.0.0.tar.gz</p>
+<p>Extraemos y entramos al apartado mysql y realizamos lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /etc/guacamole/extensions
+root@java2:/home/vagrant/guacamole-auth-jdbc-1.0.0/postgresql# mv guacamole-auth-jdbc-postgresql-1.0.0.jar /etc/guacamole/extensions/
+</code></pre></div><p>También debemos descargarnos el conector de postgresql oficial, nos lo descargaremos de la página <a href="https://jdbc.postgresql.org/download.html">https://jdbc.postgresql.org/download.html</a> y elegimos la opción de nuestro java.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /etc/guacamole/lib
+mv postgresql-42.2.9.jar /etc/guacamole/lib/
+</code></pre></div><h2 id="creación-de-la-base-de-datos">Creación de la base de datos</h2>
+<p>Primero de todo debemos crear las tablas y el usuario administrador para la base de datos, por lo que entramos en postgresql</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">su postgres
+postgres@java2:~$ createdb guacamole_db
+postgres@java2:/home/vagrant/guacamole-auth-jdbc-1.0.0/postgresql$ cat schema/*.sql | psql -d guacamole_db -f -
+</code></pre></div><p>Ahora entramos a la base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">psql -d guacamole_db
+CREATE USER guacamole_user WITH PASSWORD &#39;guacamole&#39;;
+GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO guacamole_user;
+GRANT SELECT,USAGE ON ALL SEQUENCES IN SCHEMA public TO guacamole_user;
+</code></pre></div><h2 id="autentificación-de-guacamole-por-base-de-datos">Autentificación de Guacamole por base de datos</h2>
+<p>Vamos ahora a /etc/guacamole/guacamole.properties y realizamos la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># PostgreSQL properties
+postgresql-hostname: localhost
+postgresql-port: 5432
+postgresql-database: guacamole_db
+postgresql-username: guacamole_user
+postgresql-password: guacamole
+</code></pre></div><h2 id="administración-de-guacamole">Administración de Guacamole</h2>
+<p>Ahora podemos acceder a la cuenta de administración de Guacamole ya que tenemos una base de datos.</p>
+<p>Entramos al usuario guacadmin y vemos la interfaz de administración</p>
+<p><img src="/images/Guacamole4.png" alt=""></p>
+<p>Vamos ahora a crear el usuario Alexrr que será el nuevo administrador.</p>
+<p><img src="/images/Guacamole5.png" alt=""></p>
+<p>Y vamos a ver si podemos acceder y tenemos los privilegios</p>
+<p><img src="/images/Guacamole6.png" alt=""></p>
+<p>Y en postgresql se nos ha creado un nuevo registro de usuario con la información que hemos puesto.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">       2 |         2 | \xc7eefe57cef41860ee763fe832c6bb8c54d3f9efe2302f1806c34079176dcf01 | \x690291c4eb71b893611d1ee932841256d74eb50edda9b7e1a8d96a10374d36a1 | 2020-01-23 21:50:33.082+00    | f        | f       |                     |                   |            |             | Europe/Madrid | Alejandro Rodríguez Rojas | alexrodriguezrojas98@gmail.com | Alex ORG     | Jefe
+
+</code></pre></div><p>Ahora vamos a comprobar que funciona el ssh haciendo una conexión mediante la página</p>
+<p><img src="/images/Guacamole7.png" alt="">
+<img src="/images/Guacamole8.png" alt=""></p>
+<p>Guardamos y entramos a la conexión creada</p>
+<p><img src="/images/Guacamole9.png" alt=""></p>
+<p>Ahora vamos a comprobar una conexión VNC mediante nuestra página, para ello configuraremos en la página la conexión hacia nuestra máquina</p>
+<p>Primero,en nuestro cliente, debemos instalar VNC para ello hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install tightvncserver
+apt install xfonts-100dpi-transcoded
+
+root@pc-alex:/home/alexrr/Hugo/alexblogtravis# vncserver
+
+You will require a password to access your desktops.
+
+Password: 
+Verify:   
+Would you like to enter a view-only password (y/n)? n 
+
+Warning: pc-alex:1 is taken because of /tmp/.X11-unix/X1
+Remove this file if there is no X server pc-alex:1
+
+New &#39;X&#39; desktop is pc-alex:2
+
+Creating default startup script /root/.vnc/xstartup
+Starting applications specified in /root/.vnc/xstartup
+Log file is /root/.vnc/pc-alex:2.log
+
+
+</code></pre></div><p>Ahora en nuestro cliente vamos a hacer que funcione de servidor vnc para que guacamole pueda conectarse.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">nano .vnc/xstartup
+
+<span class="c1">#!/bin/sh</span>
+
+xrdb <span class="nv">$HOME</span>/.Xresources
+xsetroot -solid grey
+<span class="c1">#x-terminal-emulator -geometry 80x24+10+10 -ls -title &#34;$VNCDESKTOP Desktop&#34;</span> 
+<span class="c1">#x-window-manager &amp;</span>
+<span class="c1"># Fix to make GNOME work</span>
+<span class="nb">export</span> <span class="nv">XKL_XMODMAP_DISABLE</span><span class="o">=</span><span class="m">1</span>
+/etc/X11/Xsession
+
+gnome-panel <span class="p">&amp;</span>
+gnome-settings-daemon <span class="p">&amp;</span>
+metacity <span class="p">&amp;</span>
+nautilus <span class="p">&amp;</span>
+
+</code></pre></div><p>Entramos a guacamole y hacemos la conexión
+<img src="/images/Guacamole12.png" alt=""></p>
+<p>Y miramos si podemos acceder</p>
+<p><img src="/images/Guacamole13.png" alt=""></p>
+<p>Y también queremos probar la opción de telnet, para ello creamos una nueva conexión.</p>
+<p><img src="/images/Guacamole14.png" alt=""></p>
+<p><img src="/images/Guacamole15.png" alt=""></p>
+<p>Entramos a la conexión:</p>
+<p><img src="/images/Guacamole16.png" alt=""></p>
+<p>Y por último debemos probar la conexión RDP, para ello necesitamos un cliente windows.</p>
+<p><img src="/images/Guacamole17.png" alt=""></p>
+<p><img src="/images/Guacamole18.png" alt=""></p>
+<p>En windows vamos a Equipo-&gt;Propiedades-&gt;Acceso Remoto y permitimos las conexiones a nivel de red.</p>
+<p><img src="/images/Guacamole19.png" alt="">
+W</p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fguacamole%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fguacamole%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fguacamole%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fguacamole%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

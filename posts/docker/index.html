@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Implantación de aplicaciones web PHP en Docker - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/docker/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/docker/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/docker/">
+    <title>
+  Implantación de aplicaciones web PHP en Docker - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/docker/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Implantación de aplicaciones web PHP en Docker</h1>
+      <h2 class="date">February 20, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="implantación-de-aplicaciones-web-php-en-docker">Implantación de aplicaciones web PHP en Docker</h2>
+<h3 id="ejecución-de-una-aplicación-web-php-en-docke">Ejecución de una aplicación web PHP en docke</h3>
+<p>Vamos a implantar una aplicación web basada en citas médicas, escrita en php.</p>
+<p>Primero vamos a realizar la instalación de docker</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install docker.io
+</code></pre></div><p>Luego vamos a clonarnos el repositorio en nuestra máquina</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone https://github.com/evilnapsis/bookmedik
+</code></pre></div><p>Nuestro esquema será el siguiente:</p>
+<p>2 contenedores-&gt;
+1-Base de datos mariadb
+2-Apache con módulo PHP</p>
+<p>Vamos a borrar la línea en schema.sql de creación de la base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">create database bookmedik;
+</code></pre></div><p>Vamos a crear primero una red para poder enlazar la base de datos y el apache</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker network create bookmedik
+</code></pre></div><p>Primero de todo vamos a realizar el contenedor con los datos cargados de sql.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name servidor_mysql --network bookmedik -e MYSQL_DATABASE=bookmedik -e MYSQL_USER=bookmedik -e MYSQL_PASSWORD=bookmedik -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+</code></pre></div><p>Ahora vamos a cargar los datos en la base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica/bookmedik# cat schema.sql | docker exec -i servidor_mysql /usr/bin/mysql -u root --password=asdasd bookmedik
+</code></pre></div><p>Ahora vamos a crear el dockerfile para el contenedor que tendrá el apache con el modulo php</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM debian
+RUN apt-get update &amp;&amp; apt-get install -y apache2 libapache2-mod-php7.3 php7.3 php7.3-mysql &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN rm /var/www/html/index.html
+ENV APACHE_SERVER_NAME www.citasalexrr.com
+ENV MARIADB_USER bookmedik
+ENV MARIADB_PASS bookmedik
+ENV MARIADB_HOST servidor_mysql
+
+EXPOSE 80
+
+COPY ./bookmedik /var/www/html
+ADD script.sh /usr/local/bin/script.sh
+
+RUN chmod +x /usr/local/bin/script.sh
+
+CMD [&#34;/usr/local/bin/script.sh&#34;]
+
+
+</code></pre></div><p>Ahora vamos a realizar script.sh</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/$this-&gt;user=&#34;root&#34;;/$this-&gt;user=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_USER</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;pass=&#34;&#34;;/$this-&gt;pass=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_PASS</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;host=&#34;localhost&#34;;/$this-&gt;host=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_HOST</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+apache2ctl -D FOREGROUND
+
+
+</code></pre></div><p>Ahora hacemos la imagen</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica# docker build -t alexrr12341/bookmedik:v1 .
+</code></pre></div><p>Y hacemos ahora el contenedor</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name bookmedik --network bookmedik -p 80:80 alexrr12341/bookmedik:v1
+</code></pre></div><p>Miramos si podemos acceder al servicio</p>
+<p><img src="/images/Bookmedik1.png" alt=""></p>
+<p>Ahora vamos a hacer un volumen en nuestro contenedor para los logs de apache2 y otro para los logs de apache2.</p>
+<p>mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name servidor_mysql --network bookmedik -v /opt/bbdd_mariadb:/var/lib/mysql -e MYSQL_DATABASE=bookmedik -e MYSQL_USER=bookmedik -e MYSQL_PASSWORD=bookmedik -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+</code></pre></div><p>logs apache2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name bookmedik --network bookmedik -v /opt/logs_apache2:/var/log/apache2 -p 80:80 alexrr12341/bookmedik:v1
+</code></pre></div><p>Ejecutamos de vuelta el script de mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cat schema.sql | docker exec -i servidor_mysql /usr/bin/mysql -u root --password=asdasd bookmedik
+</code></pre></div><p>Vamos a observar el interior de las carpetas.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica# ls /opt/bbdd_mariadb/
+aria_log.00000001  aria_log_control  bookmedik	ib_buffer_pool	ibdata1  ib_logfile0  ib_logfile1  ibtmp1  multi-master.info  mysql  performance_schema
+  
+root@docker:~/practica# ls /opt/logs_apache2/
+access.log  error.log  other_vhosts_access.log
+
+</code></pre></div><p><img src="/images/Bookmedik2.png" alt=""></p>
+<p>Ahora borramos los contenedores y volvemos a cargarlos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica/bookmedik# docker rm -f servidor_mysql
+servidor_mysql
+root@docker:~/practica/bookmedik# docker rm -f bookmedik
+bookmedik
+root@docker:~/practica/bookmedik# docker run -d --name servidor_mysql --network bookmedik -v /opt/bbdd_mariadb:/var/lib/mysql -e MYSQL_DATABASE=bookmedik -e MYSQL_USER=bookmedik -e MYSQL_PASSWORD=bookmedik -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+21c58a6514d347f14bffe7b1c4016e58a24b557ed630dc83380d0165fbf45548
+root@docker:~/practica/bookmedik# docker run -d --name bookmedik --network bookmedik -v /opt/logs_apache2:/var/log/apache2 -p 80:80 alexrr12341/bookmedik:v1
+bf36aa451fd4e168b32cd8fdaeb24067cf2606b3189b74c6555c7f9e0c71b56f
+
+</code></pre></div><p><img src="/images/Bookmedik3.png" alt=""></p>
+<h3 id="ejecución-de-una-aplicación-web-php-en-docker">Ejecución de una aplicación web PHP en docker</h3>
+<p>Ahora vamos a realizar el mismo ejercicio pero con una imagen de Php oficial</p>
+<p>Nuestro Dockerfile será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM php:7.4.3-apache
+ENV MARIADB_USER bookmedik
+ENV MARIADB_PASS bookmedik
+ENV MARIADB_HOST servidor_mysql2
+RUN docker-php-ext-install pdo pdo_mysql mysqli json
+RUN a2enmod rewrite
+EXPOSE 80
+WORKDIR /var/www/html
+COPY ./bookmedik /var/www/html
+ADD script.sh /usr/local/bin/script.sh
+
+RUN chmod +x /usr/local/bin/script.sh
+
+CMD [&#34;/usr/local/bin/script.sh&#34;]
+
+</code></pre></div><p>El script que ejecutaremos en este caso sería el mismo que el anterior.</p>
+<p>Vamos a realizar la imagen</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/bookmedikphp:v1 .
+</code></pre></div><p>Y vamos a realizar la creación de los contenedores</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name servidor_mysql2 --network bookmedik -v /opt/bbdd_mariadb:/var/lib/mysql -e MYSQL_DATABASE=bookmedik -e MYSQL_USER=bookmedik -e MYSQL_PASSWORD=bookmedik -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+
+docker run -d --name bookmedikphp --network bookmedik -v /opt/logs_apache2:/var/log/apache2 -p 80:80 alexrr12341/bookmedikphp:v1
+</code></pre></div><p>Vemos que podemos acceder a la página.</p>
+<p><img src="/images/Bookmedik4.png" alt=""></p>
+<p>Si queremos guardar la imagen en DockerHub realizamos el siguiente comando:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker push alexrr12341/bookmedikphp:v1
+</code></pre></div><p>La sintaxis sería:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker push {usuarioDocker}/{NombreImagen}:{Version}
+</code></pre></div><p>La imagen <a href="https://hub.docker.com/repository/docker/alexrr12341/bookmedikphp">Docker</a> ya estaría subida.</p>
+<p>Si queremos hacerlo con docker-compose, primero deberíamos instalarlo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install docker-compose
+</code></pre></div><p>Y hacemos el fichero docker-compose.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">version: &#39;3.1&#39;
+
+services:
+  bookmedikphp:
+    container_name: bookmedikphp
+    image: php:7.4.3-apache
+    restart: always
+    environment:
+      MARIADB_USER: bookmedik
+      MARIADB_PASS: bookmedik
+      MARIADB_HOST: servidor_mysql2
+    ports:
+      - 80:80
+    volumes:
+      - /opt/logs_apache2:/var/log/apache2
+      - ./script.sh:/usr/local/bin/script.sh
+      - ./bookmedik:/var/www/html
+    command: &gt;
+      bash /usr/local/bin/script.sh
+  servidor_mysql2:
+    container_name: servidor_mysql2
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: bookmedik
+      MYSQL_USER: bookmedik
+      MYSQL_PASSWORD: bookmedik
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+
+</code></pre></div><p>El script que ejecutaré en este caso será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/$this-&gt;user=&#34;root&#34;;/$this-&gt;user=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_USER</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;pass=&#34;&#34;;/$this-&gt;pass=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_PASS</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;host=&#34;localhost&#34;;/$this-&gt;host=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_HOST</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+docker-php-ext-install pdo pdo_mysql mysqli json
+apache2ctl -D FOREGROUND
+
+</code></pre></div><p>Para ejecutarlos hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker-compose up -d
+</code></pre></div><p>Y vemos que se están ejecutando los procesos y podemos entrar a la página</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+root@docker:~/practica2# docker-compose ps
+     Name                    Command               State         Ports       
+-----------------------------------------------------------------------------
+bookmedikphp      docker-php-entrypoint bash ...   Up      0.0.0.0:80-&gt;80/tcp
+servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp     
+
+</code></pre></div><p><img src="/images/Bookmedik5.png" alt=""></p>
+<h3 id="ejecución-de-una-aplicación-php-en-docker">Ejecución de una aplicación PHP en docker</h3>
+<p>Ahora vamos a crear un escenario con nginx(bookmedik)+php-fpm+mariadb, por lo que cada uno tendrá su propio contenedor, y compartirán información para que puedan conectarse entre ellos.
+Para ello vamos a crear un docker-compose que contenga toda la información:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">version: &#39;3.1&#39;
+services:
+  bookmedik:
+    image: nginx:latest
+    container_name: bookmedik
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./bookmedik:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+  php:
+    image: php:7.4.3-fpm-buster
+    container_name: php-fpm
+    restart: always
+    environment:
+      MARIADB_USER: bookmedik
+      MARIADB_PASS: bookmedik
+      MARIADB_HOST: servidor_mysql2
+    volumes:
+      - ./bookmedik:/var/www/html
+      - ./script.sh:/usr/local/bin/script.sh
+    command: bash /usr/local/bin/script.sh
+  servidor_mysql2:
+    image: mariadb
+    container_name: servidor_mysql2
+    restart: always
+    environment:
+      MYSQL_DATABASE: bookmedik
+      MYSQL_USER: bookmedik
+      MYSQL_PASSWORD: bookmedik
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+</code></pre></div><p>Y el script que ejecutaremos en php-fpm será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/$this-&gt;user=&#34;root&#34;;/$this-&gt;user=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_USER</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;pass=&#34;&#34;;/$this-&gt;pass=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_PASS</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+sed -i <span class="s1">&#39;s/$this-&gt;host=&#34;localhost&#34;;/$this-&gt;host=&#34;&#39;</span><span class="si">${</span><span class="nv">MARIADB_HOST</span><span class="si">}</span><span class="s1">&#39;&#34;;/g&#39;</span> /var/www/html/core/controller/Database.php
+docker-php-ext-install pdo pdo_mysql mysqli json
+php-fpm
+</code></pre></div><p>El default.conf que copiaremos será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">server {
+    index index.php index.html;
+    server_name php-docker.local;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/html;
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php-fpm:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}
+</code></pre></div><p>Ejecutamos docker-compose</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica3# docker-compose up -d
+Starting php-fpm         ... done
+Starting servidor_mysql2 ... done
+Starting bookmedik       ... done
+
+</code></pre></div><p>Vemos que todos están escuchando en los puertos correspondientes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica3# docker-compose ps
+     Name                    Command               State         Ports       
+-----------------------------------------------------------------------------
+bookmedik         nginx -g daemon off;             Up      0.0.0.0:80-&gt;80/tcp
+php-fpm           docker-php-entrypoint bash ...   Up      9000/tcp          
+servidor_mysql2   docker-entrypoint.sh mysqld      Up      3306/tcp   
+</code></pre></div><p>Y que podemos acceder.</p>
+<p><img src="/images/Bookmedikfpm.png" alt=""></p>
+<h3 id="ejecución-de-un-cms-en-docker">Ejecución de un CMS en docker</h3>
+<p>Ahora vamos a realizar un contenedor que contenga Drupal, que estará en una imagen base de debian y otro contenedor que contenga la base de datos mariadb</p>
+<p>Primero de todo nos descargamos drupal en nuestro ordenador.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">wget https://www.drupal.org/download-latest/zip
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">unzip zip
+</code></pre></div><p>Tendremos una carpeta drupal</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica4# ls
+Dockerfile  drupal-8.8.2  zip
+</code></pre></div><p>Y para crear el contenedor crearemos un dockerfile con la siguiente información:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM debian
+RUN apt-get update &amp;&amp; apt-get install -y apache2 libapache2-mod-php7.3 php7.3 php7.3-mysql php-dom php-xml php-gd php-mbstring &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN rm /var/www/html/index.html
+EXPOSE 80
+COPY ./drupal-8.8.2 /var/www/html
+ADD script.sh /usr/local/bin/script.sh
+RUN chmod +x /usr/local/bin/script.sh
+RUN chmod a+w /var/www/html/sites/default/files
+RUN cp /var/www/html/sites/default/default.settings.php /var/www/html/sites/default/settings.php
+RUN chmod a+w /var/www/html/sites/default/settings.php
+RUN a2enmod rewrite 
+CMD [&#34;/usr/local/bin/script.sh&#34;]
+
+</code></pre></div><p>El script que ejecutaremos será el siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/AllowOverride None/AllowOverride All/g&#39;</span> /etc/apache2/apache2.conf
+apache2ctl -D FOREGROUND
+</code></pre></div><p>Ahora creamos una red para conectar la base de datos con drupal</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica4# docker network create drupal
+</code></pre></div><p>Creamos la imagen:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/drupal:v1 .
+</code></pre></div><p>Vamos a lanzar la base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name servidor_mysql4 --network drupal -v /opt/bbdd_drupal2:/var/lib/mysql -e MYSQL_DATABASE=drupal -e MYSQL_USER=drupal -e MYSQL_PASSWORD=drupal -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+</code></pre></div><p>Y lanzamos la aplicación drupal</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 alexrr12341/drupal:v1
+</code></pre></div><p>Vamos ahora a instalar drupal mediante el panel web</p>
+<p><img src="/images/Drupal.png" alt="">
+<img src="/images/Drupal2.png" alt=""></p>
+<p>Vamos a borrar los contenedores y vamos a comprobar que drupal sigue con la información:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker rm -f servidor_mysql4
+docker rm -f drupal
+</code></pre></div><p>Y iniciamos los servicios</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name servidor_mysql4 --network drupal -v /opt/bbdd_drupal2:/var/lib/mysql -e MYSQL_DATABASE=drupal -e MYSQL_USER=drupal -e MYSQL_PASSWORD=drupal -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+docker run -d --name drupal --network drupal -v drupal1:/var/www/html -p 80:80 alexrr12341/drupal:v1
+</code></pre></div><p><img src="/images/Drupal3.png" alt=""></p>
+<h3 id="ejecución-de-un-cms-en-dockerimágen-oficial">Ejecución de un CMS en docker(Imágen oficial)</h3>
+<p>Vamos ahora a instalar un nextcloud mediante la imagen oficial</p>
+<p>Para ello instalamos nextcloud</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker pull nextcloud
+</code></pre></div><p>Creamos el docker-compose para ambos contenedores</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">version: &#39;3.1&#39;
+services:
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+      POSTGRES_HOST: postgres_next
+    volumes:
+      - /opt/nextcloud:/var/www/html
+  postgres_next:
+    image: postgres
+    container_name: postgres_next
+    restart: always
+    environment:
+      POSTGRES_USER: nextcloud
+      POSTGRES_DB: nextcloud
+      POSTGRES_PASSWORD: nextcloud
+    volumes:
+      - /opt/bbdd_nextcloud:/var/lib/postgresql
+
+
+</code></pre></div><p>Y activamos el docker-compose</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/practica5# docker-compose up -d
+
+
+root@docker:~/practica5# docker-compose ps
+    Name                   Command               State         Ports       
+---------------------------------------------------------------------------
+nextcloud       /entrypoint.sh apache2-for ...   Up      0.0.0.0:80-&gt;80/tcp
+postgres_next   docker-entrypoint.sh postgres    Up      5432/tcp 
+</code></pre></div><p>Como tenemos las variables de entorno configuradas solo tenemos que introducir el usuario con privilegios para nextcloud y su contraseña</p>
+<p><img src="/images/Nextcloud.png" alt=""></p>
+<p><img src="/images/Nextcloud2.png" alt=""></p>
+<p><img src="/images/Nextcloud3.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdocker%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdocker%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdocker%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdocker%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

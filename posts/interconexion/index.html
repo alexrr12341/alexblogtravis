@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Interconexión de bases de datos - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/interconexion/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/interconexion/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/interconexion/">
+    <title>
+  Interconexión de bases de datos - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/interconexion/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Interconexión de bases de datos</h1>
+      <h2 class="date">January 17, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="conexion-oracle-a-oracle">Conexion Oracle a Oracle</h2>
+<p>Vamos a configurar dos máquinas Debian con un Oracle instalado en cada una de ellas.</p>
+<p>Para configurar la interconexión primero debemos configurar el listener.ora de Oracle que está ubicado en /opt/oracle/product/12.2.0.1/dbhome_1/network/admin.
+Ip de la máquina:
+<img src="/images/Interconexion1.png" alt=""></p>
+<p>listener.ora:
+<img src="/images/Interconexion2.png" alt=""></p>
+<p>tnsnames.ora:
+<img src="/images/Interconexion3.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">lsnrctl stop
+lsnrctl start
+</code></pre></div><h3 id="comprobar-interconexión">Comprobar interconexión</h3>
+<p>Para que podamos hacer un database link en oracle primero tendremos que darle permisos a nuestro usuario alexrr
+<img src="/images/Interconexion4.png" alt=""></p>
+<p>Ahora entramos al usuario alexrr
+<img src="/images/Interconexion5.png" alt=""></p>
+<p>Ahora creamos el link:
+<img src="/images/Interconexion6.png" alt=""></p>
+<p>Y probamos un join de nuestras tablas con la base de datos remota
+<img src="/images/Interconexion8.png" alt=""></p>
+<h2 id="conexion-postgresql-a-postgresql">Conexion PostgreSQL a PostgreSQL</h2>
+<p>Vamos a configurar dos máquinas Debian con un PostgreSQL instalado en cada uno de ellas.</p>
+<p>Ip de la maquina:
+<img src="/images/Interconexion9.png" alt=""></p>
+<p>Ip de la maquina 2:
+<img src="/images/Interconexion10.png" alt=""></p>
+<p>Entramos al postgresql de la máquina 1 y le crearemos un usuario y contraseña para hacer la interconexion
+<img src="/images/Interconexion11.png" alt=""></p>
+<p>Entramos al usuario
+<img src="/images/Interconexion12.png" alt=""></p>
+<p>Y creamos las tablas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Create table Viveros
+(
+Codigo Varchar(10),
+Direccion Varchar(150),
+Telefono Varchar(9),
+CONSTRAINT pk_Codigo_Vivero PRIMARY KEY (Codigo),
+CONSTRAINT direccionvivero_correcta check(Direccion like &#39;%(Dos Hermanas)%&#39; or Direccion like &#39;%(Alcala)%&#39; or Direccion like &#39;%(Gelves)%&#39;)
+);
+
+insert into Viveros(Codigo,Direccion,Telefono)
+values(&#39;12345&#39;,&#39;Ctra. Dos Hermanas Utrera km, 3, 41702 Sevilla (Dos Hermanas)&#39;,&#39;954720244&#39;);
+insert into Viveros(Codigo,Direccion,Telefono)
+values(&#39;12114&#39;,&#39;Carretera Montequinto a Dos Hermanas, Km 2.5, 41089 Sevilla (Dos Hermanas)&#39;,&#39;854537288&#39;);
+insert into Viveros(Codigo,Direccion,Telefono)
+values(&#39;11567&#39;,&#39;Calle Mar Báltico, 3, 41927 Mairena del Aljarafe, Sevilla(Gelves)&#39;,&#39;955600977&#39;);
+insert into Viveros(Codigo,Direccion,Telefono)
+values(&#39;64443&#39;,&#39;Viveros Molina, Autovia A—376 Km, 10,5 Frente a, 41500, Sevilla(Alcala)&#39;,&#39;615033716&#39;);
+</code></pre></div><p>Ahora desde el usuario postgres le damos el permiso de crear links de bases de datos a la base de datos pruebin
+<img src="/images/Interconexion13.png" alt=""></p>
+<p>Entramos al usuario pruebin y hacemos la interconexion
+<img src="/images/Interconexion14.png" alt=""></p>
+<h2 id="conexion-oracle-a-postgresql">Conexion Oracle a PostgreSQL</h2>
+<p>Máquina Oracle</p>
+<p>Ip oracle:
+<img src="/images/Interconexion15.png" alt=""></p>
+<p>Ip postgres:
+<img src="/images/Interconexion16.png" alt=""></p>
+<p>En nuestra máquina Oracle vamos a instalar el paquete odbc que es el que permitirá el acceso a postgres desde cualquier gestor de base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install odbc-postgresql unixodbc
+</code></pre></div><p>Se nos creará un fichero /etc/odbcinst.ini y debemos configurarlo de la siguiente manera
+<img src="/images/Interconexion17.png" alt=""></p>
+<p>Para comprobarlo ejecutamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@debian:/home/oracle# odbcinst -q -d
+[PostgreSQL ANSI]
+[PostgreSQL Unicode]
+</code></pre></div><p>Ahora configuramos /etc/odbc.ini de la siguiente manera:
+<img src="/images/Interconexion18.png" alt=""></p>
+<p>Hacemos ahora</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@debian:/home/oracle# odbcinst -q -s
+[PSQLA]
+[PSQLU]
+[Default]
+</code></pre></div><p>Y comprobamos la conexión
+<img src="/images/Interconexion19.png" alt=""></p>
+<p>Ahora vamos a crear el fichero $ORACLE_HOME/hs/admin/initPSQLU.ora
+<img src="/images/Interconexion20.png" alt=""></p>
+<p>Configuraremos el listener para que escuche a psqlu
+<img src="/images/Interconexion21.png" alt=""></p>
+<p>Y el tnsnames.ora
+<img src="/images/Interconexion22.png" alt=""></p>
+<p>Creamos el link ahora y miramos si podemos acceder a la base de datos pruebin.
+<img src="/images/Interconexion23.png" alt=""></p>
+<p><img src="/images/Interconexion24.png" alt=""></p>
+<h2 id="conexion-de-postgresql-a-oracle">Conexion de PostgreSQL a Oracle</h2>
+<p>Ip PostgreSQL y Oracle:
+<img src="/images/Interconexion25.png" alt=""></p>
+<p>Lo primero que haremos será instalar el cliente de Oracle en nuestra máquina postgresql, para ello antes debemos de instalar los siguientes paquetes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install libaio1 libaio-dev alien
+</code></pre></div><p>Y ahora instalamos el cliente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@bd:~$ ls
+oracle-instantclient19.5-basic-19.5.0.0.0-1.x86_64.rpm  oracle-instantclient19.5-sqlplus-19.5.0.0.0-1.x86_64.rpm
+oracle-instantclient19.5-devel-19.5.0.0.0-1.x86_64.rpm  oracle-instantclient19.5-tools-19.5.0.0.0-1.x86_64.rpm
+vagrant@bd:~$ sudo alien --to-deb --scripts *
+oracle-instantclient19.5-basic_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-devel_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-sqlplus_19.5.0.0.0-2_amd64.deb generated
+oracle-instantclient19.5-tools_19.5.0.0.0-2_amd64.deb generated
+
+
+vagrant@bd:~$ sudo dpkg -i *.deb
+</code></pre></div><p>Ahora debemos configurar postgresql para conectarse con oracle, nos descargaremos una extensión de postgresql y la compilaremos.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone https://github.com/laurenz/oracle_fdw.git
+</code></pre></div><p>Antes de compilar debemos configurar el Makefile y incluir las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">PG_CPPFLAGS = ... -I/usr/include/oracle/19.5/client64
+SHLIB_LINK = ... -L/usr/lib/oracle/19.5/client64/lib
+</code></pre></div><p>Añadimos las siguientes variables de entorno para poder compilarlo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@bd:~$ export ORACLE_HOME=&#34;/usr/lib/oracle/19.5/client64&#34;
+vagrant@bd:~$ export LD_LIBRARY_PATH=&#34;/usr/lib/oracle/19.5/client64/lib&#34;
+vagrant@bd:~$ export PATH=$ORACLE_HOME:$PATH
+vagrant@bd:~$ export USE_PGXS=1
+</code></pre></div><p>Ahora compilamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@bd:~/oracle_fdw$ make
+You need to install postgresql-server-dev-NN for building a server-side extension or libpq-dev for building a client-side application.
+</code></pre></div><p>Nos saltará este error, instalamos el siguiente paquete y no tendremos problemas al compilar</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt install postgresql-server-dev-11
+</code></pre></div><p>Ahora si podremos compilar postgresql</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">make
+sudo make install
+</code></pre></div><p>Ahora vamos a entrar a postgres y crearemos la extension
+<img src="/images/Interconexion26.png" alt=""></p>
+<p>Ahora creamos la conexion con el servidor
+<img src="/images/Interconexion27.png" alt=""></p>
+<p>Y comprobamos que funcione nuestra conexión con postgresql, vamos a coger la tabla Viveros de nuestro Oracle para comprobarlo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">CREATE FOREIGN TABLE oracleviveros (
+Codigo VARCHAR(10),
+Direccion VARCHAR(150),
+Telefono VARCHAR(9)
+)
+SERVER alexoracle OPTIONS (schema &#39;ALEXRR&#39;, table &#39;VIVEROS&#39;);
+</code></pre></div><p><img src="/images/Interconexion28.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2finterconexion%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2finterconexion%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2finterconexion%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2finterconexion%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

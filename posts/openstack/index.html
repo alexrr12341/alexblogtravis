@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Instalación de Openstack con Kolla-Ansible - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/openstack/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/openstack/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/openstack/">
+    <title>
+  Instalación de Openstack con Kolla-Ansible - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/openstack/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Instalación de Openstack con Kolla-Ansible</h1>
+      <h2 class="date">February 28, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="instalación-de-openstack-con-kolla-ansible">Instalación de Openstack con Kolla-Ansible</h2>
+<p>Vamos a preparar un escenario que se basará en 3 máquinas, 1 máquina será el instalador, otra será el controlador y otra será el computador, por lo que vamos a empezar a realizar las siguientes configuraciones:</p>
+<h3 id="configuración-inicial">Configuración inicial</h3>
+<p>Vamos primero a hacer nuestras dos máquinas master y compute para la instalación (ambas máquinas tienen que tener instaladas python-dev, también añadirle contraseña a root y editar el fichero /etc/ssh/sshd_config)</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Vagrant.configure(&#34;2&#34;) do |config|
+  config.vm.define :instalador do |instalador|
+    instalador.vm.box = &#34;ubuntu/bionic64&#34;
+    instalador.vm.hostname = &#34;instalador&#34;
+    instalador.vm.network :public_network, :bridge=&gt;&#34;enp7s0&#34;
+    instalador.vm.network :private_network, ip: &#34;10.10.1.4&#34;, virtualbox__intnet: &#34;redinterna&#34;
+  end
+  config.vm.define :master do |master|
+    master.vm.box = &#34;ubuntu/bionic64&#34;
+    master.vm.hostname = &#34;master&#34;
+    master.vm.network :public_network, :bridge=&gt;&#34;enp7s0&#34;
+    master.vm.network :private_network, ip: &#34;10.10.1.2&#34;, virtualbox__intnet: &#34;redinterna&#34;
+    master.vm.network :public_network, :bridge=&gt;&#34;enp7s0&#34;
+    master.vm.provider &#34;virtualbox&#34; do |mv|
+      mv.customize [&#34;modifyvm&#34;, :id, &#34;--memory&#34;, &#34;6144&#34;]
+    end
+  end
+  config.vm.define :compute do |compute|
+    compute.vm.box = &#34;ubuntu/bionic64&#34;
+    compute.vm.hostname = &#34;compute&#34;
+    compute.vm.network :public_network, :bridge=&gt;&#34;enp7s0&#34;
+    compute.vm.network :private_network, ip: &#34;10.10.1.3&#34;, virtualbox__intnet: &#34;redinterna&#34;
+    compute.vm.provider &#34;virtualbox&#34; do |mv|
+      mv.customize [&#34;modifyvm&#34;, :id, &#34;--memory&#34;, &#34;3072&#34;]
+    end
+  end
+end
+
+
+</code></pre></div><p>Máquina master:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">3: enp0s8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:0e:0d:7c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.144/24 brd 192.168.1.255 scope global dynamic enp0s8
+       valid_lft 85844sec preferred_lft 85844sec
+    inet6 2a01:c50e:be4a:4300:a00:27ff:fe0e:d7c/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1781sec preferred_lft 581sec
+    inet6 fe80::a00:27ff:fe0e:d7c/64 scope link 
+       valid_lft forever preferred_lft forever
+4: enp0s9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:18:74:2d brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.2/24 brd 10.10.1.255 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe18:742d/64 scope link 
+       valid_lft forever preferred_lft forever
+5: enp0s10: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:bf:3e:94 brd ff:ff:ff:ff:ff:ff
+    inet6 2a01:c50e:be4a:4300:a00:27ff:febf:3e94/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1781sec preferred_lft 581sec
+    inet6 fe80::a00:27ff:febf:3e94/64 scope link 
+       valid_lft forever preferred_lft forever
+
+
+</code></pre></div><p>Máquina compute:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">3: enp0s8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:25:76:ad brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.10/24 brd 192.168.1.255 scope global dynamic enp0s8
+       valid_lft 86052sec preferred_lft 86052sec
+    inet6 2a01:c50e:be4a:4300:a00:27ff:fe25:76ad/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1758sec preferred_lft 558sec
+    inet6 fe80::a00:27ff:fe25:76ad/64 scope link 
+       valid_lft forever preferred_lft forever
+4: enp0s9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:5f:25:94 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.3/24 brd 10.10.1.255 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe5f:2594/64 scope link 
+       valid_lft forever preferred_lft forever
+
+
+</code></pre></div><p>Fichero /etc/ssh/sshd_config</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">PermitRootLogin yes
+PasswordAuthentication yes
+</code></pre></div><p>En nuestro /etc/hosts añadimos la siguiente información</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">192.168.1.144    master
+192.168.1.10    compute
+
+</code></pre></div><h3 id="nodo-instalador">Nodo instalador</h3>
+<p>Todas las máquinas se basarán en ubuntu 18.04 por lo que nuestro instalador también será de dicha distribución</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@instalador:~$ source openstack/bin/activate
+(openstack) vagrant@instalador:~$ pip install -U pip
+apt install python-dev libffi-dev gcc libssl-dev python-selinux sshpass python3-dev build-essential libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
+(openstack) vagrant@instalador:~$ pip install -U ansible
+</code></pre></div><p>Ahora instalamos kolla-ansible</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(openstack) vagrant@instalador:~$ pip install -U kolla-ansible
+</code></pre></div><p>Creamos el directorio /etc/kolla</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo mkdir -p /etc/kolla
+sudo chown $USER:$USER /etc/kolla
+</code></pre></div><p>Copiamos los ficheros necesarios para el despliegue de openstack</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(openstack) vagrant@instalador:~$ cp -r openstack/share/kolla-ansible/etc_examples/kolla/* /etc/kolla/
+</code></pre></div><p>Y también el directorio desde el que vamos a trabajar el inventario para el multinodo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+(openstack) vagrant@instalador:~/openstack$ cp openstack/share/kolla-ansible/ansible/inventory/* .
+</code></pre></div><h3 id="ansible">Ansible</h3>
+<p>Ahora vamos a crear el fichero /etc/ansible/ansible.cfg</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo mkdir /etc/ansible
+sudo nano /etc/ansible/ansible.cfg
+
+[defaults]
+host_key_checking=False
+pipelining=True
+forks=100
+
+sudo chown -R $USER:$USER /etc/ansible
+</code></pre></div><p>Ahora vamos a nuestra carpeta de openstack y vamos al fichero multinode y realizamos lo siguiente (muy importante sólo cambiar las lineas dadas, no borrar el fichero entero)</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[control]
+master ansible_user=root ansible_password=password
+
+[network:children]
+control
+
+[compute]
+compute ansible_user=root ansible_password=password
+
+[monitoring:children]
+control
+
+[storage:children]
+control
+
+[deployment]
+localhost ansible_connection=local
+</code></pre></div><p>Miramos si podemos hacerle ping</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(openstack) vagrant@instalador:~$ ansible -i multinode all -m ping
+localhost | SUCCESS =&gt; {
+    &#34;ansible_facts&#34;: {
+        &#34;discovered_interpreter_python&#34;: &#34;/usr/bin/python&#34;
+    },
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;
+}
+master | SUCCESS =&gt; {
+    &#34;ansible_facts&#34;: {
+        &#34;discovered_interpreter_python&#34;: &#34;/usr/bin/python3&#34;
+    },
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;
+}
+compute | SUCCESS =&gt; {
+    &#34;ansible_facts&#34;: {
+        &#34;discovered_interpreter_python&#34;: &#34;/usr/bin/python3&#34;
+    },
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;}
+
+
+
+</code></pre></div><p>Ahora vamos a instalarle a todas las máquinas python-dev con el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ansible -i multinode all -m raw -a &#34;apt-get -y install python3-dev&#34;
+</code></pre></div><h3 id="kolla-passwords">Kolla Passwords</h3>
+<p>Para que kolla tenga contraseñas,vamos a generar las contraseñas con el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla-genpwd
+</code></pre></div><h3 id="kolla-globalsyml">Kolla Globals.yml</h3>
+<p>Editamos el siguiente fichero, kolla recomienda usar Ubuntu o centos, por lo que en este caso vamos a utilizar ubuntu</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla_base_distro: &#34;ubuntu&#34; # Base de ubuntu
+
+kolla_install_type: &#34;binary&#34; # Para repositorios apt
+
+openstack_release: &#34;train&#34; # Version de openstack
+network_interface: &#34;enp0s9&#34; # Interfaz interna
+kolla_internal_vip_address: &#34;10.10.1.254&#34; # Ip para gestionar interfaz interna
+kolla_external_vip_address: &#34;192.168.1.200&#34;
+kolla_external_vip_interface: &#34;enp0s10&#34; # Interfaz que no tiene ip
+neutron_external_interface: &#34;enp0s10&#34;
+
+enable_cinder: &#34;yes&#34;
+enable_cinder_backup: &#34;yes&#34;
+enable_cinder_backend_hnas_nfs: &#34;yes&#34;
+enable_cinder_backend_nfs: &#34;yes&#34;
+
+nova_compute_virt_type: &#34;qemu&#34;
+
+</code></pre></div><p>Y vamos a preparar el deploy, para ello primero preparamos las dependencias en los nodos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla-ansible -i multinode bootstrap-servers
+</code></pre></div><p>Nos saltará un error de pip3, para ello instalamos en las máquinas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install python3-pip
+</code></pre></div><p>Comprobamos que todo está listo:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla-ansible -i multinode prechecks
+</code></pre></div><p>Y hacemos el deploy</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla-ansible -i ./multinode deploy
+</code></pre></div><p>Al hacer el deploy nos saltará un error porque hemos activado el nfs backend de cinder, para ello vamos a instalar nfs</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install nfs-kernel-server
+</code></pre></div><p>En /etc/exports ponemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/kolla_nfs 10.10.1.0/24(rw,sync,no_root_squash)
+</code></pre></div><p>Creamos la carpeta kolla_nfs</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /kolla_nfs
+</code></pre></div><p>Reiniciamos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart nfs-kernel-server
+</code></pre></div><p>Y hacemos un fichero /etc/kolla/config/nfs_shares que contenga lo siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">storage01:/kolla_nfs
+storage02:/kolla_nfs
+</code></pre></div><p>Y volvemos a iniciar el deploy.</p>
+<p>Cuando el deploy termine, realizamos una evaluación para que todo esté correcto</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kolla-ansible post-deploy
+. /etc/kolla/admin-openrc.sh
+</code></pre></div><p>La contraseña y el usuario lo podemos ver en el fichero /etc/kolla/admin-source.sh</p>
+<p><img src="/images/Openstack.png" alt=""></p>
+<p>Como hay ejemplos de imágenes,reds,etc en openstack vamos a ejecutar el siguiente comando:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(openstack) root@instalador:~# pip install python-openstackclient
+
+(openstack) root@instalador:~# openstack/share/kolla-ansible/init-runonce 
+
+</code></pre></div><p>Siendo openstack nuestro entorno virtual</p>
+<p><img src="/images/Openstack2.png" alt=""></p>
+<p><img src="/images/Openstack3.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenstack%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenstack%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenstack%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fopenstack%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

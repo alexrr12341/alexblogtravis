@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Implantación de Aplicaciones Web Python en Docker - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/dockerpython/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/dockerpython/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/dockerpython/">
+    <title>
+  Implantación de Aplicaciones Web Python en Docker - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/dockerpython/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Implantación de Aplicaciones Web Python en Docker</h1>
+      <h2 class="date">April 24, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="implantación-de-aplicaciones-web-python-en-docker">Implantación de Aplicaciones Web Python en Docker</h2>
+<h2 id="ejecución-de-una-aplicación-web-python-en-docker">Ejecución de una aplicación web Python en docker</h2>
+<h3 id="parte-1">Parte 1</h3>
+<p>Vamos a implantar la aplicación web escrita en python gestion IESGN.</p>
+<p>Para ello nos vamos a clonar el repositorio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/escenario1/gestion# git clone https://github.com/jd-iesgn/iaw_gestionGN
+
+
+</code></pre></div><p>También debemos instalar docker, para ello</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install docker.io
+</code></pre></div><p>Vamos a editar el fichero settings.py para que pueda observar la base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ALLOWED_HOSTS = [&#39;192.168.1.38&#39;]
+...
+...
+DATABASES = {
+      &#39;default&#39;: {
+          &#39;ENGINE&#39;: &#39;mysql.connector.django&#39;,
+          &#39;NAME&#39;: &#39;iesgn&#39;,
+          &#39;USER&#39;: &#39;iesgn&#39;,
+          &#39;PASSWORD&#39;: &#39;iesgn&#39;,
+          &#39;HOST&#39;: &#39;mariadb&#39;,
+          &#39;PORT&#39;: &#39;&#39;,
+      }
+  }
+</code></pre></div><p>Nuestro Dockerfile tendrá el siguiente contenido:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+FROM debian
+RUN apt-get update &amp;&amp; apt-get install -y apache2 libapache2-mod-wsgi-py3 python3-pip python3-mysqldb zlib1g-dev libjpeg62-turbo-dev &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install mysql-connector-python
+RUN rm /var/www/html/index.html
+EXPOSE 80
+
+COPY ./iaw_gestionGN /var/www/html
+COPY ./000-default.conf /etc/apache2/sites-available
+RUN pip3 install -r /var/www/html/iaw_gestionGN/requirements.txt
+RUN cp -r /usr/local/lib/python3.7/dist-packages/django/contrib/admin/static/admin/ /var/www/html/iaw_gestionGN/static
+RUN chown -R www-data: /var/www/html/iaw_gestionGN
+ENTRYPOINT [&#34;/usr/sbin/apache2ctl&#34;, &#34;-D&#34;, &#34;FOREGROUND&#34;]
+</code></pre></div><p>El fichero 000-default.conf será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;VirtualHost *:80&gt;
+    DocumentRoot /var/www/html/iaw_gestionGN
+    WSGIDaemonProcess iaw_gestionGN user=www-data group=www-data processes=1 threads=5 python-path=/var/www/html/iaw_gestionGN
+    WSGIScriptAlias / /var/www/html/iaw_gestionGN/gestion/wsgi.py
+
+    &lt;Directory /var/www/html/iaw_gestionGN&gt;
+            WSGIProcessGroup iaw_gestionGN
+            WSGIApplicationGroup %{GLOBAL}
+            Require all granted
+    &lt;/Directory&gt;
+    Alias &#34;/static/&#34; &#34;/var/www/html/iaw_gestionGN/static/&#34;
+&lt;/VirtualHost&gt;
+</code></pre></div><p>Vamos a crear una network para que ambos se puedan ver</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker network create iesgn
+</code></pre></div><p>Vamos a lanzar una base de datos mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name mariadb --network iesgn -v /opt/bbdd_mariadb:/var/lib/mysql -e MYSQL_DATABASE=iesgn -e MYSQL_USER=iesgn -e MYSQL_PASSWORD=iesgn -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+</code></pre></div><p>Vamos a montar la imagen</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/iaw_gestion:v1 .
+
+</code></pre></div><p>Ahora corremos el contenedor</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name iesgn --network iesgn -p 80:80 alexrr12341/iaw_gestion:v1
+</code></pre></div><p>Ahora simplemente tendremos que ejecutar el comando para la migración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker exec iesgn python3 /var/www/html/iaw_gestionGN/manage.py migrate
+</code></pre></div><p>Y entramos a la página</p>
+<p><img src="/images/dockerpython1.png" alt="">
+<img src="/images/dockerpython2.png" alt=""></p>
+<h3 id="parte-2">Parte 2</h3>
+<p>Ahora vamos a realizar la imagen desde la oficial de python.</p>
+<p>Partiendo del escenario anterior, vamos a realizar el Dockerfile para la imagen que ejecutaremos para el compose.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM python:3
+WORKDIR /usr/src/app
+RUN pip3 install mysql-connector-python
+COPY ./gestion/iaw_gestionGN/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY ./gestion/iaw_gestionGN .
+EXPOSE 8000
+CMD [&#34;python&#34;, &#34;manage.py&#34;, &#34;collectstatic&#34;]
+CMD [&#34;python&#34;, &#34;manage.py&#34;, &#34;runserver&#34;, &#34;0.0.0.0:8000&#34;]
+</code></pre></div><p>Hacemos la imagen</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/iaw_gestion:v2 .
+</code></pre></div><p>Ahora como necesitamos docker-compose hacemos la instalación</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install docker-compose
+</code></pre></div><p>Nuestro docker-compose.yml tendrá el siguiente contenido</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">version: &#39;3.1&#39;
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: iesgn
+      MYSQL_USER: iesgn
+      MYSQL_PASSWORD: iesgn
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+  iesgn:
+    container_name: iesgn
+    image: alexrr12341/iaw_gestion:v2
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - 8000:8000
+
+</code></pre></div><p>Y lo ejecutamos con el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker-compose up -d
+</code></pre></div><p>Para hacer la migración, realizamos el comando que hicimos en el escenario anterior</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker exec iesgn python3 /usr/src/app/manage.py migrate
+</code></pre></div><p>Observamos que esté funcionando correctamente.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> Name                Command               State           Ports         
+-------------------------------------------------------------------------
+iesgn     python manage.py runserver ...   Up      0.0.0.0:8000-&gt;8000/tcp
+mariadb   docker-entrypoint.sh mysqld      Up      3306/tcp     
+</code></pre></div><p><img src="/images/dockerpython3.png" alt=""></p>
+<p><img src="/images/dockerpython4.png" alt=""></p>
+<h3 id="parte-3">Parte 3</h3>
+<p>Ahora vamos a hacer un docker compose que contenga:</p>
+<ul>
+<li>La imagen Nginx con nuestra aplicación</li>
+<li>Una imagen con uwsgi</li>
+<li>Una imagen con la base de datos mariadb</li>
+</ul>
+<p>Primero de todo vamos a crear la imagen de iesgn con la imagen oficial de nginx, para eso hacemos el siguiente Dockerfile:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM nginx
+WORKDIR /var/www/html
+RUN apt-get update &amp;&amp; apt-get install -y python3-pip python3-mysqldb zlib1g-dev libjpeg62-turbo-dev &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN pip3 install mysql-connector-python
+COPY ./gestion/iaw_gestionGN/requirements.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt
+EXPOSE 80
+CMD [&#34;python3&#34;, &#34;manage.py&#34;, &#34;collectstatic&#34;]
+CMD [&#34;nginx&#34;, &#34;-g&#34;, &#34;daemon off;&#34;]
+
+</code></pre></div><p>Haremos la imagen de iesgn con el siguiente comando:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/iaw_gestion:v3 .
+</code></pre></div><p>Tambien vamos a crear una imagen  para la instalación de gunicorn</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM debian
+WORKDIR /var/www/html
+RUN apt-get update &amp;&amp; apt-get install -y uwsgi uwsgi-plugin-python3 python3-pip python3-mysqldb zlib1g-dev libjpeg62-turbo-dev &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN pip3 install mysql-connector-python
+COPY ./gestion/iaw_gestionGN/requirements.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt
+EXPOSE 8080
+
+
+</code></pre></div><p>Y la hacemos con el siguiente comando:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker build -t alexrr12341/uwsgi:v1 .
+</code></pre></div><p>Y hacemos el docker-compose para el despliegue:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">version: &#39;3.1&#39;
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: iesgn
+      MYSQL_USER: iesgn
+      MYSQL_PASSWORD: iesgn
+      MYSQL_ROOT_PASSWORD: asdasd
+    volumes:
+      - /opt/bbdd_mariadb:/var/lib/mysql
+  iesgn:
+    container_name: iesgn
+    image: alexrr12341/iaw_gestion:v3
+    restart: always
+    depends_on:
+      - mariadb
+      - uwsgi
+    ports:
+      - 80:80
+    volumes:
+    - ./gestion/iaw_gestionGN:/var/www/html
+    - ./default.conf:/etc/nginx/conf.d/default.conf
+  uwsgi:
+    container_name: uwsgi
+    image: alexrr12341/uwsgi:v1
+    restart: always
+    volumes:
+    - ./gestion/iaw_gestionGN:/var/www/html
+    command: uwsgi --http-socket :8080 --plugin python37 --chdir /var/www/html --wsgi-file gestion/wsgi.py --process 4 --threads 2 --master 
+</code></pre></div><p>Y observamos que va correctamente la página.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> Name                Command               State         Ports       
+---------------------------------------------------------------------
+iesgn     nginx -g daemon off;             Up      0.0.0.0:80-&gt;80/tcp
+mariadb   docker-entrypoint.sh mysqld      Up      3306/tcp          
+uwsgi     uwsgi --http-socket :8080  ...   Up      8080/tcp  
+</code></pre></div><p><img src="/images/dockerpython5.png" alt=""></p>
+<p><img src="/images/dockerpython6.png" alt=""></p>
+<h3 id="parte-4">Parte 4</h3>
+<p>Ahora vamos a crear una imagen con el CMS &ldquo;django CMS&rdquo;, ejecutaremos el contenedor y observaremos si funciona correctamente.</p>
+<p>Vamos primero a instalarnos el cms django en nuestro ordenador para copiarlo en el nuevo contenedor, para ello hacemos:</p>
+<p>Para ello haremos el siguiente Dockerfile:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM python:3
+WORKDIR /usr/src/app
+RUN apt-get update &amp;&amp; apt-get install -y python3-mysqldb zlib1g-dev libjpeg62-turbo-dev &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN pip3 install mysql-connector-python
+RUN pip3 install djangocms-installer
+EXPOSE 8000
+RUN djangocms mysite
+RUN pip3 install -r /usr/src/app/mysite/requirements.txt
+COPY ./script.sh /tmp
+RUN chmod +x /tmp/script.sh
+RUN /tmp/script.sh
+CMD [&#34;python3&#34;, &#34;/usr/src/app/mysite/manage.py&#34;, &#34;migrate&#34;]
+CMD [&#34;python3&#34;, &#34;/usr/src/app/mysite/manage.py&#34;, &#34;runserver&#34;, &#34;0.0.0.0:8000&#34;]
+</code></pre></div><p>El script que ejecutaremos en este caso será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/project.db/mysite\/project.db/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s1">&#39;s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[&#34;192.168.1.38&#34;\]/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+
+</code></pre></div><p>Comprobamos el funcionamiento de la página:</p>
+<p><img src="/images/dockerpython7.png" alt="">
+<img src="/images/dockerpython8.png" alt=""></p>
+<h3 id="parte-5">Parte 5</h3>
+<p>Por último vamos a insertarle una base de datos mariadb.</p>
+<p>Para ello vamos a crear una red</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker network create django
+</code></pre></div><p>Vamos a ejecutar el contenedor de mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">docker run -d --name djangodb --network django -v /opt/bbdd_django:/var/lib/mysql -e MYSQL_DATABASE=django -e MYSQL_USER=django -e MYSQL_PASSWORD=django -e MYSQL_ROOT_PASSWORD=asdasd mariadb
+</code></pre></div><p>Usaremos casi la misma imagen que la parte 5, simplemente cambiaremos el script que se ejecutará y un parámetro de la imagen.</p>
+<p>Dockerfile:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FROM python:3
+WORKDIR /usr/src/app
+RUN apt-get update &amp;&amp; apt-get install -y python3-mysqldb zlib1g-dev libjpeg62-turbo-dev &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN pip3 install djangocms-installer
+EXPOSE 8000
+RUN djangocms mysite
+RUN pip3 install -r /usr/src/app/mysite/requirements.txt
+RUN pip3 install pymysql
+RUN pip3 install mysqlclient
+COPY ./script.sh /tmp
+RUN chmod +x /tmp/script.sh
+RUN /tmp/script.sh
+CMD [&#34;python3&#34;, &#34;/usr/src/app/mysite/manage.py&#34;, &#34;migrate&#34;]
+CMD [&#34;python3&#34;, &#34;/usr/src/app/mysite/manage.py&#34;, &#34;runserver&#34;, &#34;0.0.0.0:8000&#34;]
+</code></pre></div><p>script.sh:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>sed -i <span class="s1">&#39;s/project.db/django/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s1">&#39;s/django.db.backends.sqlite3/django.db.backends.mysql/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s1">&#39;s/localhost/djangodb/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s2">&#34;s/&#39;PASSWORD&#39;: &#39;&#39;,/&#39;PASSWORD&#39;: &#39;django&#39;,/g&#34;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s2">&#34;s/&#39;USER&#39;: &#39;&#39;/&#39;USER&#39;: &#39;django&#39;/g&#34;</span> /usr/src/app/mysite/mysite/settings.py
+sed -i <span class="s1">&#39;s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[&#34;192.168.1.38&#34;\]/g&#39;</span> /usr/src/app/mysite/mysite/settings.py
+</code></pre></div><p>Observamos que la página está funcionando y están los dos contenedores</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:~/escenario4# docker ps
+CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                    NAMES
+f1311bfc12a8        alexrr12341/djangocms:v1   &#34;python3 /usr/src/ap…&#34;   35 seconds ago      Up 34 seconds       0.0.0.0:8000-&gt;8000/tcp   djangocms
+6fe3f5b42130        mariadb                    &#34;docker-entrypoint.s…&#34;   About an hour ago   Up About an hour    3306/tcp                 djangodb
+</code></pre></div><p><img src="/images/dockerpython9.png" alt=""></p>
+<p><img src="/images/dockerpython10.png" alt=""></p>
+<p>Vemos como las tablas se han importado correctamente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@docker:/opt/bbdd_django# ls
+aria_log.00000001  aria_log_control  django  ib_buffer_pool  ibdata1  ib_logfile0  ib_logfile1	ibtmp1	multi-master.info  mysql  performance_schema
+</code></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdockerpython%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdockerpython%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdockerpython%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fdockerpython%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

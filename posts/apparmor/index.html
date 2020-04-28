@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Configuración de perfiles AppArmor(mariadb,sensu,bacula) - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/apparmor/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/apparmor/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/apparmor/">
+    <title>
+  Configuración de perfiles AppArmor(mariadb,sensu,bacula) - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/apparmor/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Configuración de perfiles AppArmor(mariadb,sensu,bacula)</h1>
+      <h2 class="date">February 17, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="apparmor">AppArmor</h2>
+<p>Vamos a habilitar apparmor en tortilla de forma estricta y segura, para ello instalamos los siguientes paquetes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install apparmor-utils apparmor-profiles
+</code></pre></div><p>Ahora vamos a generar un perfil</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">aa-genprof mysqld
+</code></pre></div><p>Y vamos a editar el fichero /etc/apparmor.d/usr.sbin/mysqld</p>
+<p><em>Para hacer este fichero debemos ir haciendo restart de mariadb, buscando los errores en journalctl -xe hasta que se active dicho programa.</em></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># Last Modified: Sat Feb 15 15:52:53 2020
+#include &lt;tunables/global&gt;
+
+/usr/sbin/mysqld {
+  #include &lt;abstractions/base&gt;
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/mysqld mrwk,
+
+#Acceso a fichero de configuracion
+ /etc/mysql/** r,
+#Permitimos los mensajes de error
+ /usr/share/mysql/ r,
+ /usr/share/mysql/** r,
+
+#Permitimos escritura y lectura en las bases de datos
+ /var/lib/mysql/ rwk,
+ /var/lib/mysql/** rwk,
+#Permitimos escribir archivos temporales
+ /tmp/** rwk,
+ /tmp/ r,
+#Permitimos abrir mysql
+ /run/mysqld/** w,
+
+#Damos permisos de usuarios
+ /etc/nsswitch.conf r,
+ /etc/passwd r,
+
+#Permitimos notificaciones de systemd
+ /run/systemd/notify w,
+ capability sys_resource,
+ capability dac_override,
+ capability setuid,
+ capability setgid,
+ /run/systemd/resolve/stub-resolv.conf r,
+
+#Permitimos mensajes de error
+ /var/log/mysql/** rwk,
+
+#Permitimos el acceso a los sockets
+ unix,
+ /var/run/mysqld/mysqld.pid rw,
+ /var/run/mysqld/mysqld.sock rw,
+ /var/run/mysqld/mysqld.sock.lock rw,
+ /run/mysqld/mysqld.pid rw,
+ /run/mysqld/mysqld.sock rw,
+ /run/mysqld/mysqld.sock.lock rw,
+
+#Permitimos el acceso por red
+ network inet stream,
+ network inet6 stream,
+ network inet dgram,
+ network inet6 dgram,
+#Permitimos acceso a los hosts de la maquina
+ /etc/hosts r,
+ /etc/host.conf r,
+
+#Permitimos que coja informacion del sistema
+ /proc/*/status r,
+ /sys/devices/system/node/ r,
+ /sys/devices/system/node/node0/meminfo r, 
+}
+</code></pre></div><p>Hacemos un start de mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl start mariadb
+
+systemctl status mariadb
+● mariadb.service - MariaDB 10.1.44 database server
+   Loaded: loaded (/lib/systemd/system/mariadb.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2020-02-17 20:02:46 UTC; 2min 42s ago
+     Docs: man:mysqld(8)
+           https://mariadb.com/kb/en/library/systemd/
+  Process: 25568 ExecStartPost=/bin/sh -c systemctl unset-environment _WSREP_START_POSITION (code=exited, status=0/SUCCESS)
+  Process: 25563 ExecStartPost=/etc/mysql/debian-start (code=exited, status=0/SUCCESS)
+  Process: 25483 ExecStartPre=/bin/sh -c [ ! -e /usr/bin/galera_recovery ] &amp;&amp; VAR= ||   VAR=`/usr/bin/galera_recovery`; [ $? -eq 0 ]   &amp;&amp; systemctl set-environment _WSREP_START_POSITION=$VAR || exit 1 (code=exit
+  Process: 25480 ExecStartPre=/bin/sh -c systemctl unset-environment _WSREP_START_POSITION (code=exited, status=0/SUCCESS)
+  Process: 25473 ExecStartPre=/usr/bin/install -m 755 -o mysql -g root -d /var/run/mysqld (code=exited, status=0/SUCCESS)
+</code></pre></div><p>Observamos que nos podemos conectar remotamente desde croqueta:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/debian# mysql -u wordpress -p wordpress -h 10.0.0.7
+Enter password: 
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 4
+Server version: 10.1.44-MariaDB-0ubuntu0.18.04.1 Ubuntu 18.04
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement.
+
+MariaDB [wordpress]&gt; 
+</code></pre></div><p>Ahora vamos a hacer el perfil para bacula-fd, que es el cliente de bacula, para ello vamos a realizar:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">aa-genprof bacula-fd
+</code></pre></div><p>Ahora editamos el fichero /etc/apparmor.d/usr.sbin.bacula-fd y lo realizamos como hemos hecho anteriormente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># Last Modified: Mon Feb 17 20:18:06 2020
+#include &lt;tunables/global&gt;
+
+/usr/sbin/bacula-fd {
+  #include &lt;abstractions/base&gt;
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /usr/sbin/bacula-fd mr,
+
+ #Permisos para fichero de configuracion
+ /etc/bacula/bacula-fd.conf r,
+
+ #Permisos para archivos temporales
+ /tmp/ r,
+ /tmp/** rwk,
+
+ #Permisos especiales
+ /usr/lib/bacula/bpipe-fd.so mr,
+
+ #Permisos de red
+ network inet stream,
+ network inet6 stream,
+
+ #Permisos de hosts
+ /etc/hosts.allow r,
+ /etc/hosts.deny r,
+
+ #Permisos para realizar las copias
+ /home/ r,
+ /var/ r,
+ /etc/ r,
+ /home/** rwk,
+ /var/** rwk,
+ /etc/** rwk,
+
+ #Permisos de creacion
+ /var/lib/bacula/** rwk,
+ /var/lib/bacula/ r,
+
+}
+</code></pre></div><p>Hacemos un start y vemos que está funcionando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl status bacula-fd
+
+● bacula-fd.service - Bacula File Daemon service
+   Loaded: loaded (/lib/systemd/system/bacula-fd.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2020-02-17 20:27:12 UTC; 49s ago
+     Docs: man:bacula-fd(8)
+  Process: 29309 ExecStartPre=/usr/sbin/bacula-fd -t -c $CONFIG (code=exited, status=0/SUCCESS)
+ Main PID: 29320 (bacula-fd)
+    Tasks: 2 (limit: 546)
+   CGroup: /system.slice/bacula-fd.service
+           └─29320 /usr/sbin/bacula-fd -fP -c /etc/bacula/bacula-fd.conf
+
+Feb 17 20:27:12 tortilla systemd[1]: Starting Bacula File Daemon service...
+Feb 17 20:27:12 tortilla systemd[1]: Started Bacula File Daemon service.
+
+</code></pre></div><p>Vamos a comprobar que funciona haciendo una copia incremental de tortilla como prueba</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@serranito:/home/ubuntu# bconsole
+Connecting to Director 10.0.0.10:9101
+1000 OK: 103 choco-dir Version: 9.0.6 (20 November 2017)
+Enter a period to cancel a command.
+*run
+Automatically selected Catalog: MyCatalog
+Using Catalog &#34;MyCatalog&#34;
+A job name must be specified.
+The defined Job resources are:
+     1: choco
+     2: croqueta
+     3: salmorejo
+     4: tortilla
+     5: RestoreChoco
+     6: RestoreCroqueta
+     7: RestoreSalmorejo
+     8: RestoreTortilla
+     9: choco-anual
+    10: croqueta-anual
+    11: salmorejo-anual
+    12: tortilla-anual
+    13: RestoreChoco-anual
+    14: RestoreCroqueta-anual
+    15: RestoreSalmorejo-anual
+    16: RestoreTortilla-anual
+Select Job resource (1-16): 4
+Run Backup job
+JobName:  tortilla
+Level:    Incremental
+Client:   tortilla-fd
+FileSet:  Full Set
+Pool:     File (From Job resource)
+Storage:  File (From Job resource)
+When:     2020-02-17 20:39:11
+Priority: 10
+OK to run? (yes/mod/no): yes
+Job queued. JobId=141
+You have messages.
+
+</code></pre></div><p>Como podemos observar, la copia se realiza correctamente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">|   141 | tortilla         | 2020-02-17 20:39:18 | B    | I     |      179 |  27,241,199 | T         |
+
+</code></pre></div><p>Ahora vamos a realizar el perfil para el cliente de sensu, para ello vamos a crear el perfil</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">aa-genprof /opt/sensu/bin/sensu-client
+</code></pre></div><p>Y vamos a /etc/apparmor.d/opt.sensu.embedded.bin.sensu-client y editamos el fichero como hemos hecho anteriormente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># Last Modified: Mon Feb 17 22:07:21 2020
+#include &lt;tunables/global&gt;
+
+/opt/sensu/embedded/bin/sensu-client {
+  include &lt;abstractions/base&gt;
+
+  /lib/x86_64-linux-gnu/ld-*.so mr,
+  /opt/sensu/embedded/bin/ruby ix,
+  /opt/sensu/embedded/bin/sensu-client r,
+  /opt/sensu/embedded/lib/lib*so* mr,
+  #Permisos a las librerias de sensu
+  /opt/sensu/embedded/lib/** mr,
+  #Permisos a los certificados de sensu
+  /opt/sensu/embedded/ssl/** r,
+  #Permisos de logs
+  /var/log/sensu/sensu-client.log rwk,
+  #Permitimos conexiones de internet
+  network netlink raw,
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+  #Acceso a ficheros de configuracion
+  /etc/sensu/ r,
+  /etc/sensu/** r,
+  #Escritura de archivos temporales
+  /tmp/ r,
+  /tmp/** rwk,
+  #Permitimos correr sensu
+  /run/sensu/ r,
+  /run/sensu/** rwk,
+  #Permitimos la ejecucion de los eventos
+  /bin/** rix,
+  #Permitimos la ejecucion de las metricas
+  /opt/sensu/embedded/bin/metrics-mysql-graphite.rb rix,
+  /opt/sensu/embedded/bin/metrics-vmstat.rb rix,
+  #Damos acceso a los stats de la maquina
+  /usr/bin/vmstat rix,
+  /usr/bin/tail rix,
+  /proc/vmstat r,
+  #Damos acceso a los hosts
+  /etc/nsswitch.conf r,
+  /etc/host.conf r,
+  /etc/hosts r,
+  #Damos acceso a systemd
+  /run/systemd/resolve/stub-resolv.conf r,
+  #Permitimos acceso del kernel
+  /proc/sys/kernel/osrelease r,
+  #Damos permisos a la monitorizacion
+  /opt/sensu/embedded/bin/check-disk-usage.rb rix,
+  /opt/sensu/embedded/bin/check-cpu.rb rix,
+  #Damos permiso para que vea las particiones del sistema
+  /proc/*/mounts r,       
+}
+</code></pre></div><p>Podemos observar que el servidor de sensu recoge las metricas y la monitorizacion correctamente.
+<img src="/images/tortillaapparmor.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fapparmor%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fapparmor%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fapparmor%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fapparmor%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

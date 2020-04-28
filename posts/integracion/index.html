@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Integración Continua estática y Django - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/integracion/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/integracion/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/integracion/">
+    <title>
+  Integración Continua estática y Django - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/integracion/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Integración Continua estática y Django</h1>
+      <h2 class="date">January 16, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="despliegue-de-una-página-web-estática">Despliegue de una página web estática</h2>
+<p>Vamos a realizar una integración continua de este mismo blog en githubpages con travis, nuestra aplicación es de Hugo.
+Para ello crearemos un repositorio en github que solo contenga los ficheros markdown.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alexrr@pc-alex:~/Hugo$ git@github.com:alexrr12341/alexblogtravis.git
+alexrr@pc-alex:~/Hugo$ cp -r alexblog/* alexblogtravis/
+</code></pre></div><p>Vamos ahora a borrar la carpeta public que es la que contiene los htmls</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alexrr@pc-alex:~/Hugo/alexblogtravis$ rm -r public/
+</code></pre></div><p>Ahora vamos a hacer nuestro fichero travis y vamos a modificarlo para que instale hugo y ejecute el comando (.travis.yml), luego meterá la carpeta public en gh-pages, esta integración será la utilizada para el blog <a href="http://www.alexrrinformatico.com">www.alexrrinformatico.com</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dist: xenial
+language: python
+python:
+  - &#34;3.7&#34;
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get -yq install apt-transport-https tor curl
+
+# install - install any dependencies required
+install:
+    # install latest release version
+    # Github may forbid request from travis container, so use tor proxy
+    - sudo systemctl start tor
+    # - curl -fsL --socks5-hostname 127.0.0.1:9050 https://api.github.com/repos/gohugoio/hugo/releases/latest | sed -r -n &#39;/browser_download_url/{/Linux-64bit.deb/{s@[^:]*:[[:space:]]*&#34;([^&#34;]*)&#34;.*@\1@g;p;q}}&#39; | xargs wget
+    - download_command=&#39;curl -fsSL -x socks5h://127.0.0.1:9050&#39; # --socks5-hostname
+    - $download_command -O $($download_command https://api.github.com/repos/gohugoio/hugo/releases/latest | sed -r -n &#39;/browser_download_url/{/Linux-64bit.deb/{s@[^:]*:[[:space:]]*&#34;([^&#34;]*)&#34;.*@\1@g;p;q}}&#39;)
+    - sudo dpkg -i hugo*.deb
+    - rm -rf public 2&gt; /dev/null
+
+# script - run the build script
+script:
+    - hugo --theme=hugo-coder-portfolio
+    - echo &#34;$CNAME_URL&#34; &gt; public/CNAME
+# Deploy to GitHub pages
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: public
+  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  on:
+    branch: master
+</code></pre></div><p>Este fichero lo que hará será instalar apt-transfport-https para que podamos descargar la última versión de hugo, instalarla, lanzar el comando hugo y subirlo a githubpages en nuestro repositorio <a href="https://github.com/alexrr12341/alexblogtravis">https://github.com/alexrr12341/alexblogtravis</a></p>
+<p>Después, debemos modificar una pequeña parte de github para que la página de github pages tenga el dominio <a href="http://www.alexrrinformatico.com">www.alexrrinformatico.com</a> y su branch sea gh-pages</p>
+<p><img src="/images/gh-pages.png" alt=""></p>
+<p>En nuestro repositorio, vamos a Settings, vamos al apartado de GitHub Pages(está mas abajo), en source ponemos la rama gh-pages y el custom domain, en caso de tenerlo.</p>
+<p>Ahora vamos a comprobar la integración continua con este mismo post, sacaremos antes de una actualización una foto sin estos contenidos y luego haremos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alexrr@pc-alex:~/Hugo/alexblogtravis$ git add *
+alexrr@pc-alex:~/Hugo/alexblogtravis$ git commit -am &#34;Prueba Travis&#34;
+[master 17683d4] Prueba Travis
+ 3 files changed, 61 insertions(+), 8 deletions(-)
+ create mode 100644 themes/hugo-coder-portfolio/static/images/gh-pages.png
+ create mode 100644 themes/hugo-coder-portfolio/static/images/ic-travis.png
+alexrr@pc-alex:~/Hugo/alexblogtravis$ git push
+X11 forwarding request failed on channel 0
+Enumerando objetos: 19, listo.
+Contando objetos: 100% (19/19), listo.
+Compresión delta usando hasta 8 hilos
+Comprimiendo objetos: 100% (10/10), listo.
+Escribiendo objetos: 100% (11/11), 109.47 KiB | 903.00 KiB/s, listo.
+Total 11 (delta 5), reusado 0 (delta 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To github.com:alexrr12341/alexblogtravis.git
+   a318731..17683d4  master -&gt; master
+</code></pre></div><p><img src="/images/ic-travis.png" alt=""></p>
+<p>La información llega a Travis:
+<img src="/images/ic-travis2.png" alt="">
+<img src="/images/ic-travis3.png" alt=""></p>
+<p>Y efectivamente está actualizado nuestro blog:
+<img src="/images/ic-travis4.png" alt=""></p>
+<h2 id="integración-continua-de-aplicación-django">Integración continua de aplicación Django</h2>
+<p>Clonamos el repositorio de django_tutorial</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone git@github.com:alexrr12341/django_tutorial.git
+</code></pre></div><p>Vamos a ejecutar las pruebas haciendo el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(pythonreqs) alexrr@pc-alex:~/django_tutorial$ python3 manage.py test
+Creating test database for alias &#39;default&#39;...
+System check identified no issues (0 silenced).
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.046s
+
+OK
+Destroying test database for alias &#39;default&#39;...
+</code></pre></div><p>Observamos tests.py y vemos el siguiente código</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">def test_future_question(self):
+        &#34;&#34;&#34;
+        Questions with a pub_date in the future aren&#39;t displayed on
+        the index page.
+        &#34;&#34;&#34;
+        create_question(question_text=&#34;Future question.&#34;, days=30)
+        response = self.client.get(reverse(&#39;polls:index&#39;))
+        self.assertContains(response, &#34;No polls are available.&#34;)
+        self.assertQuerysetEqual(response.context[&#39;latest_question_list&#39;], []
+</code></pre></div><p>Ahora nos vamos a dirigir a django_tutorial/polls/templates/polls/index.html y modificamos la siguiente línea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{% else %}
+    &lt;p&gt;No encuestas están permitidas.&lt;/p&gt;
+</code></pre></div><p>Vamos a ejecutar el test a ver que ocurre.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(pythonreqs) alexrr@pc-alex:~/django_tutorial$ python3 manage.py test
+Creating test database for alias &#39;default&#39;...
+System check identified no issues (0 silenced).
+..F.F.....
+======================================================================
+FAIL: test_future_question (polls.tests.QuestionIndexViewTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &#34;/home/alexrr/django_tutorial/polls/tests.py&#34;, line 79, in test_future_question
+    self.assertContains(response, &#34;No polls are available.&#34;)
+  File &#34;/home/alexrr/django_tutorial/pythonreqs/lib/python3.7/site-packages/django/test/testcases.py&#34;, line 454, in assertContains
+    self.assertTrue(real_count != 0, msg_prefix + &#34;Couldn&#39;t find %s in response&#34; % text_repr)
+AssertionError: False is not true : Couldn&#39;t find &#39;No polls are available.&#39; in response
+
+======================================================================
+FAIL: test_no_questions (polls.tests.QuestionIndexViewTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &#34;/home/alexrr/django_tutorial/polls/tests.py&#34;, line 57, in test_no_questions
+    self.assertContains(response, &#34;No polls are available.&#34;)
+  File &#34;/home/alexrr/django_tutorial/pythonreqs/lib/python3.7/site-packages/django/test/testcases.py&#34;, line 454, in assertContains
+    self.assertTrue(real_count != 0, msg_prefix + &#34;Couldn&#39;t find %s in response&#34; % text_repr)
+AssertionError: False is not true : Couldn&#39;t find &#39;No polls are available.&#39; in response
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.034s
+
+FAILED (failures=2)
+Destroying test database for alias &#39;default&#39;...
+</code></pre></div><p>Efectivamente nos salta un error, ya que tiene que poner &ldquo;No Polls are available.&rdquo;</p>
+<p>Ahora vamos a realizar un .travis.yml para que podamos hacer la integración continua, dicho fichero será:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">language: python
+python:
+  - &#34;3.8&#34;
+# command to install dependencies
+install:
+  - pip3 install -r requirements.txt
+# command to run tests
+script: python3 manage.py test
+</code></pre></div><p>Este script lo que hará es ejecutar el test, si da error travis lo mostrará y si no, no lo mostrará.</p>
+<p>Vamos a modificar django_tutorial/polls/templates/polls/index.html y pondremos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{% else %}
+    &lt;p&gt;No polls are available.&lt;/p&gt;
+
+</code></pre></div><p><img src="/images/travisdjango.png" alt=""></p>
+<p>Y ahora vamos a forzar el error poniendo en el mismo fichero</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">{% else %}
+    &lt;p&gt;No encuestas están disponibles&lt;/p&gt;   
+</code></pre></div><p><img src="/images/travisdjangoerror.png" alt=""></p>
+<p>Ahora vamos a realizar la integración continua en PythonAnywhere.</p>
+<p>Vamos a acceder a la consola de pythonanywhere y vamos a poner lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone https://github.com/alexrr12341/django_tutorial.git
+python3 -m venv envi
+10:13 ~ $ source envi/bin/activate                                                                                                                                                                                
+(envi) 10:14 ~ $ pip3 install -r django_tutorial/requirements.txt 
+</code></pre></div><p>A la hora de darle a la pestaña de Web, le daremos a la opción de Manual Configuration y seleccionaremos la opción de Python3.7</p>
+<p>En el apartado Virtual Env ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/home/Alexrr/envi (El nombre de nuestro entorno virtual)
+</code></pre></div><p>En el apartado Code ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">WSGI configuration file: /var/www/alexrr_pythonanywhere_com_wsg
+
+# +++++++++++ DJANGO +++++++++++
+# To use your own Django app use code like this:
+import os
+import sys
+
+# assuming your Django settings file is at &#39;/home/myusername/mysite/mysite/settings.py&#39;
+path = &#39;/home/Alexrr/django_tutorial&#39;
+if path not in sys.path:
+    sys.path.insert(0, path)
+
+os.environ[&#39;DJANGO_SETTINGS_MODULE&#39;] = &#39;django_tutorial.settings&#39;
+
+## Uncomment the lines below depending on your Django version
+###### then, for Django &gt;=1.5:
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+###### or, for older Django &lt;=1.4
+#import django.core.handlers.wsgi
+#application = django.core.handlers.wsgi.WSGIHandler()
+</code></pre></div><p>También vamos a entrar a la consola y haremos el migrate</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(envi) 11:08 ~/django_tutorial (master)$ python3 manage.py migrate                                                                                                                                                
+</code></pre></div><p>Como último debemos añadir nuestro allowed_host en el settings.py</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ALLOWED_HOSTS = [&#39;alexrr.pythonanywhere.com&#39;]
+</code></pre></div><p><img src="/images/pythonanywheredeploy.png" alt=""></p>
+<p>Vamos a preparar nuestro entorno de produccion haciendo los siguientes comandos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(envi) 11:33 ~/django_tutorial (master)$ mkdir .travis                                                                                                                                                            
+(envi) 11:34 ~/django_tutorial (master)$ cd .travis/                                                                                                                                                              
+(envi) 11:34 ~/django_tutorial/.travis (master)$ ssh-keygen -t rsa -b 4096 -C &#39;hallo@example.com&#39; -f deploy_key    
+
+</code></pre></div><p>No podemos seguir el ejercicio debido a que dicha función sólo esta realizada para usuarios que son de pago, en nuestro caso, nosotros somos usuarios gratuitos.</p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fintegracion%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fintegracion%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fintegracion%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fintegracion%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

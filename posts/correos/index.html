@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Servidor de correos(Postfix) - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/correos/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/correos/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/correos/">
+    <title>
+  Servidor de correos(Postfix) - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/correos/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Servidor de correos(Postfix)</h1>
+      <h2 class="date">February 17, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="servidor-de-correos-postfix">Servidor de correos Postfix</h2>
+<p>Primero de todo tenemos que tener instalado postfix</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install postfix
+</code></pre></div><p>Y en /etc/postfix/main.cf editamos las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">myhostname = alejandro.gonzalonazareno.org
+relayhost = babuino-smtp.gonzalonazareno.org
+</code></pre></div><p>Y en /etc/hosts tendremos la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">127.0.1.1 alejandro.gonzalonazareno.org croqueta.alejandro.gonzalonazareno.org croqueta
+</code></pre></div><p>Y nuestro hostname será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/debian# hostname -f
+alejandro.gonzalonazareno.org
+</code></pre></div><p>Reiniciamos postfix</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart postfix
+</code></pre></div><p>Y enviamos un correo desde telnet a <a href="mailto:alexrodriguezrojas98@gmail.com">alexrodriguezrojas98@gmail.com</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/debian# telnet localhost 25
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is &#39;^]&#39;.
+220 alejandro.gonzalonazareno.org ESMTP Postfix (Debian/GNU)
+HELO correo.alejandro.gonzalonazareno.org
+250 alejandro.gonzalonazareno.org
+mail from: debian@alejandro.gonzalonazareno.org
+250 2.1.0 Ok
+rcpt to: alexrodriguezrojas98@gmail.com
+250 2.1.5 Ok
+data
+354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;
+from: debian@alejandro.gonzalonazareno.org
+to: alexrodriguezrojas98@gmail.com
+subject: Prueba telnet
+
+Hola, esto es una prueba para el ejercicio 1
+
+.
+250 2.0.0 Ok: queued as 32CA9218D3
+quit
+221 2.0.0 Bye
+Connection closed by foreign host.
+</code></pre></div><p><img src="/images/telnet1.png" alt=""></p>
+<p>Los logs del envio serían los siguientes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Feb 13 16:24:37 alejandro postfix/smtpd[4317]: disconnect from unknown[172.22.200.164] ehlo=2 starttls=1 mail=1 rcpt=0/1 quit=1 commands=5/6
+Feb 13 16:24:49 alejandro postfix/smtpd[2409]: 32CA9218D3: client=localhost[127.0.0.1]
+Feb 13 16:25:25 alejandro postfix/cleanup[4332]: 32CA9218D3: message-id=&lt;20200213162449.32CA9218D3@alejandro.gonzalonazareno.org&gt;
+Feb 13 16:25:25 alejandro postfix/qmgr[7481]: 32CA9218D3: from=&lt;debian@alejandro.gonzalonazareno.org&gt;, size=494, nrcpt=1 (queue active)
+Feb 13 16:25:25 alejandro postfix/smtp[4357]: 32CA9218D3: to=&lt;alexrodriguezrojas98@gmail.com&gt;, relay=babuino-smtp.gonzalonazareno.org[192.168.203.3]:25, delay=49, delays=49/0.04/0.06/0.04, dsn=2.0.0, status=sent (250 2.0.0 Ok: queued as A8465C9D5A)
+</code></pre></div><p>Vamos a responder al correo anteriormente mandado y vamos a ver los logs  y el mensaje enviado.</p>
+<p>Primero en nuestro servidor dns debemos añadir un registro MX para que pueda recibir el correo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">@       IN      MX      10      correo.alejandro.gonzalonazareno.org.
+
+$ORIGIN alejandro.gonzalonazareno.org.
+....
+correo          IN      CNAME   croqueta
+....
+</code></pre></div><p>Vamos a gmail y vamos a responder dicho email, ya que babuino tiene añadido nuestro dominio a su relay, dicho correo nos llegará.</p>
+<p><img src="/images/gmail.png" alt=""></p>
+<p>Vamos a ver los logs:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Feb 13 17:08:24 alejandro postfix/smtpd[5125]: connect from babuino-smtp.gonzalonazareno.org[192.168.203.3]
+Feb 13 17:08:24 alejandro postfix/smtpd[5125]: 6CA29218D4: client=babuino-smtp.gonzalonazareno.org[192.168.203.3]
+Feb 13 17:08:24 alejandro postfix/cleanup[5129]: 6CA29218D4: message-id=&lt;CAPN2xJRTNQoLS6WqUVCGMpQHyC=6Hbg9BAUCMgiL+pB8m-q01w@mail.gmail.com&gt;
+Feb 13 17:08:24 alejandro postfix/qmgr[5070]: 6CA29218D4: from=&lt;alexrodriguezrojas98@gmail.com&gt;, size=3834, nrcpt=1 (queue active)
+Feb 13 17:08:24 alejandro postfix/smtpd[5125]: disconnect from babuino-smtp.gonzalonazareno.org[192.168.203.3] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 13 17:08:24 alejandro postfix/local[6594]: 6CA29218D4: to=&lt;debian@alejandro.gonzalonazareno.org&gt;, relay=local, delay=0.16, delays=0.06/0.06/0/0.04, dsn=2.0.0, status=sent (delivered to mailbox)
+Feb 13 17:08:24 alejandro postfix/qmgr[5070]: 6CA29218D4: removed
+
+</code></pre></div><p>Vemos que se conecta a babuino, y este delega el mensaje hacia mi dominio, y nos lo envia, estará en nuestro mailbox</p>
+<p>debian@croqueta:~$ mail</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">From: Alejandro Rodriguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+Date: Thu, 13 Feb 2020 18:08:09 +0100
+Message-ID: &lt;CAPN2xJRTNQoLS6WqUVCGMpQHyC=6Hbg9BAUCMgiL+pB8m-q01w@mail.gmail.com&gt;
+Subject: Re: Prueba telnet
+To: Debian &lt;debian@alejandro.gonzalonazareno.org&gt;
+Content-Type: multipart/alternative; boundary=&#34;000000000000cff3b1059e7822a2&#34;
+
+--000000000000cff3b1059e7822a2
+Content-Type: text/plain; charset=&#34;UTF-8&#34;
+Content-Transfer-Encoding: quoted-printable
+
+Hola, te respondo de vuelta, gracias.
+
+</code></pre></div><p>Ahora vamos a instalar tanto POP como IMAP en nuestro servidor de correos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install dovecot-imapd dovecot-pop3d dovecot-core
+</code></pre></div><p>Ahora en /etc/postfix/main.cf editamos la siguiente línea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">home_mailbox = Maildir/
+mailbox_command =
+
+
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/24 172.22.0.0/16
+
+</code></pre></div><p>En /etc/dovecot/conf.d/10-auth.conf editamos la siguiente linea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">disable_plaintext_auth = no
+</code></pre></div><p>En /etc/dovecot/conf.d/10-mail.conf editamos esta línea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mail_location = maildir:~/Maildir
+</code></pre></div><p>Ahora en nuestro DNS añadimos tanto pop como imap.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">pop IN CNAME croqueta
+imap IN CNAME croqueta
+</code></pre></div><p><em>Muy importante tener habilitados los puertos IMAP y POP3</em></p>
+<p>Ahora vamos a Evolution y vamos a Archivo-&gt;Nuevo-&gt;Cuenta de Correo.</p>
+<p><img src="/images/Evolution1.png" alt=""></p>
+<p><img src="/images/Evolution2.png" alt=""></p>
+<p><img src="/images/Evolution3.png" alt=""></p>
+<p>Si enviamos un mensaje al exterior vemos que podemos realizarlo</p>
+<p><img src="/images/Evolution4.png" alt=""></p>
+<p><img src="/images/Evolution5.png" alt=""></p>
+<p>Como ya hemos configurado POP vamos a observar como funciona este método, para ello vamos a enviarnos desde gmail un correo a debian.
+<img src="/images/POP1.png" alt="">
+<img src="/images/POP2.png" alt=""></p>
+<p><em>Muy importante tener una contraseña en el usuario debian</em></p>
+<p>Vemos que se borran los mensajes en el servidor, esto es propio del método POP</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/debian# ls Maildir/new/
+root@croqueta:/home/debian# 
+root@croqueta:/home/debian# ls Maildir/cur/
+root@croqueta:/home/debian# 
+
+</code></pre></div><p>Vamos ahora a configurar Evolution con IMAP, en el servidor ya lo tenemos instalado</p>
+<p><img src="/images/Evolution1.png" alt=""></p>
+<p><img src="/images/Evolution6.png" alt="">
+<img src="/images/Evolution7.png" alt=""></p>
+<p>Vamos a enviarnos un correo desde gmail a nuestro servidor.
+<img src="/images/IMAP1.png" alt=""></p>
+<p>Lo recibimos en evolution y miramos el servidor.</p>
+<p><img src="/images/Evolution8.png" alt=""></p>
+<p>Vemos que en el servidor se nos guarda el mensaje, esto es propio del método IMAP</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/debian# ls Maildir/cur/
+1582017293.Vfe01I21c06M329057.croqueta:2,S
+</code></pre></div><h3 id="crontab">Crontab</h3>
+<p>Ahora vamos a configurar una tarea cron que envie ciertos correos a root para informar de su estado.</p>
+<p>Vamos a ejecutar una tarea crontab</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">crontab -e
+</code></pre></div><p>Y ponemos la línea:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">MAILTO = root
+
+* * * * * /root/scriptls.sh
+</code></pre></div><p>Dicho script solo hace un ls en /root.</p>
+<p>Vamos a probar que está funcionando y le llegan mensajes a root</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~/Maildir/new# cat 1582099141.Vfe01I218d5M780676.croqueta 
+Return-Path: &lt;root@alejandro.gonzalonazareno.org&gt;
+X-Original-To: root
+Delivered-To: root@alejandro.gonzalonazareno.org
+Received: by alejandro.gonzalonazareno.org (Postfix, from userid 0)
+	id A957A218D7; Wed, 19 Feb 2020 07:59:01 +0000 (UTC)
+From: root@alejandro.gonzalonazareno.org (Cron Daemon)
+To: root@alejandro.gonzalonazareno.org
+Subject: Cron &lt;root@croqueta&gt; /root/scriptls.sh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;MAILTO=root&gt;
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;20200219075901.A957A218D7@alejandro.gonzalonazareno.org&gt;
+Date: Wed, 19 Feb 2020 07:59:01 +0000 (UTC)
+
+certs
+dead.letter
+IESGonzaloNazareno.crt
+ldapsecure.ldif
+ldapssl.ldif
+ldapSSL.ldif
+ldapusers
+Mail
+Maildir
+newcerts.ldif
+salmorejo.alejandro.gonzalonazareno.org.crt
+salmorejo.alejandro.gonzalonazareno.org.key
+scriptls.sh
+sent
+</code></pre></div><p>Ahora vamos a realizar una redirección para que dichos correos se envien a debian, para ello vamos a /etc/aliases y ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root: debian
+
+</code></pre></div><p>Y ejecutamos la siguiente instrucción</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">newaliases
+</code></pre></div><p>Ahora vamos a comprobar que están llegando dichos correos a debian.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@croqueta:~/Maildir/new$ cat 1582099262.Vfe01I21bf0M338379.croqueta 
+Return-Path: &lt;root@alejandro.gonzalonazareno.org&gt;
+X-Original-To: root
+Delivered-To: root@alejandro.gonzalonazareno.org
+Received: by alejandro.gonzalonazareno.org (Postfix, from userid 0)
+	id 05D5221C03; Wed, 19 Feb 2020 08:01:01 +0000 (UTC)
+From: root@alejandro.gonzalonazareno.org (Cron Daemon)
+To: root@alejandro.gonzalonazareno.org
+Subject: Cron &lt;root@croqueta&gt; /root/scriptls.sh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;MAILTO=root&gt;
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;20200219080102.05D5221C03@alejandro.gonzalonazareno.org&gt;
+Date: Wed, 19 Feb 2020 08:01:01 +0000 (UTC)
+
+certs
+dead.letter
+IESGonzaloNazareno.crt
+ldapsecure.ldif
+ldapssl.ldif
+ldapSSL.ldif
+ldapusers
+Mail
+Maildir
+newcerts.ldif
+salmorejo.alejandro.gonzalonazareno.org.crt
+salmorejo.alejandro.gonzalonazareno.org.key
+scriptls.sh
+sent
+
+</code></pre></div><p>Y vamos a crear ahora un fichero que estará en /home/debian/.forward que contendrá lo siguiente para que se envien los correos a nuestro correo de gmail</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@croqueta:~$ cat .forward 
+alexrodriguezrojas98@gmail.com
+</code></pre></div><p><img src="/images/crontab.png" alt=""></p>
+<p>Ahora vamos a instalar un webmail para nuestro servidor de correos, para ello, instalaremos roundcube.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install roundcube
+</code></pre></div><p>En las opciones le damos a:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1-No
+2-Yes
+3-imap.alejandro.gonzalonazareno.org
+4-Ok
+5-Yes
+6-Native
+7-Slight
+8-Automatic
+9-No
+</code></pre></div><p>Y creamos su base de datos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">MariaDB [(none)]&gt; create database roundcube;
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]&gt; create user roundcube identified by &#39;roundcube&#39;;
+Query OK, 0 rows affected (0.07 sec)
+
+MariaDB [(none)]&gt; grant all privileges on roundcube.* to roundcube;
+Query OK, 0 rows affected (0.02 sec)
+
+MariaDB [(none)]&gt; flush privileges;
+Query OK, 0 rows affected (0.06 sec)
+
+</code></pre></div><p>Ahora vamos a instalar roundcube-mysql para que podamos enviar la información a nuestra base de datos en tortilla</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install roundcube-mysql
+</code></pre></div><p>Y configuramos la base de datos en /etc/dbconfig-common/roundcube.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dbc_dbuser=&#39;roundcube&#39;
+dbc_dbpass=&#39;roundcube&#39;
+dbc_dbserver=&#39;tortillaint.alejandro.gonzalonazareno.org&#39;
+dbc_dbport=&#39;3306&#39;
+dbc_dbname=&#39;roundcube&#39;
+dbc_dbadmin=&#39;root&#39;
+
+</code></pre></div><p>Y en /etc/roundcube/config.inc.php realizamos la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$config[&#39;default_host&#39;] = array(&#34;imap.alejandro.gonzalonazareno.org&#34;);
+$config[&#39;smtp_server&#39;] = &#39;correo.alejandro.gonzalonazareno.org&#39;;
+$config[&#39;smtp_port&#39;] = 25;
+$config[&#39;smtp_user&#39;] = &#39;&#39;;
+$config[&#39;smtp_pass&#39;] = &#39;&#39;;
+$config[&#39;product_name&#39;] = &#39;Roundcube Webmail&#39;;
+$config[&#39;default_port&#39;] = 143;
+$config[&#39;smtp_auth_type&#39;] = &#39;LOGIN&#39;;
+$config[&#39;smtp_helo_host&#39;] = &#39;correo.alejandro.gonzalonazareno.org&#39;;
+$config[&#39;mail_domain&#39;] = &#39;alejandro.gonzalonazareno.org&#39;;
+$config[&#39;useragent&#39;] = &#39;Server World Webmail&#39;;
+
+$config[&#39;imap_conn_options&#39;] = array(
+  &#39;ssl&#39;         =&gt; array(
+    &#39;verify_peer&#39; =&gt; true,
+    &#39;CN_match&#39; =&gt; &#39;alejandro.gonzalonazareno.org&#39;,
+    &#39;allow_self_signed&#39; =&gt; true,
+    &#39;ciphers&#39; =&gt; &#39;HIGH:!SSLv2:!SSLv3&#39;,
+  ),
+);
+$config[&#39;smtp_conn_options&#39;] = array(
+  &#39;ssl&#39;         =&gt; array(
+    &#39;verify_peer&#39; =&gt; true,
+    &#39;CN_match&#39; =&gt; &#39;alejandro.gonzalonazareno.org&#39;,
+    &#39;allow_self_signed&#39; =&gt; true,
+    &#39;ciphers&#39; =&gt; &#39;HIGH:!SSLv2:!SSLv3&#39;,
+  ),
+);
+</code></pre></div><p>Y en /etc/apache2/conf-enabled/roundcube.conf hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">    Alias /roundcube /var/lib/roundcube
+
+</code></pre></div><p>Y reiniciamos apache2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart apache2
+</code></pre></div><p>Insertamos también los datos de la base de datos roundcube</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mysql -u roundcube -p roundcube -h tortillaint.alejandro.gonzalonazareno.org &lt; /usr/share/roundcube/SQL/mysql.initial.sql 
+
+MariaDB [roundcube]&gt; show tables;
++---------------------+
+| Tables_in_roundcube |
++---------------------+
+| cache               |
+| cache_index         |
+| cache_messages      |
+| cache_shared        |
+| cache_thread        |
+| contactgroupmembers |
+| contactgroups       |
+| contacts            |
+| dictionary          |
+| identities          |
+| searches            |
+| session             |
+| system              |
+| users               |
++---------------------+
+
+</code></pre></div><p>Y ponemos la base de datos en configuracion en /etc/roundcube/defaults.inc.php</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$config[&#39;db_dsnw&#39;] = &#39;mysql://roundcube:roundcube@tortillaint/roundcube&#39;;
+</code></pre></div><p>Ahora vamos a configurar el instalador, para ello hacemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp -r /usr/share/roundcube/installer/ /var/lib/roundcube/
+</code></pre></div><p>Y en /etc/roundcube/config.inc.php añadimos la linea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$config[&#39;enable_installer&#39;] = true;
+</code></pre></div><p><img src="/images/Roundcube.png" alt=""></p>
+<p>Como podemos observar hay una línea que no está, por lo que vamos a instalarla</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install php-net-idna2
+</code></pre></div><p><img src="/images/Roundcube2.png" alt=""></p>
+<p><img src="/images/Roundcube3.png" alt="">
+<img src="/images/Roundcube4.png" alt=""></p>
+<p>Ahora borramos el instalador y entramos en http://{servidor}/roundcube y ponemos usuario debian/debian</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">rm -r /var/lib/roundcube/installer
+</code></pre></div><p><img src="/images/Roundcube5.png" alt=""></p>
+<p>Vamos a realizar una prueba, para ello vamos a enviarnos un correo para ver si nos llega a roundcube.
+<img src="/images/Roundcube6.png" alt=""></p>
+<p><img src="/images/Roundcube9.png" alt=""></p>
+<p>Y probamos el envio
+<img src="/images/Roundcube7.png" alt=""></p>
+<p><img src="/images/Roundcube8.png" alt=""></p>
+<p>Ahora vamos a configurar un servicio de antispam en nuestro correo postfix, para ello instalamos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install amavisd-new spamassassin clamav clamav-daemon
+</code></pre></div><p>Instalamos los descompresores y utilidades</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install unrar-free unzip bzip2 libnet-ph-perl libnet-snpp-perl libnet-telnet-perl nomarch lzop
+</code></pre></div><p>Escogemos la opción de Spain
+Las demás opciones las dejamos por defecto.</p>
+<p>Agregamos a los usuarios a los grupos de cada uno para que se puedan enviar información</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">adduser clamav amavis
+adduser amavis clamav
+</code></pre></div><p>Ahora en /etc/default/spamassassin añadimos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">CRON=1
+ENABLED=1
+
+</code></pre></div><p>Y reiniciamos el sistema</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart spamassassin
+</code></pre></div><p>En /etc/amavis/conf.d/15-content_filter_mode hacemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">use strict;
+ 
+# You can modify this file to re-enable SPAM checking through spamassassin
+# and to re-enable antivirus checking.
+ 
+#
+# Default antivirus checking mode
+# Please note, that anti-virus checking is DISABLED by
+# default.
+# If You wish to enable it, please uncomment the following lines:
+ 
+ 
+@bypass_virus_checks_maps = (
+   \%bypass_virus_checks, \@bypass_virus_checks_acl, \$bypass_virus_checks_re);
+ 
+ 
+#
+# Default SPAM checking mode
+# Please note, that anti-spam checking is DISABLED by
+# default.
+# If You wish to enable it, please uncomment the following lines:
+ 
+ 
+@bypass_spam_checks_maps = (
+   \%bypass_spam_checks, \@bypass_spam_checks_acl, \$bypass_spam_checks_re);
+ 
+1;  # ensure a defined return
+</code></pre></div><p>Y en /etc/amavis/conf.d/20-debian_defaults ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$final_spam_destiny = D_DISCARD;
+</code></pre></div><p>Reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart amavis
+</code></pre></div><p>Ahora vamos a configurar postfix, para ello ejecutamos en la terminal:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">postconf -e &#39;content_filter = amavis:[127.0.0.1]:10024&#39;
+postconf -e &#39;receive_override_options = no_address_mappings&#39;
+
+</code></pre></div><p>Esto lo que hará es añadir dichas líneas de amavis en /etc/postfix/main.cf</p>
+<p>Y en /etc/postfix/master.cf añadimos las siguientes lineas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">amavis unix - - - - 2 smtp
+        -o smtp_data_done_timeout=1200
+        -o smtp_send_xforward_command=yes	
+
+127.0.0.1:10025 inet n - - - - smtpd
+        -o content_filter=
+        -o local_recipient_maps=
+        -o relay_recipient_maps=
+        -o smtpd_restriction_classes=
+        -o smtpd_client_restrictions=
+        -o smtpd_helo_restrictions=
+        -o smtpd_sender_restrictions=
+        -o smtpd_recipient_restrictions=permit_mynetworks,reject
+        -o mynetworks=127.0.0.0/8
+        -o strict_rfc821_envelopes=yes
+        -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks
+        -o smtpd_bind_address=127.0.0.1
+</code></pre></div><p>Y reiniciamos postfix</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart postfix
+</code></pre></div><p>Y vamos a actualizar el antivirus</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl stop clamav-freshclam
+freshclam
+systemctl stop clamav-daemon
+clamd
+systemctl start clamav-daemon
+systemctl start clamav-freshclam
+</code></pre></div><p>Ahora vamos a comprobar el ejemplo de anti spam con el siguiente <a href="https://spamassassin.apache.org/gtube/gtube.txt">ejemplo</a></p>
+<p>Nos enviamos un correo con spam
+<img src="/images/AntiSpam.png" alt=""></p>
+<p>Vamos a comprobar los logs de emails</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Feb 26 09:04:44 croqueta postfix/qmgr[2641]: E52312222F: from=&lt;alexrodriguezrojas98@gmail.com&gt;, size=2997, nrcpt=1 (queue active)
+Feb 26 09:04:44 croqueta postfix/smtpd[3558]: disconnect from babuino-smtp.gonzalonazareno.org[192.168.203.3] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 09:04:46 croqueta amavis[3491]: (03491-01) Blocked SPAM {DiscardedInbound,Quarantined}, [192.168.203.3]:47508 [209.85.166.194] &lt;alexrodriguezrojas98@gmail.com&gt; -&gt; &lt;debian@alejandro.gonzalonazareno.org&gt;, quarantine: W/spam-WK3LMJCskwci.gz, Queue-ID: E52312222F, Message-ID: &lt;CAPN2xJTcpDLpWPjvhtGsWeSuWFWtj+Tfv2cuevh4VKUh2+TNEw@mail.gmail.com&gt;, mail_id: WK3LMJCskwci, Hits: 1000.053, size: 2997, 1093 ms
+Feb 26 09:04:46 croqueta postfix/smtp[3562]: E52312222F: to=&lt;debian@alejandro.gonzalonazareno.org&gt;, relay=127.0.0.1[127.0.0.1]:10024, delay=1.1, delays=0.03/0.01/0.01/1.1, dsn=2.7.0, status=sent (250 2.7.0 Ok, discarded, id=03491-01 - spam)
+Feb 26 09:04:46 croqueta postfix/qmgr[2641]: E52312222F: removed
+
+</code></pre></div><h3 id="usuarios-virtuales-con-ldap">Usuarios Virtuales con LDAP</h3>
+<p>Primero de todo vamos a configurar un usuario ldap para que contenga la información del correo</p>
+<p>Para ello primero vamos a instalar:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install postfix-ldap
+</code></pre></div><p>Vamos a crear la unidad organizativa para postfix</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dn:ou=postfix,dc=alejandro,dc=gonzalonazareno,dc=org
+ou: postfix
+objectClass: organizationalUnit
+
+</code></pre></div><p>La añadimos a ldap</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ldapadd -f postfix.ldif -x -D &#34;cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org&#34; -W
+Enter LDAP Password: 
+adding new entry &#34;ou=postfix,dc=alejandro,dc=gonzalonazareno,dc=org&#34;
+</code></pre></div><p>La estructura de correos estará bajo el directorio /home/vmail/{usuario} por lo que vamos a crearlo</p>
+<p>Primero creamos el grupo</p>
+<p>grouppostfix.ldif</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dn:cn=vmail,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org
+cn: vmail
+gidNumber: 10004
+objectClass: top
+objectClass: posixGroup
+</code></pre></div><p>Añadimos el grupo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ldapadd -f grouppostfix.ldif -x -D &#34;cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org&#34; -W
+Enter LDAP Password: 
+adding new entry &#34;cn=vmail,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org&#34;
+</code></pre></div><p>Hacemos la carpeta</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir -p /home/vmail/alexrr
+chown 10001:10004 /home/vmail/alexrr
+chmod 2755 /home/vmail/alexrr
+</code></pre></div><p>Instalamos el paquete courier-authlib-ldap</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install courier-authlib-ldap
+</code></pre></div><p>Y añadimos el esquema</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp /usr/share/doc/courier-authlib-ldap/authldap.schema /etc/ldap/schema/authldap.schema
+</code></pre></div><p>Añadimos el esquema a ldap</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir /tmp/borrame.d
+
+nano /tmp/borrame.conf
+
+include /etc/ldap/schema/core.schema
+include /etc/ldap/schema/cosine.schema
+include /etc/ldap/schema/nis.schema
+include /etc/ldap/schema/inetorgperson.schema
+include /etc/ldap/schema/authldap.schema
+</code></pre></div><p>Hacemos el esquema</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">slaptest -f /tmp/borrame.conf -F /tmp/borrame.d
+</code></pre></div><p>Añadimos el esquema a slapd</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# cp /tmp/borrame.d/cn\=config/cn\=schema/cn\=\{4\}authldap.ldif /etc/ldap/slapd.d/cn\=config/cn\=schema/
+root@croqueta:~# chown openldap:openldap /etc/ldap/slapd.d/cn\=config/cn\=schema/cn\=\{4\}authldap.ldif 
+root@croqueta:~# systemctl restart slapd
+
+</code></pre></div><p>Añadimos al usuario ahora</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dn:uid=alexrr,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+uid: alexrr
+cn: Alejandro
+sn: Rodríguez Rojas
+userPassword:{CRYPT}mdkQsdBAQepDU
+uidNumber: 10001
+gidNumber: 10004
+homeDirectory: /home/vmail/alexrr
+objectClass: top
+objectClass: person
+objectClass: posixAccount
+objectClass: CourierMailAccount
+mail: alexrr@alejandro.gonzalonazareno.org
+mailbox: alexrr/
+quota: 0
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ldapadd -f alexrr.ldif -x -D &#34;cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org&#34; -W
+Enter LDAP Password: 
+adding new entry &#34;uid=alexrr,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org&#34;
+</code></pre></div><p>Ahora vamos a /etc/postfix/main.cf y añadimos las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">virtual_mailbox_domains = alejandro.gonzalonazareno.org
+virtual_mailbox_base = /home/vmail
+virtual_minimum_uid = 100
+
+#Virtual User
+
+virtual_mailbox_maps = ldap:vuser
+
+vuser_server_host = 127.0.0.1
+vuser_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+vuser_query_filter = (&amp;(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+vuser_result_attribute = mailbox
+vuser_bind = no
+
+#Virtual User uid
+
+virtual_uid_maps = ldap:uidldap
+
+uidldap_server_host = 127.0.0.1
+uidldap_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+uidldap_query_filter = (&amp;(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+uidldap_result_attribute = uidNumber
+uidldap_bind = no
+
+#Virtual User gid
+
+virtual_gid_maps = ldap:gidldap
+
+gidldap_server_host = 127.0.0.1
+gidldap_search_base = ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+gidldap_query_filter = (&amp;(mail=%s)(!(quota=-1))(objectClass=CourierMailAccount))
+gidldap_result_attribute = gidNumber
+gidldap_bind = no
+</code></pre></div><p>Vamos a enviar un email</p>
+<p><img src="/images/postfixLDAP.png" alt=""></p>
+<p>Y vemos que llega la información y es enviada al usuario ldap.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Feb 26 11:15:00 croqueta postfix/qmgr[11640]: D64C32381F: from=&lt;alexrodriguezrojas98@gmail.com&gt;, size=2888, nrcpt=1 (queue active)
+Feb 26 11:15:00 croqueta postfix/smtpd[11676]: disconnect from babuino-smtp.gonzalonazareno.org[192.168.203.3] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: connect from localhost[127.0.0.1]
+Feb 26 11:15:03 croqueta postfix/trivial-rewrite[11680]: warning: do not list domain alejandro.gonzalonazareno.org in BOTH mydestination and virtual_mailbox_domains
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: 37ABA23820: client=localhost[127.0.0.1]
+Feb 26 11:15:03 croqueta postfix/cleanup[11681]: 37ABA23820: message-id=&lt;CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com&gt;
+Feb 26 11:15:03 croqueta postfix/qmgr[11640]: 37ABA23820: from=&lt;alexrodriguezrojas98@gmail.com&gt;, size=3420, nrcpt=1 (queue active)
+Feb 26 11:15:03 croqueta postfix/trivial-rewrite[11680]: warning: do not list domain alejandro.gonzalonazareno.org in BOTH mydestination and virtual_mailbox_domains
+Feb 26 11:15:03 croqueta postfix/smtpd[11697]: disconnect from localhost[127.0.0.1] ehlo=1 mail=1 rcpt=1 data=1 quit=1 commands=5
+Feb 26 11:15:03 croqueta amavis[3492]: (03492-02) Passed CLEAN {RelayedInbound}, [192.168.203.3]:55548 [209.85.166.42] &lt;alexrodriguezrojas98@gmail.com&gt; -&gt; &lt;alexrr@alejandro.gonzalonazareno.org&gt;, Queue-ID: D64C32381F, Message-ID: &lt;CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com&gt;, mail_id: y56hSa8ZL3DA, Hits: 0.052, size: 2888, queued_as: 37ABA23820, 2342 ms
+Feb 26 11:15:03 croqueta postfix/smtp[11682]: D64C32381F: to=&lt;alexrr@alejandro.gonzalonazareno.org&gt;, relay=127.0.0.1[127.0.0.1]:10024, delay=2.4, delays=0.04/0.01/0/2.3, dsn=2.0.0, status=sent (250 2.0.0 from MTA(smtp:[127.0.0.1]:10025): 250 2.0.0 Ok: queued as 37ABA23820)
+Feb 26 11:15:03 croqueta postfix/qmgr[11640]: D64C32381F: removed
+Feb 26 11:15:03 croqueta postfix/local[11698]: 37ABA23820: to=&lt;alexrr@alejandro.gonzalonazareno.org&gt;, relay=local, delay=0.05, delays=0.01/0.03/0/0.01, dsn=2.0.0, status=sent (delivered to maildir)
+</code></pre></div><p>Vemos que el correo ha llegado</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/vmail/alexrr/Maildir/new# ls
+1582715703.Vfe01I60105M268039.croqueta.alejandro.gonzalonazareno.org
+root@croqueta:/home/vmail/alexrr/Maildir/new# cat 1582715703.Vfe01I60105M268039.croqueta.alejandro.gonzalonazareno.org 
+Return-Path: &lt;alexrodriguezrojas98@gmail.com&gt;
+X-Original-To: alexrr@alejandro.gonzalonazareno.org
+Delivered-To: alexrr@alejandro.gonzalonazareno.org
+Received: from localhost (localhost [127.0.0.1])
+	by alejandro.gonzalonazareno.org (Postfix) with ESMTP id 37ABA23820
+	for &lt;alexrr@alejandro.gonzalonazareno.org&gt;; Wed, 26 Feb 2020 11:15:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at alejandro.gonzalonazareno.org
+Received: from alejandro.gonzalonazareno.org ([127.0.0.1])
+	by localhost (alejandro.gonzalonazareno.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id y56hSa8ZL3DA for &lt;alexrr@alejandro.gonzalonazareno.org&gt;;
+	Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: from babuino-smtp.gonzalonazareno.org (babuino-smtp.gonzalonazareno.org [192.168.203.3])
+	by alejandro.gonzalonazareno.org (Postfix) with ESMTP id D64C32381F
+	for &lt;alexrr@alejandro.gonzalonazareno.org&gt;; Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	by babuino-smtp.gonzalonazareno.org (Postfix) with ESMTPS id 9CC63C9D58
+	for &lt;alexrr@alejandro.gonzalonazareno.org&gt;; Wed, 26 Feb 2020 11:15:00 +0000 (UTC)
+Received: by mail-io1-f42.google.com with SMTP id m25so2891673ioo.8
+        for &lt;alexrr@alejandro.gonzalonazareno.org&gt;; Wed, 26 Feb 2020 03:15:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=14DaWJPDIvc1Labl5BH74k7de9aCaM2tSI6nfSeboVk=;
+        b=gqd/pUli6lJ7FA6SFUT3YTc4YAJh5vSAZbPAcBoYL4pRJrRtAJb2+EwIevZsRbcxl0
+         tGtTsljFE8uSwy6xGCDZtZ3rkEpmbtssFadt6bQAKTZWUoQ39gY2zmglX/U3j6Fpyftr
+         Y6PLN8jGeskHdIrHZM50RJaHbu/WwzjE+nK+rM3mTf/75GJEr95HIpllOrGcrywX3Lom
+         IenoDnTc8qgcDkm1t/YRbfb7tXoIIx4n/7+WsSCJS6nH2dSfuZhuNTco+LrVfXQ7sXAO
+         MAFPnnnnvLkG/JBi1GDjct9cxD/+iS2U16oR/RWuLxXQ2LXTqlBBZiwHGvc71MVUD46O
+         nbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=14DaWJPDIvc1Labl5BH74k7de9aCaM2tSI6nfSeboVk=;
+        b=RcEk4YXrX0pvejaJB9o4AZOrO3SVF0r4MakohjBmutc0SCDNfr8sKdH0hz/xxmBizk
+         M0OzdqRFyNb/PPwU4Tfa66wwlg5ADSoDoslZ9NE5gGaPVZCa97Iuu/b4XznDmlDgb+Pg
+         30OsPuZvLcv2d2yShIBti/dPkKazRSQqbUkDAhkeRfts1/JEPjGcciylruP/YFiofkZS
+         xrIBpDcGUN0c+6zcNSmZ7IKkJjJLcxpIY2KgN6WdvP0tvTrQ4nFUaj9wnwL+MTKI43LD
+         FlRYdo8QkbtrRRu+TeLmYT80rL6hj8t2qj3BS9XzUvWGXM0QFLHa4EKPzB+aq1ki0Sgb
+         vwQA==
+X-Gm-Message-State: APjAAAWDQgr0IIBupFfUCWc5U42t3Q8qit9LT5UBruI0gnu0Jn6dbGgZ
+	/3mJjOd3e3zEOCSv125rHuTDp1MunayPQQ/2FPnyDA==
+X-Google-Smtp-Source: APXvYqyujYh+9EBR/opZ/uBVeks4vc2u85MU9AehD0kF9qaP9F9ciuf4r18BBfuUc2YXVbdWBYGkPgyyIAy9OOF9ino=
+X-Received: by 2002:a6b:ea05:: with SMTP id m5mr1935606ioc.191.1582715698378;
+ Wed, 26 Feb 2020 03:14:58 -0800 (PST)
+MIME-Version: 1.0
+From: Alejandro Rodriguez Rojas &lt;alexrodriguezrojas98@gmail.com&gt;
+Date: Wed, 26 Feb 2020 12:14:46 +0100
+Message-ID: &lt;CAPN2xJR1aEUe_5CnPUreobuAxFfwdzsq9ym_u=iA9hqxsGMXsg@mail.gmail.com&gt;
+Subject: Prueba ldap
+To: alexrr@alejandro.gonzalonazareno.org
+Content-Type: multipart/alternative; boundary=&#34;000000000000fb7ccb059f78b629&#34;
+
+--000000000000fb7ccb059f78b629
+Content-Type: text/plain; charset=&#34;UTF-8&#34;
+
+Hola esto es una prueba
+
+--000000000000fb7ccb059f78b629
+Content-Type: text/html; charset=&#34;UTF-8&#34;
+
+&lt;div dir=&#34;ltr&#34;&gt;Hola esto es una prueba&lt;br&gt;&lt;/div&gt;
+
+--000000000000fb7ccb059f78b629--
+
+</code></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcorreos%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcorreos%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcorreos%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcorreos%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

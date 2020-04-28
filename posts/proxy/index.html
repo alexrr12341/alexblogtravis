@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Proxy, Proxy inverso y balanceadores de carga - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/proxy/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/proxy/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/proxy/">
+    <title>
+  Proxy, Proxy inverso y balanceadores de carga - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/proxy/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Proxy, Proxy inverso y balanceadores de carga</h1>
+      <h2 class="date">March 3, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="proxy-proxy-inverso-y-balanceadores-de-carga">Proxy, Proxy inverso y balanceadores de carga</h2>
+<p>Vamos a realizar un ejercicio donde vamos a hacer proxys, proxys inversos y balanceadores de carga.</p>
+<p>Vamos a utilizar el siguiente Vagrantfile</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure(&#34;2&#34;) do |config|
+config.vm.define :proxy do |proxy|
+    proxy.vm.box = &#34;debian/buster64&#34;
+    proxy.vm.hostname = &#34;proxy&#34;
+    proxy.vm.network :private_network, ip: &#34;10.0.0.10&#34;, virtualbox__intnet: &#34;red_privada1&#34;
+    proxy.vm.network :private_network, ip: &#34;192.168.200.10&#34;
+  end
+  config.vm.define :cliente_int do |cliente_int|
+    cliente_int.vm.box = &#34;debian/buster64&#34;
+    cliente_int.vm.network :private_network, ip: &#34;10.0.0.11&#34;,virtualbox__intnet: &#34;red_privada1&#34;
+  end
+  
+end
+
+</code></pre></div><h2 id="máquina-proxy">Máquina proxy</h2>
+<p>Vamos a instalar squid en dicha máquina, por lo que realizamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install squid3
+</code></pre></div><p>Y en /etc/squid3/squid.conf ponemos las siguientes líneas:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">acl redlocal src 192.168.200.0/24
+http_access allow redlocal
+</code></pre></div><p>Y reiniciamos squid</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart squid
+</code></pre></div><p>Ahora vamos a probar distintos métodos del proxy.</p>
+<h3 id="directamente-desde-el-navegador">Directamente desde el navegador</h3>
+<p>Vamos al navegador y hacemos click en preferencias &ndash;&gt; Configuracion de red y se nos abrira la siguiente ventana que debe de quedar asi:</p>
+<p><img src="/images/Proxy.png" alt=""></p>
+<p>Accedemos a hola.com y miramos los logs en /var/log/squid/access.log</p>
+<p><img src="/images/Proxy2.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1583221323.149    473 192.168.200.1 TCP_TUNNEL/200 7109 CONNECT www.himgs.com:443 - HIER_DIRECT/184.27.3.218 -
+1583221323.154    392 192.168.200.1 TCP_TUNNEL/200 5939 CONNECT www.himgs.com:443 - HIER_DIRECT/184.27.3.218 -
+1583221323.162    401 192.168.200.1 TCP_TUNNEL/200 8793 CONNECT www.himgs.com:443 - HIER_DIRECT/184.27.3.218 -
+1583221323.184    508 192.168.200.1 TCP_TUNNEL/200 39589 CONNECT www.himgs.com:443 - HIER_DIRECT/184.27.3.218 -
+1583221323.202    440 192.168.200.1 TCP_TUNNEL/200 6199 CONNECT www.himgs.com:443 - HIER_DIRECT/184.27.3.218 -
+1583221323.642     99 192.168.200.1 TCP_MISS/200 1135 POST http://ocsp.digicert.com/ - HIER_DIRECT/93.184.220.29 application/ocsp-response
+
+</code></pre></div><h3 id="configuración-proxy-del-sistema">Configuración proxy del sistema</h3>
+<p>Ahora en el navegador ponemos que use la configuración proxy del sistema</p>
+<p><img src="/images/Proxy4.png" alt=""></p>
+<p>Y en nuestro entorno gráfico, vamos a la configuración de red-&gt;Proxy de la red y seleccionamos manual y escribimos nuestra IP</p>
+<p><img src="/images/Proxy5.png" alt=""></p>
+<p>Y entramos en marca.com</p>
+<p><img src="/images/Proxy6.png" alt=""></p>
+<p>Miramos los logs</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1583221704.401   3882 192.168.200.1 TCP_TUNNEL/200 3911 CONNECT pixelcounter.marca.com:443 - HIER_DIRECT/193.110.128.197 -
+1583221709.076    251 192.168.200.1 TCP_TUNNEL/200 5289 CONNECT shb.richaudience.com:443 - HIER_DIRECT/116.202.128.60 -
+1583221709.078    253 192.168.200.1 TCP_TUNNEL/200 5289 CONNECT shb.richaudience.com:443 - HIER_DIRECT/116.202.128.60 -
+1583221709.091    267 192.168.200.1 TCP_TUNNEL/200 5289 CONNECT shb.richaudience.com:443 - HIER_DIRECT/116.202.128.60 -
+1583221709.092    268 192.168.200.1 TCP_TUNNEL/200 5289 CONNECT shb.richaudience.com:443 - HIER_DIRECT/116.202.128.60 -
+1583221709.094    270 192.168.200.1 TCP_TUNNEL/200 5289 CONNECT shb.richaudience.com:443 - HIER_DIRECT/116.202.128.60 -
+1583221710.048   8824 192.168.200.1 TCP_TUNNEL/200 5754 CONNECT smetrics.el-mundo.net:443 - HIER_DIRECT/52.49.100.189 -
+1583221712.356    247 192.168.200.1 TCP_TUNNEL/200 4910 CONNECT sync.richaudience.com:443 - HIER_DIRECT/94.130.216.200 -
+
+</code></pre></div><h3 id="configuración-de-squid-para-cliente-interno">Configuración de Squid para cliente interno</h3>
+<p>Ahora vamos a configurar nuestro cliente interno para que utilice nuestro proxy, para ello vamos a /etc/squid/squid.conf y realizamos lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">acl redinterna src 10.0.0.0/24
+http_access allow redinterna
+</code></pre></div><p>Recargamos la configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl reload squid
+</code></pre></div><p>En nuestro cliente interno instalaremos w3m</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install w3m
+</code></pre></div><p>Configuramos las variables de entorno:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@buster:/home/vagrant# export https_proxy=http://10.0.0.10:3128/
+root@buster:/home/vagrant# export http_proxy=http://10.0.0.10:3128/
+</code></pre></div><p>Y accedemos a leagueoflegends.com en w3m</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+w3m leagueoflegends.com
+</code></pre></div><p>Y miramos los logs del proxy</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1583222100.528    458 10.0.0.11 TCP_MISS/302 742 GET http://leagueoflegends.com/ - HIER_DIRECT/35.156.88.172 text/html
+1583222100.856    324 10.0.0.11 TCP_TUNNEL/200 4919 CONNECT www.leagueoflegends.com:443 - HIER_DIRECT/35.156.88.172 -
+1583222101.282    423 10.0.0.11 TCP_TUNNEL/200 5514 CONNECT euw.leagueoflegends.com:443 - HIER_DIRECT/23.214.220.216 -
+1583222101.514    230 10.0.0.11 TCP_MISS/301 558 GET http://euw.leagueoflegends.com/en-gb/ - HIER_DIRECT/23.214.220.216 -
+1583222101.662    145 10.0.0.11 TCP_TUNNEL/200 67604 CONNECT euw.leagueoflegends.com:443 - HIER_DIRECT/23.214.220.216 -
+
+</code></pre></div><h3 id="filtro-de-listas-negras">Filtro de listas negras</h3>
+<p>Vamos a crear el fichero /etc/squid/webs con las web o dominios que no queremos que entren nuestros usuarios del proxy:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">www.alexrrinformatico.com
+</code></pre></div><p>Y en /etc/squid/squid.conf añadimos la acl necesaria (muy importante que esté arriba de todas las reglas anteriores, sino leerá que puede entrar, funciona como las iptables):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">acl webs url_regex &#34;/etc/squid/webs&#34;
+http_access deny webs
+</code></pre></div><p>Reiniciamos el servicio y miramos si podemos entrar a <a href="http://www.alexrrinformatico.com">www.alexrrinformatico.com</a></p>
+<p><img src="/images/Proxy8.png" alt=""></p>
+<p><img src="/images/Proxy9.png" alt=""></p>
+<p>Y miramos los logs</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1583223971.901 116456 192.168.200.1 TCP_TUNNEL/200 46558 CONNECT www.alexrrinformatico.com:443 - HIER_DIRECT/185.199.109.153 -
+1583223971.904      0 192.168.200.1 TCP_DENIED/403 3995 CONNECT www.alexrrinformatico.com:443 - HIER_NONE/- text/html
+
+</code></pre></div><h3 id="filtro-de-listas-blancas">Filtro de listas blancas</h3>
+<p>Ahora vamos a realizar justo lo contrario, vamos a aprovechar nuestro /etc/squid/webs pero vamos a realizar justo lo contrario, solo podremos acceder a nuestro blog.</p>
+<p>En /etc/squid/squid.conf realizamos la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">acl whitelist url_regex &#34;/etc/squid/webs
+
+http_access allow whitelist
+http_access deny all
+</code></pre></div><p><img src="/images/Proxy10.png" alt=""></p>
+<p><img src="/images/Proxy11.png" alt=""></p>
+<p>Miramos los logs</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1583223971.901 116456 192.168.200.1 TCP_TUNNEL/200 46558 CONNECT www.alexrrinformatico.com:443 - HIER_DIRECT/185.199.109.153 -
+1583223971.904      0 192.168.200.1 TCP_DENIED/403 3995 CONNECT www.alexrrinformatico.com:443 - HIER_NONE/- text/html
+
+1583224192.666      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224192.666      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224192.882      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224192.882      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224215.210      0 192.168.200.1 TCP_DENIED/403 3956 CONNECT www.hola.com:443 - HIER_NONE/- text/html
+1583224216.688      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224216.919      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+1583224216.919      0 192.168.200.1 NONE/000 0 NONE error:transaction-end-before-headers - HIER_NONE/- -
+
+</code></pre></div><h2 id="balanceador-de-carga">Balanceador de carga</h2>
+<p>Vamos a realizar el siguiente <a href="https://fp.josedomingo.org/serviciosgs/u08/doc/haproxy/vagrant.zip">escenario</a> para balanceadores de carga</p>
+<p>Realizamos el escenario</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alexrr@pc-alex:~/vagrant/escenarioBalanceador$ ls
+index1.html  index2.html  sesion.php  Vagrantfile  vagrant.zip
+alexrr@pc-alex:~/vagrant/escenarioBalanceador$ vagrant up
+</code></pre></div><p>En la máquina balanceador vamos a instalar haproxy</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install haproxy
+</code></pre></div><p>Vamos ahora a /etc/haproxy/haproxy.cfg y realizamos la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+global
+    daemon
+    maxconn 256
+    user    haproxy
+    group   haproxy
+    log     127.0.0.1       local0
+    log     127.0.0.1       local1  notice
+
+defaults
+    mode    http
+    log     global
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+listen granja_cda
+    bind 172.22.5.106:80 #aquí pon la dirección ip del balanceador
+    mode http
+    stats enable
+    stats auth  cda:cda
+    balance roundrobin
+    server uno 10.10.10.11:80 maxconn 128
+    server dos 10.10.10.22:80 maxconn 128
+
+</code></pre></div><p>Antes de arrancar el servicio, vamos a /etc/default/haproxy y ponemos lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ENABLED=1
+</code></pre></div><p>Y arrancamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart haproxy
+</code></pre></div><p><img src="/images/Balanceador.png" alt=""></p>
+<p><img src="/images/Balanceador2.png" alt=""></p>
+<p>Vamos al navegador y vamos a observar las estadísticas del proxy en la url http://{ip}/haproxy?stats (la contraseña es cda/cda)</p>
+<p><img src="/images/Balanceador3.png" alt=""></p>
+<p>Vamos a observar ahora los logs de apache1</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@apache1:/home/vagrant# cat /var/log/apache2/access.log 
+10.10.10.1 - - [03/Mar/2020:08:46:27 +0000] &#34;GET / HTTP/1.1&#34; 200 436 &#34;-&#34; &#34;Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0&#34;
+10.10.10.1 - - [03/Mar/2020:08:47:10 +0000] &#34;GET / HTTP/1.1&#34; 200 436 &#34;-&#34; &#34;Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0&#34;
+10.10.10.1 - - [03/Mar/2020:08:47:10 +0000] &#34;GET / HTTP/1.1&#34; 200 436 &#34;-&#34; &#34;Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0&#34;
+10.10.10.1 - - [03/Mar/2020:08:48:34 +0000] &#34;GET /favicon.ico HTTP/1.1&#34; 404 435 &#34;-&#34; &#34;Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0&#34;
+
+</code></pre></div><p>Aparece la ip interna del balanceador  ya que nosotros accedemos a la ip externa del navegador y este es el que se encarga de preguntar a los servidores web que estan en su red interna cual va a ser el que va a responder a la petición.</p>
+<p>Ahora vamos a realizar una configuración con las sesiones php intercambiadas con el fichero sessions.php</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;?php
+     header(&#39;Content-Type: text/plain&#39;);
+     session_start();
+     if(!isset($_SESSION[&#39;visit&#39;]))
+     {
+             echo &#34;This is the first time you&#39;re visiting this server&#34;;
+             $_SESSION[&#39;visit&#39;] = 0;
+     }
+     else
+             echo &#34;Your number of visits: &#34;.$_SESSION[&#39;visit&#39;];             
+
+     $_SESSION[&#39;visit&#39;]++;              
+
+     echo &#34;\nServer IP: &#34;.$_SERVER[&#39;SERVER_ADDR&#39;];
+     echo &#34;\nClient IP: &#34;.$_SERVER[&#39;REMOTE_ADDR&#39;];
+     echo &#34;\nX-Forwarded-for: &#34;.$_SERVER[&#39;HTTP_X_FORWARDED_FOR&#39;].&#34;\n&#34;;
+     print_r($_COOKIE);
+?&gt;
+
+</code></pre></div><p>Vamos a incluir las siguientes líneas en el balanceador en /etc/haproxy/haproxy.cfg</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">    cookie PHPSESSID prefix                               # &lt;- aquí
+    server uno 10.10.10.11:80 cookie EL_UNO maxconn 128   # &lt;- aquí
+    server dos 10.10.10.22:80 cookie EL_DOS maxconn 128   # &lt;- aquí
+
+</code></pre></div><p>Reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart haproxy
+</code></pre></div><p>Y entramos a la ip http://{ip}/sesion.php
+<img src="/images/Balanceador4.png" alt=""></p>
+<p>Vemos que el parametro cookie es:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Cookie:PHPSESSID=EL_DOS~ms69547s57g990vmk8gppvcieu
+</code></pre></div><p>Si recargamos varias veces la página, vemos que el parámetro no ha cambiado, pero si el número de veces que hemos entrado a la página.</p>
+<p><img src="/images/Balanceador5.png" alt=""></p>
+<p>Si entramos en modo incognito, detecta que es una nueva sesión y la cookie cambia.</p>
+<p><img src="/images/Balanceador7.png" alt=""></p>
+<p>Vemos que el parametro cookie ahora es:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Cookie:PHPSESSID=EL_UNO~98pm9cphn1i3ui30lundf6dar4
+</code></pre></div><h2 id="proxy-inverso">Proxy inverso</h2>
+<p>Vamos a utilizar el escenario anterior pero vamos a deshabilitar haproxy, para ello lo desinstalamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt purge haproxy
+</code></pre></div><p>Vamos ahora a configurar en balanceador un nginx que actuará como proxy inverso, para ello lo instalamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant@balanceador:~$ sudo apt install nginx
+
+</code></pre></div><p>Nos vamos a descargar la siguiente <a href="https://es.000webhost.com/plantillas/animales_mascotas/animal-shelter">plantilla</a></p>
+<p>Metemos la hoja de estilo en la carpeta de vagrant y hacemos un rsync</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">alexrr@pc-alex:~/vagrant/escenarioBalanceador$ ls -al
+total 4916
+drwxr-xr-x  3 alexrr alexrr    4096 mar  3 10:50 .
+drwxr-xr-x 32 alexrr alexrr    4096 mar  3 09:36 ..
+-rw-r--r--  1 alexrr alexrr 4999402 mar  3 10:35 animal-shelter.zip
+-rw-r--r--  1 alexrr alexrr     191 feb 16 20:30 index1.html
+-rw-r--r--  1 alexrr alexrr     191 feb 16 20:30 index2.html
+-rw-r--r--  1 alexrr alexrr     560 feb 16 20:31 sesion.php
+drwxr-xr-x  4 alexrr alexrr    4096 mar  3 09:37 .vagrant
+-rw-r--r--  1 alexrr alexrr    1722 feb 16 20:45 Vagrantfile
+-rw-r--r--  1 alexrr alexrr    1849 mar  3 09:36 vagrant.zip
+
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant rsync
+</code></pre></div><p>Y estará nuestra hoja de estilo en /vagrant de las máquinas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@apache1:/vagrant# ls
+animal-shelter.zip  index1.html  index2.html  sesion.php  Vagrantfile  vagrant.zip
+
+</code></pre></div><p>Y descomprimimos la hoja de estilo en ambas máquinas.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@apache1:/var/www/html# unzip animal-shelter.zip 
+
+root@apache2:/var/www/html# unzip animal-shelter.zip 
+
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@apache2:/var/www/html# ls
+ about.html		 blog-home.html     contact.html   elements.html   index.html   scss
+&#39;Animal Shelter - Doc&#39;	 blog-single.html   css		   fonts	   js	        volunteer.html
+ animal-shelter.zip	 cats.html	    dogs.html	   img		   mail.php
+
+root@apache1:/var/www/html# ls
+ about.html		 blog-home.html     contact.html   elements.html   index.html   scss
+&#39;Animal Shelter - Doc&#39;	 blog-single.html   css		   fonts	   js	        volunteer.html
+ animal-shelter.zip	 cats.html	    dogs.html	   img		   mail.php
+
+</code></pre></div><p>Ahora vamos a configurar dos virtual host en nginx que hagan su proxy inverso en el puerto 8080, para ello vamos a hacer que ambos apaches escuchen por el puerto 8080</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">&lt;VirtualHost *:8080&gt;
+...
+
+</code></pre></div><p>/etc/apache2/ports.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Listen 8080
+</code></pre></div><p>Hacemos un virtual host para la app1
+/etc/nginx/sites-available/app1</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">upstream proxy {
+    server 10.10.10.11:8080;
+    keepalive 64;
+}
+
+server {
+	listen 80;
+	server_name www.app1.org;
+	location / {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://proxy;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection &#34;keep-alive&#34;;
+		proxy_store off;
+	}
+}
+</code></pre></div><p>Y para la app2</p>
+<p>/etc/nginx/sites-available/app2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">upstream proxy2 {
+    server 10.10.10.22:8080;
+    keepalive 64;
+}
+
+server {
+	listen 80;
+	server_name www.app2.org;
+	location / {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://proxy2;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection &#34;keep-alive&#34;;
+		proxy_store off;
+	}
+}
+</code></pre></div><p>Hacemos el enlace simbolico y reiniciamos nginx</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@balanceador:/etc/nginx/sites-available# ln -s /etc/nginx/sites-available/app1 /etc/nginx/sites-enabled/
+root@balanceador:/etc/nginx/sites-available# ln -s /etc/nginx/sites-available/app2 /etc/nginx/sites-enabled/
+root@balanceador:/etc/nginx/sites-available# systemctl restart nginx
+</code></pre></div><p>Apache1</p>
+<p><img src="/images/Inverso.png" alt="">
+<img src="/images/Inverso2.png" alt=""></p>
+<p>Apache2
+<img src="/images/Inverso3.png" alt="">
+<img src="/images/Inverso4.png" alt=""></p>
+<p>Ahora vamos a hacerlo con un único virtualhost que será <a href="http://www.servidor.org">www.servidor.org</a>, /app1 para el primer apache y /app2 para el segundo.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">server {
+	listen 80;
+	server_name www.servidor.org;
+
+	location /app1/ {
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://10.10.10.11:8080/;
+		proxy_http_version 1.1;
+		proxy_pass_request_headers on;
+		proxy_set_header Connection &#34;keep-alive&#34;;
+		proxy_store off;
+	}
+        location /app2/ {
+                proxy_set_header X-Forwarded-Host $host;
+                proxy_set_header X-Forwarded-Server $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_pass http://10.10.10.22:8080/;
+                proxy_http_version 1.1;
+                proxy_pass_request_headers on;
+                proxy_set_header Connection &#34;keep-alive&#34;;
+                proxy_store off;
+        }
+}
+
+</code></pre></div><p>Apache1
+<img src="/images/Inverso5.png" alt="">
+<img src="/images/Inverso6.png" alt=""></p>
+<p>Apache2
+<img src="/images/Inverso7.png" alt="">
+<img src="/images/Inverso8.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fproxy%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fproxy%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fproxy%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fproxy%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

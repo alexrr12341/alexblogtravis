@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Clusters de Alta Disponibilidad - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/clusters/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/clusters/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/clusters/">
+    <title>
+  Clusters de Alta Disponibilidad - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/clusters/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Clusters de Alta Disponibilidad</h1>
+      <h2 class="date">February 24, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="clusters-de-alta-disponibilidad">Clusters de Alta Disponibilidad</h2>
+<p>Vamos a realizar un cluster de alta disponibilidad donde instalaremos un CMS y comprobaremos que si se apaga un nodo la aplicación sigue funcionando.
+Para ello necesitamos 2 nodos con la base de datos y el cms.</p>
+<p>El escenario que tendremos será el siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">git clone https://github.com/josedom24/escenarios-HA
+</code></pre></div><p>Utilizaremos el escenario 05 en este caso.</p>
+<p>Tenemos un entorno virtual con ansible y un vagrant</p>
+<p>Si no sabemos instalar ansible, hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">pip install ansible
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(ansible) alexrr@pc-alex:~/git/escenarios-HA/05-HA-IPFailover-Apache2+DRBD$ vagrant up
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(ansible) alexrr@pc-alex:~/git/escenarios-HA/05-HA-IPFailover-Apache2+DRBD/ansible$ ansible-playbook -b site.yaml 
+
+</code></pre></div><p>Tardará unos minutos en hacerlo, pero tendremos dos máquinas con drbd instalado.</p>
+<p>Ahora nos metemos en el nodo 1</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">vagrant ssh nodo1
+</code></pre></div><p>Vemos que nodo1 se puede comunicar con nodo2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# pcs status
+Cluster name: mycluster
+Stack: corosync
+Current DC: nodo2 (version 2.0.1-9e909a5bdd) - partition with quorum
+Last updated: Mon Feb 24 10:35:34 2020
+Last change: Mon Feb 24 10:17:56 2020 by hacluster via crmd on nodo1
+
+2 nodes configured
+2 resources configured
+
+Online: [ nodo1 nodo2 ]
+
+Full list of resources:
+
+ VirtualIP	(ocf::heartbeat:IPaddr2):	Started nodo1
+ WebSite	(ocf::heartbeat:apache):	Started nodo1
+
+Daemon Status:
+  corosync: active/enabled
+  pacemaker: active/enabled
+  pcsd: active/enabled
+
+</code></pre></div><p>Tenemos dos discos disponibles en nodo1 y nodo2, por lo que vamos a utilizar drbd para compartir dicha información.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# apt install drbd-utils
+root@nodo2:/home/vagrant# apt install drbd-utils
+</code></pre></div><p>En ambos nodos en /etc/drbd.d/wwwdata.res de ambos nodos configuramos lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">resource wwwdata {
+ protocol C;
+ meta-disk internal;
+ device /dev/drbd1;
+ syncer {
+  verify-alg sha1;
+ }
+ net {
+  allow-two-primaries;
+ }
+ on nodo1 {
+  disk   /dev/sdb;
+  address  10.1.1.101:7789;
+ }
+ on nodo2 {
+  disk   /dev/sdb;
+  address  10.1.1.102:7789;
+ }
+}
+</code></pre></div><p>Ahora vamos a crear los recursos y lo vamos a activar en ambos nodos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# drbdadm create-md wwwdata
+initializing activity log
+initializing bitmap (16 KB) to all zero
+Writing meta data...
+New drbd meta data block successfully created.
+
+root@nodo2:/home/vagrant# drbdadm create-md wwwdata
+initializing activity log
+initializing bitmap (16 KB) to all zero
+Writing meta data...
+New drbd meta data block successfully created.
+
+root@nodo1:/home/vagrant# drbdadm up wwwdata
+root@nodo2:/home/vagrant# drbdadm up wwwdata
+</code></pre></div><p>Como por defecto, los nodos están en modo secundario, vamos a añadir a nodo1 como primario.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# drbdadm primary --force wwwdata
+
+</code></pre></div><p>Miramos el estado de la sincronizacion</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# drbdadm status wwwdata
+wwwdata role:Primary
+  disk:UpToDate
+  peer role:Secondary
+    replication:Established peer-disk:UpToDate
+
+root@nodo2:/home/vagrant# drbdadm status wwwdata
+wwwdata role:Secondary
+  disk:UpToDate
+  peer role:Primary
+    replication:Established peer-disk:UpToDate
+
+</code></pre></div><p>Ahora vamos a formatear el disco de nodo1 con xfs por lo que hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/home/vagrant# apt install xfsprogs
+mkfs.xfs /dev/drbd1
+
+root@nodo1:/home/vagrant# mount /dev/drbd1 /var/www/html
+
+</code></pre></div><p>Ahora vamos a configurar drbd en nuestro cluster en el nodo1 por lo que hacemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">pcs cluster cib drbd_cfg
+pcs -f drbd_cfg resource create WebData ocf:linbit:drbd drbd_resource=wwwdata op monitor interval=60s
+pcs -f drbd_cfg resource promotable WebData promoted-max=1 promoted-node-max=1 clone-max=2  clone-node-max=1 notify=true
+pcs cluster cib-push drbd_cfg --config
+</code></pre></div><p>Y vamos a generar el recurso para que se monte en /var/www/html:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">pcs cluster cib fs_cfg
+pcs -f fs_cfg resource create WebFS Filesystem device=&#34;/dev/drbd1&#34; directory=&#34;/var/www/html&#34; fstype=&#34;xfs&#34;
+pcs -f fs_cfg constraint colocation add WebFS with WebData-clone INFINITY with-rsc-role=Master
+pcs -f fs_cfg constraint order promote WebData-clone then start WebFS
+pcs -f fs_cfg constraint colocation add WebSite with WebFS INFINITY
+pcs -f fs_cfg constraint order WebFS then WebSite
+pcs cluster cib-push fs_cfg --config
+</code></pre></div><p>Ahora vamos a ver el estado del cluster:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# pcs status
+Cluster name: mycluster
+Stack: corosync
+Current DC: nodo2 (version 2.0.1-9e909a5bdd) - partition with quorum
+Last updated: Mon Feb 24 10:58:39 2020
+Last change: Mon Feb 24 10:58:17 2020 by root via cibadmin on nodo1
+
+2 nodes configured
+5 resources configured
+
+Online: [ nodo1 nodo2 ]
+
+Full list of resources:
+
+ VirtualIP	(ocf::heartbeat:IPaddr2):	Started nodo1
+ WebSite	(ocf::heartbeat:apache):	Started nodo1
+ Clone Set: WebData-clone [WebData] (promotable)
+     Masters: [ nodo1 ]
+     Slaves: [ nodo2 ]
+ WebFS	(ocf::heartbeat:Filesystem):	Started nodo1
+
+Daemon Status:
+  corosync: active/enabled
+  pacemaker: active/enabled
+  pcsd: active/enabled
+
+</code></pre></div><p>Vemos como el maestro es nodo1 y el esclavo es nodo2.</p>
+<p>Ahora vamos a realizar la configuración para wordpress, para ello instalamos el modulo de php para apache</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# apt install libapache2-mod-php php-mysql
+root@nodo2:/home/vagrant# apt install libapache2-mod-php php-mysql
+
+</code></pre></div><p>Y en el nodo 1 descargamos wordpress en /var/www/html</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# wget https://es.wordpress.org/latest-es_ES.zip
+root@nodo1:/var/www/html# unzip latest-es_ES.zip
+root@nodo1:/var/www/html# cp -r wordpress/* .
+root@nodo1:/var/www/html# rm -r wordpress/
+
+
+</code></pre></div><p><img src="/images/Wordpress1.png" alt=""></p>
+<p>Ahora vamos a configurar la base de datos, para ello vamos a instalar mariadb en ambos servidores</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# apt install mariadb-server
+root@nodo2:/home/vagrant# apt install mariadb-server
+
+</code></pre></div><p>Cambiamos la contraseña al root de ambas mariadb</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">set password = password(&#34;root&#34;);
+
+</code></pre></div><p>Ahora instalaremos rsync en ambos nodos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# apt install rsync
+root@nodo2:/home/vagrant# apt install rsync
+
+</code></pre></div><p><em>Como es vagrant ya lo tenemos instalado</em></p>
+<p>Ahora vamos a configurar galera en el primer nodo, para ello vamos creamos /etc/mysql/conf.d/galera.cnf y realizamos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[mysqld]
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+# Galera Provider Configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Galera Cluster Configuration
+wsrep_cluster_name=&#34;cluster_mariadb&#34;
+wsrep_cluster_address=&#34;gcomm://10.1.1.101,10.1.1.102&#34;
+
+# Galera Synchronization Configuration
+wsrep_sst_method=rsync
+
+# Galera Node Configuration
+wsrep_node_address=&#34;10.1.1.101&#34;
+wsrep_node_name=&#34;nodo1&#34;
+
+</code></pre></div><p>En el nodo2 haremos el mismo fichero pero con esta información</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[mysqld]
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+# Galera Provider Configuration
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Galera Cluster Configuration
+wsrep_cluster_name=&#34;cluster_mariadb&#34;
+wsrep_cluster_address=&#34;gcomm://10.1.1.101,10.1.1.102&#34;
+
+# Galera Synchronization Configuration
+wsrep_sst_method=rsync
+
+# Galera Node Configuration
+wsrep_node_address=&#34;10.1.1.102&#34;
+wsrep_node_name=&#34;nodo2&#34;
+</code></pre></div><p>Ahora vamos a parar mariadb en ambos nodos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl stop mysql
+</code></pre></div><p>Ahora en el nodo1 lanzamos el cluster</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# galera_new_cluster
+
+</code></pre></div><p>Ahora verificamos si está lanzado el cluster</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# mysql -u root -p -e &#34;SHOW STATUS LIKE &#39;wsrep_cluster_size&#39;&#34;
+Enter password: 
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| wsrep_cluster_size | 1     |
++--------------------+-------+
+
+</code></pre></div><p>Ahora iniciamos el segundo nodo y miramos de vuelta el comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo2:/home/vagrant# systemctl restart mysql
+
+
+root@nodo2:/home/vagrant# mysql -u root -p -e &#34;SHOW STATUS LIKE &#39;wsrep_cluster_size&#39;&#34;
+Enter password: 
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| wsrep_cluster_size | 2     |
++--------------------+-------+
+
+</code></pre></div><p>Vamos a comprobar la replicación para eso vamos a crear una base de datos llamada wordpress en el nodo1 y también un usuario igual, y vamos a observar que en nodo2 está realizada</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 14
+Server version: 10.3.22-MariaDB-0+deb10u1 Debian 10
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement.
+
+MariaDB [(none)]&gt; create database wordpress;
+Query OK, 1 row affected (0.020 sec)
+
+MariaDB [(none)]&gt; create user wordpress identified by &#39;wordpress&#39;;
+Query OK, 0 rows affected (0.031 sec)
+
+MariaDB [(none)]&gt; grant all privileges on wordpress.* to wordpress;
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [(none)]&gt; flush privileges;
+Query OK, 0 rows affected (0.009 sec)
+
+
+root@nodo2:/home/vagrant# mysql -u wordpress -p wordpress
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 14
+Server version: 10.3.22-MariaDB-0+deb10u1 Debian 10
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement.
+
+MariaDB [wordpress]&gt; 
+
+</code></pre></div><p>Como ya tenemos la base de datos wordpress, vamos a acceder a wordpress y configurar el config.php</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo1:/var/www/html# cp wp-config-sample.php wp-config.php
+root@nodo1:/var/www/html# nano wp-config.php
+
+define(&#39;DB_NAME&#39;, &#39;wordpress&#39;);
+define(&#39;DB_USER&#39;, &#39;wordpress&#39;);
+define(&#39;DB_PASSWORD&#39;, &#39;wordpress&#39;);
+
+
+</code></pre></div><p>Ahora entramos a wordpress</p>
+<p><img src="/images/Wordpress2.png" alt=""></p>
+<p>Vamos a añadir un post para que comprobemos que la base de datos se replica.</p>
+<p><img src="/images/Wordpress3.png" alt=""></p>
+<p>Ahora vamos a tirar la maquina nodo1 y vamos a comprobar que se monta en nodo2 y sigue la base de datos funcionando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">(ansible) alexrr@pc-alex:~/git/escenarios-HA/05-HA-IPFailover-Apache2+DRBD$ vagrant halt nodo1
+
+</code></pre></div><p>Miramos el nodo2</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@nodo2:/home/vagrant# lsblk -f
+NAME    FSTYPE LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINT
+sda                                                                      
+├─sda1  ext4         0355bc72-bb92-4894-90fa-d2ccd87e7dd6   15.4G    11% /
+├─sda2                                                                   
+└─sda5  swap         0147b768-52ec-4267-bf05-7a5aea8451a2                [SWAP]
+sdb     drbd         cd2aa0fae1bdc02a                                    
+└─drbd1                                                    432.4M    15% /var/www/html
+
+</code></pre></div><p><img src="/images/Wordpress4.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fclusters%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fclusters%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fclusters%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fclusters%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

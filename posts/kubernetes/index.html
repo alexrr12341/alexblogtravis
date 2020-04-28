@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Instalación de Kubernetes (Kubeadm) - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/kubernetes/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/kubernetes/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/kubernetes/">
+    <title>
+  Instalación de Kubernetes (Kubeadm) - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/kubernetes/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Instalación de Kubernetes (Kubeadm)</h1>
+      <h2 class="date">March 4, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="instalación-de-kubernetes">Instalación de Kubernetes</h2>
+<p>Disponemos de 3 máquinas para realizar la configuración de un cluster de Kubernetes, para ejecutar las máquinas podemos usar 3 instancias de openstack o usando el siguiente script de vagrant para libvirt:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"># -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure(&#34;2&#34;) do |config|
+  config.vm.define :kubeadm do |kubeadm|
+    kubeadm.vm.box = &#34;debian/buster64&#34;
+    kubeadm.vm.hostname = &#34;kubeadm&#34;
+    kubeadm.vm.provider :libvirt do |libvirt|
+      libvirt.cpus = 2
+      libvirt.memory = 2048
+      libvirt.qemu_use_session = true
+      libvirt.uri = &#39;qemu:///session&#39;
+      libvirt.system_uri = &#39;qemu:///system&#39;
+    end
+  end
+  config.vm.define :nodo1 do |nodo1|
+    nodo1.vm.box = &#34;debian/buster64&#34;
+    nodo1.vm.hostname = &#34;nodo1&#34;
+    nodo1.vm.provider :libvirt do |libvirt1|
+      libvirt1.cpus = 2
+      libvirt1.memory = 2048
+      libvirt1.qemu_use_session = true
+      libvirt1.uri = &#39;qemu:///session&#39;
+      libvirt1.system_uri = &#39;qemu:///system&#39;
+    end
+  end
+ config.vm.define :nodo2 do |nodo2|
+    nodo2.vm.box = &#34;debian/buster64&#34;
+    nodo2.vm.hostname = &#34;nodo2&#34;
+    nodo2.vm.provider :libvirt do |libvirt2|
+      libvirt2.cpus = 2
+      libvirt2.memory = 2048
+      libvirt2.qemu_use_session = true
+      libvirt2.uri = &#39;qemu:///session&#39;
+      libvirt2.system_uri = &#39;qemu:///system&#39;
+    end
+  end
+end
+
+</code></pre></div><p>En mi caso voy a usar las instancias de openstack debido a que mi ordenador no soporta el peso de instalación de kubeadm, por lo que tendremos una máquina kubeadm, que es la master y nodo1 y nodo2 que serán los slaves, en mi caso las máquinas serán Debian Buster 10.3.</p>
+<p>Antes de la instalación, debemos cambiar las reglas de iptables a iptables legacy, para ello hacemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt-get install -y iptables arptables ebtables
+
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+sudo update-alternatives --set arptables /usr/sbin/arptables-legacy
+sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+</code></pre></div><p>Vamos a instalar docker.io en todas las máquinas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@kubeadm:/home/debian# apt install docker.io
+root@nodo2:/home/debian# apt install docker.io
+root@nodo1:/home/debian# apt install docker.io
+
+</code></pre></div><p>En la máquina Kubeadm instalamos los requisitos necesarios para instalar kubeadm</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https curl gnupg2
+</code></pre></div><p>Importamos la clave de kubernetes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+</code></pre></div><p>Y hacemos el repositorio de kubernetes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cat &lt;&lt;EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+</code></pre></div><p>Actualizamos y instalamos kubeadm y kubectl</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@kubeadm:/home/debian# apt update
+root@kubeadm:/home/debian# apt install -y kubelet kubeadm kubectl
+</code></pre></div><p>Retenemos kubelet, kubeadm y kubectl para que no se actualice de forma automatica</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@kubeadm:/home/debian# apt-mark hold kubelet kubeadm kubectl
+</code></pre></div><p>Apagamos la swap</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@kubeadm:/home/debian# swapoff -a
+</code></pre></div><p>Vamos a iniciar kubeadm</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@kubeadm:/home/debian# kubeadm init --pod-network-cidr=192.168.100.0/24 --apiserver-cert-extra-sans=172.22.201.144
+</code></pre></div><p>Vamos a ejecutar los comandos que nos indican a la hora de iniciar kubeadm</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@kubeadm:~$ mkdir -p $HOME/.kube
+debian@kubeadm:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+debian@kubeadm:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+</code></pre></div><p>Ahora con Calico vamos a permitir la comunicación de kubernetes con otros nodos, por lo que vamos a instalarlo para configurar todos los nodos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@kubeadm:~$ kubectl apply -f &#34;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&#34;
+
+</code></pre></div><h2 id="configuración-multinodo">Configuración Multinodo</h2>
+<p>El token para conectarnos hacia la máquina nos la da al instalar kubeadm en la máquina kubeadm, por lo que en el nodo1 y nodo2 realizaremos lo siguiente para conectarnos (para poder realizar dicha accion vamos a instalar también kubeadm en los nodos como hemos realizado arriba)</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+debian@nodo1:/home/debian# kubeadm join 10.0.0.16:6443 --token 5tir3z.7brpoop4876rlcn4 --discovery-token-ca-cert-hash sha256:ab9e0dc778410b230d8d03c69167117e27392880f4e2a7d09bea78bf84fd0914
+debian@nodo2:/home/debian# kubeadm join 10.0.0.16:6443 --token 5tir3z.7brpoop4876rlcn4 --discovery-token-ca-cert-hash sha256:ab9e0dc778410b230d8d03c69167117e27392880f4e2a7d09bea78bf84fd0914
+</code></pre></div><p>Miramos que están conectadas al cluster</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@kubeadm:~$ kubectl get nodes
+NAME      STATUS   ROLES    AGE   VERSION
+kubeadm   Ready    master   3m    v1.17.3
+nodo1     Ready    &lt;none&gt;   89s   v1.17.3
+nodo2     Ready    &lt;none&gt;   65s   v1.17.3
+
+
+</code></pre></div><h2 id="aplicación-web-con-kubernetes">Aplicación web con Kubernetes</h2>
+<p>Ahora que tenemos ya kubeadm configurado, vamos a instalar un wordpress en un pod, y un mariadb en otro, por lo que vamos a hacer la configuración necesaria para instalarlo</p>
+<h2 id="creación-del-namespace">Creación del namespace</h2>
+<p>Vamos a trabajar con un namespace que se llamará wordpress.</p>
+<p>Para ello crearemos el siguiente fichero:</p>
+<p>wordpress-name.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: v1
+kind: Namespace
+metadata:
+  name: wordpress
+</code></pre></div><p>Y lo ejecutaremos con kubectl</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f wordpress-name.yml 
+namespace/wordpress created
+
+</code></pre></div><h2 id="uso-de-secretos">Uso de secretos</h2>
+<p>Los secretos sirven para que las variables no se envien de forma clara, aunque el método de encriptación es de base64, sirve para ciertas páginas web de gestión de versiones donde no podemos enviar la contraseña en claro.
+Para ello hacemos el fichero con el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create secret generic mariadb-secret --namespace=wordpress \
+                            --from-literal=dbuser=wordpress \
+                            --from-literal=dbname=wordpress \
+                            --from-literal=dbpassword=wordpress \
+                            --from-literal=dbrootpassword=root \
+                            -o yaml --dry-run &gt; maria-secreto.yaml
+</code></pre></div><p>Vamos a añadir el secreto:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f maria-secreto.yaml 
+</code></pre></div><p>Vamos a crear ahora el servicio de clusterIP para que las máquinas se puedan comunicar, para ello hacemos un fichero mariadb-service.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: database
+spec:
+  selector:
+    app: wordpress
+    type: database
+  ports:
+  - port: 3306
+    targetPort: db-port
+  type: ClusterIP 
+</code></pre></div><p>Y lo añadimos a kubectl</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f mariadb-service.yml 
+</code></pre></div><p>Ahora vamos a realizar el deploy de mariadb, para ello hacemos un fichero mariadb-deploy.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: database
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: database
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          ports:
+            - containerPort: 3306
+              name: db-port
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbrootpassword
+</code></pre></div><p>Vamos ahora a hacer el deploy de mariadb, para ello</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f mariadb-deploy.yml 
+</code></pre></div><p>Miramos que están correctamente creados</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">debian@kubeadm:~$ kubectl get deploy,service,pods -n wordpress
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mariadb-deployment   0/1     1            0           19s
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/mariadb-service   ClusterIP   10.103.114.107   &lt;none&gt;        3306/TCP   5m20s
+
+NAME                                      READY   STATUS              RESTARTS   AGE
+pod/mariadb-deployment-7bdff7c967-w4hmw   0/1     ContainerCreating   0          19s
+</code></pre></div><p>Ahora vamos a realizar el wordpress, por lo que como antes, vamos a realizar el servicio de Nodeport, que hará que podamos conectarnos a él desde el exterior.</p>
+<p>wordpress-service.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  selector:
+    app: wordpress
+    type: frontend
+  ports:
+  - name: http-sv-port 
+    port: 80
+    targetPort: http-port
+  - name: https-sv-port
+    port: 443
+    targetPort: https-port
+  type: NodePort 
+</code></pre></div><p>Ahora lanzamos el wordpreess.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f wordpress-service.yml
+</code></pre></div><p>Ahora vamos a realizar el deploy de wordpress, para ello:</p>
+<p>wordpress-deploy.yml</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+apiVersion: apps/v1     
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: wordpress
+  labels:
+    app: wordpress
+    type: frontend
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  replicas: 1      
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        type: frontend
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress
+          ports:
+            - containerPort: 80
+              name: http-port
+            - containerPort: 443
+              name: https-port
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: mariadb-service
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbuser
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbpassword
+            - name: WORDPRESS_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: dbname
+
+
+</code></pre></div><p>Y ahora realizamos el deploy en kubernetes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kubectl create -f wordpress-deploy.yml
+</code></pre></div><p><img src="/images/Kubernetes.png" alt=""></p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkubernetes%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkubernetes%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkubernetes%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkubernetes%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

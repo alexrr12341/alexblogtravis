@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Gestión de usuarios con Kerberos5, Ldap y NFS4 - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/kerberos/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/kerberos/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/kerberos/">
+    <title>
+  Gestión de usuarios con Kerberos5, Ldap y NFS4 - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/kerberos/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Gestión de usuarios con Kerberos5, Ldap y NFS4</h1>
+      <h2 class="date">February 19, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <h2 id="gestión-de-usuarios-con-kerberos5-ldap-y-nfs4">Gestión de usuarios con Kerberos5, Ldap y NFS4</h2>
+<h2 id="ajustes-previos">Ajustes previos</h2>
+<h3 id="configuración-del-dns-con-bind9">Configuración del DNS con bind9</h3>
+<p>Para ello vamos a ir a /var/cache/bind/db.gonzalonazareno.org que es el fichero donde tenemos nuestras configuraciones de DNS y añadimos las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$ORIGIN alejandro.gonzalonazareno.org.
+...
+kerberos IN CNAME croqueta
+ldap IN CNAME croqueta
+_kerberos               IN      TXT     &#34;ALEJANDRO.GONZALONAZARENO.ORG&#34;
+_kerberos._udp          IN      SRV     0 0 88   kerberos.alejandro.gonzalonazareno.org.
+_kerberos_adm._tcp      IN      SRV     0 0 749  kerberos.alejandro.gonzalonazareno.org.
+_ldap._tcp              IN      SRV     0 0 389  ldap.alejandro.gonzalonazareno.org.
+
+</code></pre></div><p>Vemos que se ha realizado bien el dns</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/var/cache/bind# dig ldap.alejandro.gonzalonazareno.org
+
+; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1-Debian &lt;&lt;&gt;&gt; ldap.alejandro.gonzalonazareno.org
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 49194
+;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: 11d1364b4a8ef42c8f575f5e5e4d7cf5ceb2ee7c0d15db92 (good)
+;; QUESTION SECTION:
+;ldap.alejandro.gonzalonazareno.org. IN	A
+
+;; ANSWER SECTION:
+ldap.alejandro.gonzalonazareno.org. 86400 IN CNAME croqueta.alejandro.gonzalonazareno.org.
+croqueta.alejandro.gonzalonazareno.org.	42136 IN A 172.22.200.96
+</code></pre></div><h2 id="configuracion-de-ntp-servidor-de-hora">Configuracion de ntp (servidor de hora)</h2>
+<p>Primero de todo tenemos que tener el servidor y el cliente en la misma hora, para ello vamos a llamar a instalar en ambas máquinas ntp</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install ntp
+</code></pre></div><p>Y en /etc/ntpd.conf del cliente tortilla añadimos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">server croqueta.alejandro.gonzalonazareno.org
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">
+root@tortilla:/home/ubuntu# ntpq -np
+
+ 172.22.200.96   .INIT.          16 u    -   64    0    0.000    0.000   0.000
+
+</code></pre></div><h2 id="uso-de-openldap">Uso de OpenLDAP</h2>
+<p>Como ya tenemos un servidor de LDAP funcionando, con la estructura Group y People, vamos a crear un usuario llamado pruebauser1 y un grupo llamado pruebagroup en inicio.ldif</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dn: cn=pruebagroup,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org
+objectClass: posixGroup
+objectClass: top
+cn: pruebagroup
+gidNumber: 2010
+
+dn: uid=pruebauser1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+cn: pruebauser1
+uid: pruebauser1
+loginShell: /bin/bash
+uidNumber: 2101
+gidNumber: 2010
+homeDirectory: /home/users/pruebauser1
+</code></pre></div><p>Añadimos los usuarios con ldapadd</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ldapadd -f inicio.ldif -x -D &#34;cn=admin,dc=alejandro,dc=gonzalonazareno,dc=org&#34; -W
+
+adding new entry &#34;cn=pruebagroup1,ou=Group,dc=alejandro,dc=gonzalonazareno,dc=org&#34;
+
+adding new entry &#34;uid=pruebauser1,ou=People,dc=alejandro,dcdocker-compose loop=gonzalonazareno,dc=org&#34;
+</code></pre></div><p>En /etc/ldap/ldap.conf editamos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">BASE    dc=alejandro,dc=gonzalonazareno,dc=org
+URI     ldap://ldap.alejandro.gonzalonazareno.org
+</code></pre></div><p>Como no tenemos el directorio de pruebau, vamos a crear su directorio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mkdir -p /home/users/pruebauser1
+cp /etc/skel/.* /home/users/pruebauser1
+chown -R 2100:2010 /home/users/pruebauser1/
+</code></pre></div><p>Vemos los permisos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/home/users/pruebau# ls -la
+total 20
+drwxr-xr-x 2 2101 2010 4096 Feb 19 18:40 .
+drwxr-xr-x 3 root root 4096 Feb 19 18:39 ..
+-rw-r--r-- 1 2101 2010  220 Feb 19 18:40 .bash_logout
+-rw-r--r-- 1 2101 2010 3526 Feb 19 18:40 .bashrc
+-rw-r--r-- 1 2101 2010  807 Feb 19 18:40 .profile
+
+</code></pre></div><h2 id="configuración-de-name-service-switch-nss">Configuración de Name Service Switch (nss)</h2>
+<p>Para que podamos realizar la autentificación en kerberos, primero debemos instalar la siguiente configuración para ldap</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install --no-install-recommends libnss-ldap
+</code></pre></div><p>Identificador del servidor: ldap://ldap.alejandro.gonzalonazareno.org/
+DN base: dc=alejandro,dc=gonzalonazareno,dc=org
+Versión LDAP: 3
+Ignorar
+Ignorar</p>
+<p>Ahora vamos a /etc/libnss-ldap.conf y comentamos la siguiente línea</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">#rootbinddn cn=manager,dc=example,dc=net
+</code></pre></div><p>Y borramos la contraseña del administrador si la creamos.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">rm -f /etc/libnss-ldap.secret
+</code></pre></div><p>Y en /etc/nsswitch.conf ponemos las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">passwd:         files ldap
+group:          files ldap
+
+</code></pre></div><p>Vamos a probar su funcionamiento.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ls -al /home/users/pruebauser1/
+total 20
+drwxr-xr-x 2 pruebauser1 pruebagroup 4096 Feb 19 19:31 .
+drwxr-xr-x 5 root        root        4096 Feb 19 19:31 ..
+-rw-r--r-- 1 pruebauser1 pruebagroup  220 Feb 19 19:31 .bash_logout
+-rw-r--r-- 1 pruebauser1 pruebagroup 3526 Feb 19 19:31 .bashrc
+-rw-r--r-- 1 pruebauser1 pruebagroup  807 Feb 19 19:31 .profile
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# getent passwd pruebauser1
+pruebauser1:*:2101:2010:pruebauser1:/home/users/pruebauser1:/bin/bash
+</code></pre></div><p>Si queremos que se cacheen las consultas de ldap hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install nscd
+</code></pre></div><h2 id="instalación-y-configuración-de-kerberos5">Instalación y configuración de Kerberos5</h2>
+<p>Primero vamos a descargarnos los paquetes de kerberos y su administración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install krb5-kdc krb5-admin-server
+</code></pre></div><p>Como no tenemos el reino/realm creado, nos saltará un error en la instalación de kerberos5 a la hora de ejecutar el systemctl start, por lo que vamos a observar el realm en /etc/krb5kdc/kdc.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[kdcdefaults]
+    kdc_ports = 750,88
+
+[realms]
+    ALEJANDRO.GONZALONAZARENO.ORG = {
+        database_name = /var/lib/krb5kdc/principal
+        admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
+        acl_file = /etc/krb5kdc/kadm5.acl
+        key_stash_file = /etc/krb5kdc/stash
+        kdc_ports = 750,88
+        max_life = 10h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+        master_key_type = des3-hmac-sha1
+        #supported_enctypes = aes256-cts:normal aes128-cts:normal
+        default_principal_flags = +preauth
+    }
+
+</code></pre></div><p>Como vemos, debemos desactivar el puerto 750 y desactivar kerberos4</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[kdcdefaults]
+    kdc_ports = 88
+
+[realms]
+    ALEJANDRO.GONZALONAZARENO.ORG = {
+        database_name = /var/lib/krb5kdc/principal
+        admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
+        acl_file = /etc/krb5kdc/kadm5.acl
+        key_stash_file = /etc/krb5kdc/stash
+        kdc_ports = 88
+        max_life = 10h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+        master_key_type = des3-hmac-sha1
+        supported_enctypes = aes256-cts:normal aes128-cts:normal
+        default_principal_flags = +preauth
+    }
+
+
+
+</code></pre></div><p>Y en /etc/default/krb5-kdc desactivamos kerberos 4</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">KRB4_MODE = disable
+RUN_KRB524D = false
+</code></pre></div><p>Y en /etc/krb5.conf añadimos las siguientes líneas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">[libdefaults]
+	default_realm = ALEJANDRO.GONZALONAZARENO.ORG
+[realms]
+	ALEJANDRO.GONZALONAZARENO.ORG = {
+		kdc = kerberos.alejandro.gonzalonazareno.org
+		admin_server = kerberos.alejandro.gonzalonazareno.org
+		}
+[domain_realm]
+	.alejandro.gonzalonazareno.org = ALEJANDRO.GONZALONAZARENO.ORG
+	alejandro.gonzalonazareno.org = ALEJANDRO.GONZALONAZARENO.ORG
+
+</code></pre></div><p>Para definir nuestro realm, debemos realizar el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">krb5_newrealm
+</code></pre></div><p>Nos pedirá una contraseña que será quien controle todo kerberos.</p>
+<p>Reiniciamos kerberos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# systemctl restart krb5-kdc
+root@croqueta:~# systemctl restart krb5-admin-server
+</code></pre></div><p>Comprobamos que está escuchando kerberos en el puerto asignado</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">netstat -putan |grep &#34; krb5kdc \| kadmind &#34;
+
+tcp        0      0 0.0.0.0:88              0.0.0.0:*               LISTEN      30918/krb5kdc       
+tcp6       0      0 :::88                   :::*                    LISTEN      30918/krb5kdc
+</code></pre></div><h2 id="kadminlocal">kadmin.local</h2>
+<p>Ahora vamos a entrar a kadmin.local y vamos a listar los participantes de kerberos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# kadmin.local
+Authenticating as principal root/admin@ALEJANDRO.GONZALONAZARENO.ORG with password.
+kadmin.local:  list_principals
+K/M@ALEJANDRO.GONZALONAZARENO.ORG
+alexrr/admin@ALEJANDRO.GONZALONAZARENO.ORG
+host/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG
+host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG
+kadmin/admin@ALEJANDRO.GONZALONAZARENO.ORG
+kadmin/alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG
+kadmin/changepw@ALEJANDRO.GONZALONAZARENO.ORG
+kiprop/alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG
+krbtgt/ALEJANDRO.GONZALONAZARENO.ORG@ALEJANDRO.GONZALONAZARENO.ORG
+ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG
+pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+
+
+</code></pre></div><p>Llegados a este punto, debemos crear un principal para pruebauser1 por lo que en kadmin.local realizamos lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kadmin.local:  add_principal pruebauser1
+WARNING: no policy specified for pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Enter password for principal &#34;pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG&#34;: 
+Re-enter password for principal &#34;pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG&#34;: 
+Principal &#34;pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+kadmin.local:  add_principal -randkey host/croqueta.alejandro.gonzalonazareno.org
+WARNING: no policy specified for host/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal &#34;host/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+kadmin.local:  add_principal -randkey host/tortilla.alejandro.gonzalonazareno.org
+WARNING: no policy specified for host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal &#34;host/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+kadmin.local:  add_principal -randkey ldap/croqueta.alejandro.gonzalonazareno.org
+WARNING: no policy specified for ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal &#34;ldap/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+</code></pre></div><h2 id="ficheros-keytab">Ficheros Keytab</h2>
+<p>Para que las claves cifradas se identifiquen de forma no interactiva, debemos controlar los archivos de los keytab de los servidores, por lo que realizamos lo siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kadmin.local:  ktadd host/croqueta.alejandro.gonzalonazareno.org
+Entry for principal host/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+Entry for principal host/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+
+kadmin.local:  ktadd ldap/croqueta.alejandro.gonzalonazareno.org
+Entry for principal ldap/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+Entry for principal ldap/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+
+</code></pre></div><p>La información quedará almacenada en /etc/krb5.keytab</p>
+<h3 id="usuarios-administradores-de-kerberos">Usuarios administradores de kerberos</h3>
+<p>También podemos crear ciertos usuarios para administrar kerberos, para ello hacemos editamos el fichero /etc/krb5kdc/kdadm5.acl:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">*/admin *
+</code></pre></div><p>Accedemos a kadmin.local y añadimos un usuario.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">kadmin.local:  add_principal alexrr/admin
+WARNING: no policy specified for alexrr/admin@alejandro.gonzalonazareno.org; defaulting to no policy
+Enter password for principal &#34;alexrr/admin@alejandro.gonzalonazareno.org&#34;: 
+Re-enter password for principal &#34;alexrr/admin@alejandro.gonzalonazareno.org&#34;: 
+Principal &#34;alexrr/admin@alejandro.gonzalonazareno.org&#34; created.
+
+
+
+</code></pre></div><h2 id="cliente-de-kerberos">Cliente de Kerberos</h2>
+<p>Vamos ahora a instalar el cliente de kerberos en tortilla, para ello hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install krb5-config krb5-user
+</code></pre></div><p>Debemos configurar /etc/krb5.conf igual que en el servidor</p>
+<h3 id="klist">Klist</h3>
+<p>Si queremos ver los tickets de session de usuario usamos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:/home/ubuntu# klist -5
+klist: No credentials cache found (filename: /tmp/krb5cc_0)
+
+</code></pre></div><p>Esto sale ya que no hemos logeado aún.</p>
+<h3 id="kinit">Kinit</h3>
+<p>Si queremos logearnos a nuestro usuario, debemos realizar lo siguiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:/home/ubuntu# kinit pruebauser1
+Password for pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG: 
+root@tortilla:/home/ubuntu# klist -5
+Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+
+Valid starting     Expires            Service principal
+02/21/20 08:20:57  02/21/20 18:20:57  krbtgt/ALEJANDRO.GONZALONAZARENO.ORG@ALEJANDRO.GONZALONAZARENO.ORG
+	renew until 02/22/20 08:20:51
+
+</code></pre></div><p>(Tenemos que tener abiertos los puertos 749 tcp, 464 tcp, 464 udp y 88 udp)</p>
+<h2 id="saslgssapi">SASL/GSSAPI</h2>
+<p>Ahora vamos a autentificar con LDAP mediante una autentificación simple y segura, para ello hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install libsasl2-modules-gssapi-mit
+</code></pre></div><p>Para que ldap pueda acceder al fichero de configuración de kerberos vamos a editar los permisos de /etc/krb5.keytab</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">chmod 640 /etc/krb5.keytab
+chgrp openldap /etc/krb5.keytab
+</code></pre></div><p>Y creamos el fichero /etc/ldap/sasl2/slapd.conf y le añadimos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">mech_list: GSSAPI
+</code></pre></div><p>Y en /etc/ldap/ldap.conf realizamos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">SASL_MECH GSSAPI
+SASL_REALM ALEJANDRO.GONZALONAZARENO.ORG
+</code></pre></div><p>Y reiniciamos slapd</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart slapd
+</code></pre></div><p>Y miramos si está funcionando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# ldapsearch -x -b &#34;&#34; -s base -LLL supportedSASLMechanisms
+dn:
+supportedSASLMechanisms: GSSAPI
+
+</code></pre></div><p>Observamos en el cliente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">ubuntu@tortilla:~$ ldapsearch &#34;uidNumber=2101&#34;
+SASL/GSSAPI authentication started
+SASL username: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+SASL SSF: 56
+SASL data security layer installed.
+# extended LDIF
+#
+# LDAPv3
+# base &lt;dc=alejandro,dc=gonzalonazareno,dc=org&gt; (default) with scope subtree
+# filter: uidNumber=2101
+# requesting: ALL
+#
+
+# pruebauser1, People, alejandro.gonzalonazareno.org
+dn: uid=pruebauser1,ou=People,dc=alejandro,dc=gonzalonazareno,dc=org
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+cn: pruebauser1
+uid: pruebauser1
+loginShell: /bin/bash
+uidNumber: 2101
+gidNumber: 2010
+homeDirectory: /home/users/pruebauser1
+
+# search result
+search: 4
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/etc/ldap# ldapwhoami
+SASL/GSSAPI authentication started
+SASL username: pruebauser1@ALEJANDRO.GONZALONAZARENO.ORG
+SASL SSF: 256
+SASL data security layer installed.
+dn:uid=pruebauser1,cn=gssapi,cn=auth
+
+</code></pre></div><h2 id="pam">PAM</h2>
+<p>Ahora vamos a hacer que pam pueda acceder mediante kerberos, por lo que vamos a instalar:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:~# apt install libpam-krb5
+root@croqueta:~# apt install libpam-krb5
+
+</code></pre></div><p>Como vamos a tocar el PAM, vamos a guardar una copia:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">cp -r /etc/pam.d /etc/pam.d.old
+</code></pre></div><p>Ahora vamos a configurar los ficheros common-*</p>
+<p>common-auth</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">auth	sufficient	pam_krb5.so	minimum_uid=2000	
+auth	required	pam_unix.so	try_first_pass	nullok_secure
+
+</code></pre></div><p>common-session</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">session	optional	pam_krb5.so	minimum_uid=2000
+session	required	pam_unix.so
+
+</code></pre></div><p>common-account</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">account	sufficient	pam_krb5.so	minimum_uid=2000
+account	required	pam_unix.so
+
+</code></pre></div><p>common-password</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">password  sufficient  pam_krb5.so minimum_uid=2000
+password  required    pam_unix.so nullok obscure min=4 max=8 md5 sha512
+
+</code></pre></div><p>Ahora vamos a comprobar el login</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# login pruebauser1
+Password: 
+Last login: Wed Feb 26 18:38:51 UTC 2020 on pts/0
+Linux croqueta.alejandro.gonzalonazareno.org 4.19.0-8-cloud-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+pruebauser1@croqueta:~$ 
+
+</code></pre></div><h2 id="network-file-system-4-nfs4">Network File System 4 (NFS4)</h2>
+<p>Como croqueta funcionará como servidor NFS, tenemos que instalar el paquete correspondiente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install nfs-kernel-server
+</code></pre></div><p>Ahora vamos a configurarlo para que utilice el GSSAPI de kerberos</p>
+<p>/etc/default/nfs-common</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">NEED IDMAPD=yes
+
+NEED_GSSD=yes
+
+</code></pre></div><p>/etc/default/nfs-kernel-server</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">NEED_SVCGSSD=&#34;yes&#34;
+</code></pre></div><p>/etc/idmapd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Domain = alejandro.gonzalonazareno.org
+
+</code></pre></div><p>Ahora crearemos los principales en kerberos, siendo el principal de tortilla en un directorio temporal para pasarselo acto seguido.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# kadmin.local
+
+Authenticating as principal pruebauser1/admin@ALEJANDRO.GONZALONAZARENO.ORG with password.
+kadmin.local:  add_principal -randkey nfs/croqueta.alejandro.gonzalonazareno.org
+WARNING: no policy specified for nfs/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal &#34;nfs/croqueta.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+kadmin.local:  add_principal -randkey nfs/tortilla.alejandro.gonzalonazareno.org
+WARNING: no policy specified for nfs/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG; defaulting to no policy
+Principal &#34;nfs/tortilla.alejandro.gonzalonazareno.org@ALEJANDRO.GONZALONAZARENO.ORG&#34; created.
+
+kadmin.local:  ktadd nfs/croqueta.alejandro.gonzalonazareno.org
+Entry for principal nfs/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+Entry for principal nfs/croqueta.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab FILE:/etc/krb5.keytab.
+
+kadmin.local:  ktadd -k /tmp/krb5.keytab nfs/tortilla.alejandro.gonzalonazareno.org
+Entry for principal nfs/tortilla.alejandro.gonzalonazareno.org with kvno 2, encryption type aes256-cts-hmac-sha1-96 added to keytab WRFILE:/tmp/krb5.keytab.
+Entry for principal nfs/tortilla.alejandro.gonzalonazareno.org with kvno 2, encryption type aes128-cts-hmac-sha1-96 added to keytab WRFILE:/tmp/krb5.keytab.
+
+</code></pre></div><p>Pasamos los ficheros a tortilla con scp</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~/.ssh# scp /tmp/krb5.keytab root@tortilla.alejandro.gonzalonazareno.org:/etc/krb5.keytab
+krb5.keytab                                                           100%  248   136.3KB/s   00:00  
+root@croqueta:~/.ssh# rm /tmp/krb5.keytab 
+
+</code></pre></div><p>Para definir las exportaciones iremos al fichero /etc/exports y haremos lo siguiente:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+/srv/nfs4/homes/users  gss/krb5i(rw,sync,no_subtree_check,no_root_squash)
+</code></pre></div><p>Y reiniciamos los servicios</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:/srv/nfs4/homes# systemctl restart nfs-kernel-server
+root@croqueta:/srv/nfs4/homes# systemctl restart nfs-common
+
+</code></pre></div><p>Si no podemos reiniciar nfs-common, es debido a que está enmascarado, para ello hacemos:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">rm /lib/systemd/system/nfs-common.service
+systemctl daemon-reload
+</code></pre></div><p>Miramos si están montados</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@croqueta:~# showmount -e
+Export list for croqueta.alejandro.gonzalonazareno.org:
+/srv/nfs4/homes gss/krb5i
+/srv/nfs4       gss/krb5i
+
+</code></pre></div><p>En tortilla ahora vamos a configurar el cliente, por lo que vamos a instalar el paquete nfs-common</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:~# apt install nfs-common
+
+</code></pre></div><p>Lo configuramos-&gt;</p>
+<p>/etc/default/nfs-common</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">NEED_GSSD=yes
+NEED_IDMAPD=yes
+
+</code></pre></div><p>/etc/idmapd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Domain = alejandro.gonzalonazareno.org
+
+</code></pre></div><p>Y reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart nfs-common
+</code></pre></div><p>Montamos y comprobamos(tenemos que activar el puerto 2049 udp y tcp)</p>
+<p>Para ello editaremos el fstab de ambos:</p>
+<p>Croqueta(Servidor):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">/home	/srv/nfs4/homes	none	rw,bind	0	0
+
+</code></pre></div><p>Tortilla(Cliente):</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">croqueta.alejandro.gonzalonazareno.org:/homes/users     /home/users   nfs4    rw,sec=krb5i 0 0
+
+</code></pre></div><p>Aqui podemos demostrar que se ha montado</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:/home/nfs4/users/pruebauser1# ls -al
+total 28
+drwxr-xr-x 3 nobody 4294967294 4096 Feb 26 18:35 .
+drwxr-xr-x 5 root   root       4096 Mar  5 08:56 ..
+-rw------- 1 nobody 4294967294  308 Mar  4 12:22 .bash_history
+-rw-r--r-- 1 nobody 4294967294  220 Feb 19 19:31 .bash_logout
+-rw-r--r-- 1 nobody 4294967294 3526 Feb 19 19:31 .bashrc
+drwx------ 3 nobody 4294967294 4096 Feb 26 18:35 .gnupg
+-rw-r--r-- 1 nobody 4294967294  807 Feb 19 19:31 .profile
+root@tortilla:/home/nfs4/users/pruebauser1# 
+
+</code></pre></div><p>Por último, vamos a instalar libnss en tortilla</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install --no-install-recommends libnss-ldap
+</code></pre></div><p>Y comprobamos que hay login en croqueta y tortilla</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@tortilla:~# login pruebauser1
+Password: 
+Last login: Thu Mar  5 13:06:57 UTC 2020 from 172.22.200.96 on pts/1
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-88-generic x86_64)
+
+pruebauser1@tortilla:~$ pwd
+/home/users/pruebauser1
+pruebauser1@tortilla:~$ ssh croqueta
+pruebauser1@croqueta&#39;s password: 
+Linux croqueta.alejandro.gonzalonazareno.org 4.19.0-8-cloud-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Mar  5 13:06:52 2020 from 172.22.200.110
+pruebauser1@croqueta:~$ pwd
+/home/users/pruebauser1
+
+pruebauser1@croqueta:~$ ssh tortilla
+pruebauser1@tortilla&#39;s password: 
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-88-generic x86_64)
+pruebauser1@tortilla:~$ 
+
+</code></pre></div><p>Si queremos que en ssh no se nos pida contraseña, vamos a /etc/ssh/sshd_config y ponemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">GSSAPIAuthentication yes
+
+</code></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkerberos%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkerberos%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkerberos%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fkerberos%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

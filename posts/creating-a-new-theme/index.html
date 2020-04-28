@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Servidor DHCP - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/creating-a-new-theme/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/creating-a-new-theme/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/creating-a-new-theme/">
+    <title>
+  Servidor DHCP - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/creating-a-new-theme/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Servidor DHCP</h1>
+      <h2 class="date">October 2, 2019</h2>
+
+      
+    </header>
+
+    <p>##Servidor DHCP</p>
+<p><em>Tarea 2 (1 punto)(Obligatorio): Entrega el fichero Vagrantfile que define el escenario.</em></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">$script = &lt;&lt;-SCRIPT
+
+apt-get update
+
+apt-get -y install isc-dhcp-server
+
+SCRIPT
+
+Vagrant.configure(&#34;2&#34;) do |config|
+
+  config.vm.define :nodo_lan1 do |lan1|
+
+    lan1.vm.box = &#34;debian/buster64&#34;
+
+    lan1.vm.hostname = &#34;nodolan1&#34;
+
+    lan1.vm.network :private_network,type: &#34;dhcp&#34;, virtualbox__intnet: &#34;dhcp&#34;
+
+    lan1.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: &#34;ip r del default via 10.0.2.2&#34;
+
+  end
+
+  config.vm.define :Servidor do |servidor|
+
+    servidor.vm.box = &#34;debian/buster64&#34;
+
+    servidor.vm.hostname = &#34;Servidor&#34;
+
+    servidor.vm.network :private_network, ip: &#34;192.168.100.1&#34;, virtualbox__intnet: &#34;dhcp&#34;
+
+    servidor.vm.network :public_network,:bridge=&gt;&#34;wlp0s20f3&#34;,use_dhcp_assigned_default_route: true
+
+    servidor.vm.provision &#34;shell&#34;,run: &#34;always&#34;,inline: $script
+
+  end
+
+end
+
+</code></pre></div><p><em>Tarea 3 (3 puntos)(Obligatorio): Muestra el fichero de configuración del servidor, la lista de concesiones, la modificación en la configuración que has hecho en el cliente para que tome la configuración de forma automática y muestra la salida del comando <code> ip address</code>.</em>
+Fichero /etc/default/isc-dhcp-server</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">INTERFACESv4=&#34;eth1&#34;
+INTERFACESv6=&#34;&#34;
+</code></pre></div><p>Fichero /etc/dhcp/dhcpd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">default-lease-time 21600;
+max-lease-time 43200;
+
+ddns-update-style none;
+
+
+subnet 192.168.100.0 netmask 255.255.255.0 {
+  range 192.168.100.100 192.168.100.110;
+  option routers 192.168.100.1;
+  option domain-name-servers 8.8.8.8, 8.8.4.4;
+}
+</code></pre></div><p>Lista de concesiones</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">lease 192.168.100.104 {
+  starts 2 2019/10/01 07:54:06;
+  ends 2 2019/10/01 08:24:06;
+  cltt 2 2019/10/01 07:54:06;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 08:00:27:f4:67:84;
+  client-hostname &#34;nodolan1&#34;;
+}
+
+</code></pre></div><p>Configuración del cliente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">#VAGRANT-BEGIN
+# The contents below are automatically generated by Vagrant. Do not modify.
+auto eth1
+iface eth1 inet dhcp
+    post-up ip route del default dev $IFACE || true
+#VAGRANT-END
+
+
+</code></pre></div><p>ip address</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 86090sec preferred_lft 86090sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:f4:67:84 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.104/24 brd 192.168.100.254 scope global dynamic eth1
+       valid_lft 1549sec preferred_lft 1549sec
+    inet6 fe80::a00:27ff:fef4:6784/64 scope link 
+       valid_lft forever preferred_lft forever
+
+
+</code></pre></div><p><em>Tarea 4 (2 puntos): Configura el servidor para que funcione como router y NAT, de esta forma los clientes tengan internet.</em></p>
+<p>Activamos el bit forward del servidor</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">sysctl -w net.ipv4.ip_forward=1
+
+sysctl -p
+</code></pre></div><p>Y hacemos la regla de iptables para que los paquetes que pasen por la dirección privada se envien a la red internet</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth2 -j MASQUERADE
+</code></pre></div><p><em>Tarea 5 (1 punto): Realizar una captura, desde el servidor usando tcpdump, de los cuatro paquetes que corresponden a una concesión: DISCOVER, OFFER, REQUEST, ACK.</em>
+Para hacer el tcpdump realizamos el siguiente comando</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">tcpdump -i  eth1 -v
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">06:56:27.933825 IP (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 328)
+    0.0.0.0.bootpc &gt; 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:f4:67:84 (oui Unknown), length 300, xid 0xa54d7c48, Flags [none]
+	  Client-Ethernet-Address 08:00:27:f4:67:84 (oui Unknown)
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message Option 53, length 1: Discover
+	    Requested-IP Option 50, length 4: 192.168.100.104
+	    Hostname Option 12, length 8: &#34;nodolan1&#34;
+	    Parameter-Request Option 55, length 13: 
+	      Subnet-Mask, BR, Time-Zone, Default-Gateway
+	      Domain-Name, Domain-Name-Server, Option 119, Hostname
+	      Netbios-Name-Server, Netbios-Scope, MTU, Classless-Static-Route
+	      NTP
+06:56:27.934030 IP (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 328)
+    192.168.100.1.bootps &gt; 192.168.100.104.bootpc: BOOTP/DHCP, Reply, length 300, xid 0xa54d7c48, Flags [none]
+	  Your-IP 192.168.100.104
+	  Client-Ethernet-Address 08:00:27:f4:67:84 (oui Unknown)
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message Option 53, length 1: Offer
+	    Server-ID Option 54, length 4: 192.168.100.1
+	    Lease-Time Option 51, length 4: 1800
+	    Subnet-Mask Option 1, length 4: 255.255.255.0
+	    BR Option 28, length 4: 192.168.100.254
+	    Default-Gateway Option 3, length 4: 192.168.100.1
+	    Domain-Name Option 15, length 11: &#34;example.org&#34;
+	    Domain-Name-Server Option 6, length 8: dns.google,dns.google
+06:56:27.934331 IP (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 328)
+    0.0.0.0.bootpc &gt; 255.255.255.255.bootps: BOOTP/DHCP, Request from 08:00:27:f4:67:84 (oui Unknown), length 300, xid 0xa54d7c48, Flags [none]
+	  Client-Ethernet-Address 08:00:27:f4:67:84 (oui Unknown)
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message Option 53, length 1: Request
+	    Server-ID Option 54, length 4: 192.168.100.1
+	    Requested-IP Option 50, length 4: 192.168.100.104
+	    Hostname Option 12, length 8: &#34;nodolan1&#34;
+	    Parameter-Request Option 55, length 13: 
+	      Subnet-Mask, BR, Time-Zone, Default-Gateway
+	      Domain-Name, Domain-Name-Server, Option 119, Hostname
+	      Netbios-Name-Server, Netbios-Scope, MTU, Classless-Static-Route
+	      NTP
+06:56:27.935477 IP (tos 0x10, ttl 128, id 0, offset 0, flags [none], proto UDP (17), length 328)
+    192.168.100.1.bootps &gt; 192.168.100.104.bootpc: BOOTP/DHCP, Reply, length 300, xid 0xa54d7c48, Flags [none]
+	  Your-IP 192.168.100.104
+	  Client-Ethernet-Address 08:00:27:f4:67:84 (oui Unknown)
+	  Vendor-rfc1048 Extensions
+	    Magic Cookie 0x63825363
+	    DHCP-Message Option 53, length 1: ACK
+	    Server-ID Option 54, length 4: 192.168.100.1
+	    Lease-Time Option 51, length 4: 1800
+	    Subnet-Mask Option 1, length 4: 255.255.255.0
+	    BR Option 28, length 4: 192.168.100.254
+	    Default-Gateway Option 3, length 4: 192.168.100.1
+	    Domain-Name Option 15, length 11: &#34;example.org&#34;
+	    Domain-Name-Server Option 6, length 8: dns.google,dns.google
+06:56:46.216007 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 16) fe80::a00:27ff:fe9c:a554 &gt; ip6-allrouters: [icmp6 sum ok] ICMP6, router solicitation, length 16
+	  source link-address option (1), length 8 (1): 08:00:27:9c:a5:54
+
+</code></pre></div><p><em>Tarea 6 (2 punto): Los clientes toman una configuración, y a continuación apagamos el servidor dhcp. ¿qué ocurre con el cliente windows? ¿Y con el cliente linux?</em></p>
+<p>Vamos a cambiar el tiempo de concesión a 1 minuto.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback"> default-lease-time 30;
+max-lease-time 60;
+</code></pre></div><p>Ahora vamos a ver las ips que tienen la máquina windows y la linux</p>
+<p>Linux:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 83307sec preferred_lft 83307sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:f4:67:84 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.104/24 brd 192.168.100.254 scope global dynamic eth1
+       valid_lft 51sec preferred_lft 51sec
+    inet6 fe80::a00:27ff:fef4:6784/64 scope link 
+       valid_lft forever preferred_lft forever
+</code></pre></div><p>Windows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Configuración IP de Windows
+
+
+Adaptador de Ethernet Conexión de área local:
+
+   Sufijo DNS específico para la conexión. . : example.org
+   Vínculo: dirección IPv6 local. . . : fe80::b92d:fa21:a6af:a275%11
+   Dirección IPv4. . . . . . . . . . . . . . : 192.168.100.105
+   Máscara de subred . . . . . . . . . . . . : 255.255.255.0
+   Puerta de enlace predeterminada . . . . . : 192.168.100.1
+
+Adaptador de túnel isatap.example.org:
+
+   Estado de los medios. . . . . . . . . . . : medios desconectados
+   Sufijo DNS específico para la conexión. . : example.org
+
+</code></pre></div><p>Ahora apagamos el servidor y vemos que ocurren con los clientes cuando se apaga</p>
+<p>Linux:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 82953sec preferred_lft 82953sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:f4:67:84 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.100.104/24 brd 192.168.100.254 scope global dynamic eth1
+       valid_lft 33sec preferred_lft 33sec
+    inet6 fe80::a00:27ff:fef4:6784/64 scope link 
+       valid_lft forever preferred_lft forever
+</code></pre></div><p>Windows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Configuración IP de Windows
+
+
+Adaptador de Ethernet Conexión de área local:
+
+   Sufijo DNS específico para la conexión. . : example.org
+   Vínculo: dirección IPv6 local. . . : fe80::b92d:fa21:a6af:a275%11
+   Dirección IPv4. . . . . . . . . . . . . . : 192.168.100.105
+   Máscara de subred . . . . . . . . . . . . : 255.255.255.0
+   Puerta de enlace predeterminada . . . . . : 192.168.100.1
+
+Adaptador de túnel isatap.example.org:
+
+   Estado de los medios. . . . . . . . . . . : medios desconectados
+   Sufijo DNS específico para la conexión. . : example.org
+
+C:\Users\alexrr&gt;
+</code></pre></div><p>Y ahora cuando pasan los 60 segundos de concesión:</p>
+<p>Linux:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:8d:c0:4d brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 82829sec preferred_lft 82829sec
+    inet6 fe80::a00:27ff:fe8d:c04d/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:f4:67:84 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::a00:27ff:fef4:6784/64 scope link 
+       valid_lft forever preferred_lft forever
+
+</code></pre></div><p>Windows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Configuración IP de Windows
+
+
+Adaptador de Ethernet Conexión de área local:
+
+   Sufijo DNS específico para la conexión. . :
+   Vínculo: dirección IPv6 local. . . : fe80::b92d:fa21:a6af:a275%11
+   Dirección IPv4 de configuración automática: 169.254.162.117
+   Máscara de subred . . . . . . . . . . . . : 255.255.0.0
+   Puerta de enlace predeterminada . . . . . :
+
+Adaptador de túnel isatap.{0D32008B-389C-4936-862E-40485922C130}:
+
+   Estado de los medios. . . . . . . . . . . : medios desconectados
+   Sufijo DNS específico para la conexión. . :
+</code></pre></div><p>Vemos que en Windows y en Linux quitan ambos la IP, pero windows usa su configuración automática y da una IP aleatoria al usuario fuera de la red interna.</p>
+
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcreating-a-new-theme%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcreating-a-new-theme%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcreating-a-new-theme%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fcreating-a-new-theme%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

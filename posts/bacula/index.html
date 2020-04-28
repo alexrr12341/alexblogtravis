@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Alejandro Rodríguez">
+    <meta name="description" content="https://www.alexrrinformatico.com">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta property="og:site_name" content="Alexrrblog">
+    <meta property="og:title" content="
+  Sistema de Copias de Seguridad(Bacula) - Alexrrblog
+">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.alexrrinformatico.com/posts/bacula/">
+    <meta property="og:image" content="https://www.alexrrinformatico.com">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://www.alexrrinformatico.com/posts/bacula/">
+    <meta name="twitter:image" content="https://www.alexrrinformatico.com">
+
+    <base href="https://www.alexrrinformatico.com/posts/bacula/">
+    <title>
+  Sistema de Copias de Seguridad(Bacula) - Alexrrblog
+</title>
+
+    <link rel="canonical" href="https://www.alexrrinformatico.com/posts/bacula/">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.alexrrinformatico.com/css/style.min.css">
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://www.alexrrinformatico.com/images/favicon-16x16.png" sizes="16x16">
+
+    
+      <link rel="alternate" href="https://www.alexrrinformatico.com/index.xml" type="application/rss+xml" title="Alexrrblog">
+      <link href="https://www.alexrrinformatico.com/index.xml" rel="feed" type="application/rss+xml" title="Alexrrblog" />
+    
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="/">Alexrrblog</a>
+    <input type="checkbox" id="menu-control"/>
+    <label class="menu-mobile  float-right " for="menu-control">
+      <span class="btn-mobile  float-right ">&#9776;</span>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/sobre">Sobre mi</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/posts">Blog</a>
+            </li>
+          
+            <li class="navigation-item  align-center ">
+              <a class="navigation-link" href="https://www.alexrrinformatico.com/contactar">Contactame</a>
+            </li>
+          
+        
+        
+      </ul>
+    </label>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+  <article>
+    <header>
+      <h1 class="title">Sistema de Copias de Seguridad(Bacula)</h1>
+      <h2 class="date">January 30, 2020</h2>
+
+      
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML-full">
+          MathJax.Hub.Config({
+            tex2jax: {
+              inlineMath: [['$','$']],
+              displayMath: [['$$','$$']],
+              processEscapes: true,
+              processEnvironments: true,
+              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+              TeX: { extensions: ["AMSmath.js", "AMSsymbols.js"] }
+            }
+          });
+          MathJax.Hub.Queue(function() {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+          });
+          </script>
+      
+    </header>
+
+    <p>Vamos a utilizar bacula como sistema de copia de seguridad, y vamos a utilizar una instancia de ubuntu que la llamaremos choco(172.22.200.164)</p>
+<h2 id="instalación-de-bacula">Instalación de bacula</h2>
+<p>Primero de todo vamos a empezar instalando los servidores necesarios para poder ejecutar bacula</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install apache2 mariadb-server mariadb-client php
+</code></pre></div><p>Ahora instalaremos bacula completamente</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install bacula bacula-client bacula-common-mysql bacula-director-mysql bacula-server
+</code></pre></div><h2 id="instalcaión-de-webmin">Instalcaión de webmin</h2>
+<p>Para instalarnos webmin, que sirve para monitorizar las copias de seguridad, debemos descargarnoslo de la página <a href="https://sourceforge.net/projects/webadmin/files/webmin/">https://sourceforge.net/projects/webadmin/files/webmin/</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dpkg -i webmin_1.940_all.deb
+</code></pre></div><p>Nos saltará error de dependencias por lo que debemos hacer:</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install libauthen-pam-perl libio-pty-perl apt-show-versions
+apt -f install
+</code></pre></div><p>Vamos a comprobar que funcione:</p>
+<p><img src="/images/Copias1.png" alt=""></p>
+<h2 id="configuración-de-bacula-director">Configuración de Bacula Director</h2>
+<p>El fichero estará en /etc/bacula/bacula-dir.conf y ahí es donde configuraremos como haremos nuestras copias de seguridad</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {                            # define myself
+  Name = choco-dir
+  DIRport = 9101                # where we listen for UA connections
+  QueryFile = &#34;/etc/bacula/scripts/query.sql&#34;
+  WorkingDirectory = &#34;/var/lib/bacula&#34;
+  PidDirectory = &#34;/run/bacula&#34;
+  Maximum Concurrent Jobs = 20
+  Password = &#34;bacula&#34;         # Console password
+  Messages = Daemon
+  DirAddress = 10.0.0.10
+}
+
+</code></pre></div><p>También vamos a configurar la tarea que se realizará a las copias de seguridad, en este caso semanalmente se hará una copia completa.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">JobDefs {
+ Name = &#34;Backups&#34;
+ Type = Backup
+ Level = Incremental
+ Client = choco-fd
+ FileSet = &#34;Full Set&#34;
+ Schedule = &#34;semanal&#34;
+ Storage = File
+ Messages = Standard
+ Pool = File
+ SpoolAttributes = yes
+ Priority = 10
+ Write Bootstrap = &#34;/var/lib/bacula/%c.bsr&#34;
+}
+
+JobDefs {
+ Name = &#34;BackupsCroqueta&#34;
+ Type = Backup
+ Level = Incremental
+ Client = choco-fd
+ FileSet = &#34;Croqueta Set&#34;
+ Schedule = &#34;semanal&#34;
+ Storage = File
+ Messages = Standard
+ Pool = File
+ SpoolAttributes = yes
+ Priority = 10
+ Write Bootstrap = &#34;/var/lib/bacula/%c.bsr&#34;
+}
+
+</code></pre></div><p>Ahora vamos a configurar las tareas de los clientes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Job {
+ Name = &#34;choco&#34;
+ JobDefs = &#34;Backups&#34;
+ Client = &#34;choco-fd&#34;
+}
+
+Job {
+ Name = &#34;croqueta&#34;
+ JobDefs = &#34;Backups&#34;
+ Client = &#34;croqueta-fd&#34;
+}
+
+Job {
+ Name = &#34;salmorejo&#34;
+ JobDefs = &#34;Backups&#34;
+ Client = &#34;salmorejo-fd&#34;
+}
+
+Job {
+ Name = &#34;tortilla&#34;
+ JobDefs = &#34;Backups&#34;
+ Client = &#34;tortilla-fd&#34;
+}
+</code></pre></div><p>Ahora vamos a configurar el Backup de todas las máquinas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Job {
+ Name = &#34;RestoreChoco&#34;
+ Type = Restore
+ Client=choco-fd
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreCroqueta&#34;
+ Type = Restore
+ Client=croqueta-fd
+ FileSet=&#34;Croqueta Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreSalmorejo&#34;
+ Type = Restore
+ Client=salmorejo-fd
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreTortilla&#34;
+ Type = Restore
+ Client=tortilla-fd
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+</code></pre></div><p>Ahora vamos a definir los ficheros que guardaran cada una de las máquinas en su copia de seguridad</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">FileSet {
+ Name = &#34;Croqueta Set&#34;
+ Include {
+ Options {
+ signature = MD5
+ compression = GZIP
+ }
+ File = /home
+ File = /etc
+ File = /var
+ }
+ Exclude {
+ File = /var/lib/bacula
+ File = /nonexistant/path/to/file/archive/dir
+ File = /proc
+ File = /var/tmp
+ File = /tmp
+ File = /sys
+ File = /.journal
+ File = /.fsck
+ }
+}
+
+FileSet {
+ Name = &#34;Full Set&#34;
+ Include {
+ Options {
+ signature = MD5
+ compression = GZIP
+ }
+ File = /home
+ File = /etc
+ File = /var
+ }
+ Exclude {
+ File = /var/lib/bacula
+ File = /nonexistant/path/to/file/archive/dir
+ File = /proc
+ File = /var/cache
+ File = /var/tmp
+ File = /tmp
+ File = /sys
+ File = /.journal
+ File = /.fsck
+ }
+}
+</code></pre></div><p>Ahora vamos a configurar nuestro ciclo, para que sea semanal</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Schedule {
+ Name = semanal
+ Run = Level=Full sun at 23:05
+ Run = Level=Incremental mon-sat at 23:05
+}
+</code></pre></div><p>Ahora debemos configurar a nuestros clientes de bacula</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Client {
+ Name = choco-fd
+ Address = 10.0.0.10
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon
+ File Retention = 60 days # 60 days
+ Job Retention = 6 months # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = croqueta-fd
+ Address = 10.0.0.15
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 60 days # 60 days
+ Job Retention = 6 months # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = salmorejo-fd
+ Address = 10.0.0.11
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 60 days # 60 days
+ Job Retention = 6 months # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = tortilla-fd
+ Address = 10.0.0.7
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 60 days # 60 days
+ Job Retention = 6 months # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+</code></pre></div><p>Ahora vamos a configurar nuestro almacenamiento</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Storage {
+ Name = File
+# Do not use &#34;localhost&#34; here
+ Address = 10.0.0.10 # N.B. Use a fully qualified name here
+ SDPort = 9103
+ Password = &#34;bacula&#34;
+ Device = FileChgr1
+ Media Type = File
+ Maximum Concurrent Jobs = 10 # run up to 10 jobs a the same time
+}
+</code></pre></div><p>Y en teoría el acceso a la base de datos tendríamos que tenerlo así</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Catalog {
+  Name = MyCatalog
+  dbname = &#34;bacula&#34;; DB Address = &#34;localhost&#34;; dbuser = &#34;bacula&#34;; dbpassword = &#34;bacula&#34;
+}
+
+</code></pre></div><p>También definiremos el Pool, solo tendremos que añadirle unas cuantas cosas</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Pool {
+ Name = File
+ Pool Type = Backup
+ Recycle = yes # Bacula can automatically recycle Volumes
+ AutoPrune = yes # Prune expired volumes
+ Volume Retention = 365 days # one year
+ Maximum Volume Bytes = 50G # Limit Volume size to something reasonable
+ Maximum Volumes = 100 # Limit number of Volumes in Pool
+ Label Format = &#34;Remoto&#34; # Auto label
+}
+</code></pre></div><p>Añadiremos en mi caso, una configuración anual, para que haya copias de seguridad en cada año, con plan de futuro.</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">#anual
+JobDefs {
+ Name = &#34;Backups-anual&#34;
+ Type = Backup
+ Level = Full
+ Client = choco-fd
+ FileSet = &#34;Full Set&#34;
+ Schedule = &#34;anual&#34;
+ Storage = File
+ Messages = Standard
+ Pool = File
+ SpoolAttributes = yes
+ Priority = 10
+ Write Bootstrap = &#34;/var/lib/bacula/%c.bsr&#34;
+}
+
+#anual
+Job {
+ Name = &#34;choco-anual&#34;
+ JobDefs = &#34;Backups-anual&#34;
+ Client = &#34;choco-fd-anual&#34;
+}
+
+Job {
+ Name = &#34;croqueta-anual&#34;
+ JobDefs = &#34;Backups-anual&#34;
+ Client = &#34;croqueta-fd-anual&#34;
+}
+
+Job {
+ Name = &#34;salmorejo-anual&#34;
+ JobDefs = &#34;Backups-anual&#34;
+ Client = &#34;salmorejo-fd-anual&#34;
+}
+
+Job {
+ Name = &#34;tortilla-anual&#34;
+ JobDefs = &#34;Backups-anual&#34;
+ Client = &#34;tortilla-fd-anual&#34;
+}
+
+#Restore anual
+Job {
+ Name = &#34;RestoreChoco-anual&#34;
+ Type = Restore
+ Client=choco-fd-anual
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreCroqueta-anual&#34;
+ Type = Restore
+ Client=croqueta-fd-anual
+ FileSet=&#34;Croqueta Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreSalmorejo-anual&#34;
+ Type = Restore
+ Client=salmorejo-fd-anual
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+Job {
+ Name = &#34;RestoreTortilla-anual&#34;
+ Type = Restore
+ Client=tortilla-fd-anual
+ FileSet=&#34;Full Set&#34;
+ Storage = File
+ Pool = File
+ Messages = Standard
+}
+
+#schedule anual
+Schedule {
+ Name = anual
+ Run = Full on 31 Dec at 23:50
+}
+
+#Clientes anual
+
+Client {
+ Name = choco-fd-anual
+ Address = 10.0.0.10
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon
+ File Retention = 15 years # 60 days
+ Job Retention = 15 years # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = croqueta-fd-anual
+ Address = 10.0.0.15
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 15 years # 60 days
+ Job Retention = 15 years # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = salmorejo-fd-anual
+ Address = 10.0.0.11
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 15 years # 60 days
+ Job Retention = 15 years # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+
+Client {
+ Name = tortilla-fd-anual
+ Address = 10.0.0.7
+ FDPort = 9102
+ Catalog = MyCatalog
+ Password = &#34;bacula&#34; # password for FileDaemon 2
+ File Retention = 15 years # 60 days
+ Job Retention = 15 years # six months
+ AutoPrune = yes # Prune expired Jobs/Files
+}
+</code></pre></div><p>Si queremos comprobar que tengamos la sintaxis correcta, haremos un</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/home/ubuntu# bacula-dir -tc /etc/bacula/bacula-dir.conf
+root@choco:/home/ubuntu# 
+</code></pre></div><h2 id="configuración-del-dispositivo-de-almacenamiento">Configuración del dispositivo de almacenamiento</h2>
+<p>Tenemos un volumen de 20gb para las particiones, debemos hacer que la particion ocupe los 20gb y que su sistema de ficheros sea ext4</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/home/ubuntu# mkdir /bacula
+root@choco:/home/ubuntu# mkfs.ext4 /dev/vdb 
+root@choco:/home/ubuntu# mount /dev/vdb /bacula
+root@choco:/home/ubuntu# lsblk -f
+NAME    FSTYPE LABEL           UUID                                 MOUNTPOINT
+vda                                                                 
+├─vda1  ext4   cloudimg-rootfs 15993e31-3f38-4b9f-bdeb-74e0541498d0 /
+├─vda14                                                             
+└─vda15 vfat   UEFI            323C-AF60                            /boot/efi
+vdb     ext4                   930e6bb2-ccde-4dcb-a023-fa4d25aa0b55 /bacula
+
+root@choco:/bacula# mkdir backups
+root@choco:/bacula# chown bacula:bacula /bacula/backups/ -R
+root@choco:/bacula# chmod 755 /bacula/backups/ -R
+</code></pre></div><p>También queremos que se monte el volumen ante reinicios por lo que lo meteremos en el /etc/fstab</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">UUID=930e6bb2-ccde-4dcb-a023-fa4d25aa0b55       /bacula ext4    defaults        0       1
+</code></pre></div><h2 id="modificación-de-bacula-sd">Modificación de bacula-sd</h2>
+<p>El fichero está localizado en /etc/bacula/bacula-sd.conf y es ahí donde configuraremos el storage de nuestra copia de seguridad</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Storage { # definition of myself
+ Name = choco-sd
+ SDPort = 9103 # Director&#39;s port
+ WorkingDirectory = &#34;/var/lib/bacula&#34;
+ Pid Directory = &#34;/run/bacula&#34;
+ Maximum Concurrent Jobs = 20
+ SDAddress = 10.0.0.10
+}
+
+
+Director {
+  Name = choco-dir
+  Password = &#34;bacula&#34;
+}
+
+Director {
+  Name = choco-mon
+  Password = &#34;bacula&#34;
+  Monitor = yes
+}
+
+Autochanger {
+ Name = FileChgr1
+ Device = FileStorage
+ Changer Command = &#34;&#34;
+ Changer Device = /dev/null
+}
+
+Device {
+ Name = FileStorage
+ Media Type = File
+ Archive Device = /bacula/backups
+ LabelMedia = yes; # lets Bacula label unlabeled media
+ Random Access = Yes;
+ AutomaticMount = yes; # when device opened, read it
+ RemovableMedia = no;
+ AlwaysOpen = no;
+ Maximum Concurrent Jobs = 5
+}
+
+</code></pre></div><p>Como siempre, para comprobar que funcione hacemos</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/bacula# bacula-sd -tc /etc/bacula/bacula-sd.conf
+root@choco:/bacula# 
+</code></pre></div><p>Y reiniciamos los servicios</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/bacula# systemctl restart bacula-sd.service
+root@choco:/bacula# systemctl restart bacula-director.service
+</code></pre></div><h2 id="configuración-del-fichero-bconsole">Configuración del fichero bconsole</h2>
+<p>Este fichero solo lo configuraremos para acceder a la consola de bacula y estará en /etc/bacula/bconsole.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {
+ Name = choco-dir
+ DIRport = 9101
+ address = 10.0.0.10
+ Password = bacula
+}
+</code></pre></div><h2 id="configuración-de-los-clientes">Configuración de los clientes</h2>
+<p>Como es obvio, debemos configurar los clientes para que podamos realizarle una copia de seguridad, por lo que iremos uno a uno configurandolos</p>
+<h3 id="cliente-choco">Cliente Choco</h3>
+<p>Para configurar este cliente, que ya está instalado ya que lo instalamos anteriormente, debemos ir a /etc/bacula/bacula-fd.conf y realizar la siguiente configuración</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {
+  Name = choco-dir
+  Password = &#34;bacula&#34;
+}
+
+Director {
+  Name = choco-mon
+  Password = &#34;bacula&#34;
+  Monitor = yes
+}
+
+FileDaemon {                          # this is me
+  Name = choco-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /run/bacula
+  Maximum Concurrent Jobs = 20
+  Plugin Directory = /usr/lib/bacula
+  FDAddress = 10.0.0.10
+}
+
+Messages {
+ Name = Standard
+ director = choco-dir = all, !skipped, !restored
+}
+</code></pre></div><p>Y reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart bacula-fd.service
+</code></pre></div><h3 id="cliente-croqueta">Cliente Croqueta</h3>
+<p>Primero, debemos instalar el cliente de bacula</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install bacula-client
+</code></pre></div><p>Y como anteriormente, debemos configurar /etc/bacula/bacula-fd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {
+  Name = choco-dir
+  Password = &#34;bacula&#34;
+}
+
+Director {
+  Name = choco-mon
+  Password = &#34;bacula&#34;
+  Monitor = yes
+}
+
+FileDaemon {                          # this is me
+  Name = croqueta-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /run/bacula
+  Maximum Concurrent Jobs = 20
+  Plugin Directory = /usr/lib/bacula
+  FDAddress = 10.0.0.10
+}
+
+Messages {
+ Name = Standard
+ director = choco-dir = all, !skipped, !restored
+}
+</code></pre></div><p>Y reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart bacula-fd.service
+</code></pre></div><h3 id="cliente-salmorejo">Cliente Salmorejo</h3>
+<p>Ya que salmorejo está en un Centos 8, simplemente cambiará la forma donde instalarlo</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">dnf install bacula-client
+</code></pre></div><p>La configuración se deberá hacer también en /etc/bacula/bacula-fd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {
+  Name = choco-dir
+  Password = &#34;bacula&#34;
+}
+
+Director {
+  Name = choco-mon
+  Password = &#34;bacula&#34;
+  Monitor = yes
+}
+
+FileDaemon { # this is me
+ Name = salmorejo-fd
+ FDport = 9102 # where we listen for the director
+ WorkingDirectory = /var/spool/bacula
+ Pid Directory = /var/run
+ Maximum Concurrent Jobs = 20
+}
+
+Messages {
+ Name = Standard
+ director = choco-dir = all, !skipped, !restored
+}
+</code></pre></div><p>Y reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart bacula-fd.service
+</code></pre></div><h3 id="cliente-tortilla">Cliente Tortilla</h3>
+<p>Primero, debemos instalar el cliente de bacula</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">apt install bacula-client
+</code></pre></div><p>Y como anteriormente, debemos configurar /etc/bacula/bacula-fd.conf</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">Director {
+  Name = choco-dir
+  Password = &#34;bacula&#34;
+}
+
+Director {
+  Name = choco-mon
+  Password = &#34;bacula&#34;
+  Monitor = yes
+}
+
+FileDaemon {                          # this is me
+  Name = tortilla-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /run/bacula
+  Maximum Concurrent Jobs = 20
+  Plugin Directory = /usr/lib/bacula
+  FDAddress = 10.0.0.7
+}
+
+Messages {
+ Name = Standard
+ director = choco-dir = all, !skipped, !restored
+}
+</code></pre></div><p>Y reiniciamos el servicio</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart bacula-fd.service
+</code></pre></div><p>Cuando tengamos los 3 clientes configurados, debemos reiniciar los servicios en choco</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">systemctl restart bacula-fd.service
+systemctl restart bacula-sd.service
+systemctl restart bacula-director.service
+</code></pre></div><p>Vamos a acceder a la consola de bacula a ver si están los 3 clientes</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/bacula# bconsole
+Connecting to Director 10.0.0.10:9101
+1000 OK: 103 choco-dir Version: 9.0.6 (20 November 2017)
+Enter a period to cancel a command.
+*status client
+The defined Client resources are:
+     1: choco-fd
+     2: croqueta-fd
+     3: salmorejo-fd
+     4: tortilla-fd
+     5: choco-fd-anual
+     6: croqueta-fd-anual
+     7: salmorejo-fd-anual
+     8: tortilla-fd-anual
+
+</code></pre></div><h2 id="configuración-y-gestión-a-través-de-la-consola-bacula">Configuración y gestión a través de la consola bacula</h2>
+<h3 id="añadir-volumen">Añadir volumen</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/bacula# bconsole
+Connecting to Director 10.0.0.10:9101
+1000 OK: 103 choco-dir Version: 9.0.6 (20 November 2017)
+Enter a period to cancel a command.
+*label
+Automatically selected Catalog: MyCatalog
+Using Catalog &#34;MyCatalog&#34;
+The defined Storage resources are:
+     1: File
+     2: File1
+     3: File2
+Select Storage resource (1-3): 1
+Enter new Volume name: bacula
+Defined Pools:
+     1: Default
+     2: File
+     3: Scratch
+Select the Pool (1-3): 2
+Connecting to Storage daemon File at 10.0.0.10:9103 ...
+Sending label command for Volume &#34;bacula&#34; Slot 0 ...
+3000 OK label. VolBytes=211 VolABytes=0 VolType=1 Volume=&#34;bacula&#34; Device=&#34;FileStorage&#34; (/bacula/backups)
+Catalog record for Volume &#34;bacula&#34;, Slot 0  successfully created.
+Requesting to mount FileChgr1 ...
+3906 File device &#34;&#34;FileStorage&#34; (/bacula/backups)&#34; is always mounted.
+</code></pre></div><h3 id="realización-de-copias-de-seguridad">Realización de copias de seguridad</h3>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">root@choco:/home/ubuntu# bconsole
+Connecting to Director 10.0.0.10:9101
+1000 OK: 103 choco-dir Version: 9.0.6 (20 November 2017)
+Enter a period to cancel a command.
+*status
+Status available for:
+     1: Director
+     2: Storage
+     3: Client
+     4: Scheduled
+     5: Network
+     6: All
+Select daemon type for status (1-6): 6
+choco-dir Version: 9.0.6 (20 November 2017) x86_64-pc-linux-gnu ubuntu 18.04
+Daemon started 18-Jan-20 14:01, conf reloaded 18-Jan-2020 14:01:34
+ Jobs: run=0, running=0 mode=0,0
+ Heap: heap=270,336 smbytes=87,479 max_bytes=90,710 bufs=373 max_bufs=388
+ Res: njobs=16 nclients=8 nstores=3 npools=3 ncats=1 nfsets=3 nscheds=4
+
+Scheduled Jobs:
+Level          Type     Pri  Scheduled          Job Name           Volume
+===================================================================================
+Incremental    Backup    10  18-Jan-20 23:05    choco              bacula
+Incremental    Backup    10  18-Jan-20 23:05    croqueta           bacula
+Incremental    Backup    10  18-Jan-20 23:05    salmorejo          bacula
+Incremental    Backup    10  18-Jan-20 23:05    tortilla           bacula
+====
+
+</code></pre></div>
+  </article>
+
+  <br/>
+
+  
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "yourdiscussshortname" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  
+  
+</section>
+
+      </div>
+      
+        <footer class="footer">
+  <section class="container">
+    
+      <div class="sns-shares sp-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fbacula%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fbacula%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+    
+      <p>Enter a text here.</p>
+    
+     © 2020    ·  Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/naro143/hugo-coder-portfolio">CoderPortfolio</a>. 
+
+  </section>
+</footer>
+<div class="fixed-bar">
+  <section class="container">
+    
+      <p id="privateTriggerText">¿Quieres conocerme mejor?→<a id="privateTrigger">Click!</a></p>
+    
+    
+      <div class="sns-shares pc-sns-shares">
+        
+        
+          <a class="fb btn sns-share fb-share" href="http://www.facebook.com/share.php?u=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fbacula%2f" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><i class="fab fa-facebook-f"></i></a>
+        
+        
+        
+        
+          <a class="sns-share linkedIn-share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fwww.alexrrinformatico.com%2fposts%2fbacula%2f"><i class="fab fa-linkedin"></i></a>
+        
+      </div>
+    
+  </section>
+</div>
+
+      
+    </main>
+
+    
+
+  <script src="https://www.alexrrinformatico.com/js/app.js"></script>
+  
+  <script>
+  (function($) {
+    $(function() {
+      $('#privateTrigger').on('click', function() {
+        $('.private').slideToggle();
+        $('#privateTriggerText').text("Dale click a los enlaces de la derecha→");
+      });
+    });
+   })(jQuery);
+  </script>
+  
+  </body>
+</html>

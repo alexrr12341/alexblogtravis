@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Alexrrblog</title>
+    <link>https://www.alexrrinformatico.com/</link>
+    <description>Recent content on Alexrrblog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 24 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.alexrrinformatico.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Implantación de Aplicaciones Web Python en Docker</title>
+      <link>https://www.alexrrinformatico.com/posts/dockerpython/</link>
+      <pubDate>Fri, 24 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/dockerpython/</guid>
+      <description>Implantación de Aplicaciones Web Python en Docker Ejecución de una aplicación web Python en docker Parte 1 Vamos a implantar la aplicación web escrita en python gestion IESGN.
+Para ello nos vamos a clonar el repositorio
+root@docker:~/escenario1/gestion# git clone https://github.com/jd-iesgn/iaw_gestionGN También debemos instalar docker, para ello
+apt install docker.io Vamos a editar el fichero settings.py para que pueda observar la base de datos
+ALLOWED_HOSTS = [&amp;#39;192.168.1.38&amp;#39;] ... ... DATABASES = { &amp;#39;default&amp;#39;: { &amp;#39;ENGINE&amp;#39;: &amp;#39;mysql.</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Kubernetes (Kubeadm)</title>
+      <link>https://www.alexrrinformatico.com/posts/kubernetes/</link>
+      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/kubernetes/</guid>
+      <description>Instalación de Kubernetes Disponemos de 3 máquinas para realizar la configuración de un cluster de Kubernetes, para ejecutar las máquinas podemos usar 3 instancias de openstack o usando el siguiente script de vagrant para libvirt:
+# -*- mode: ruby -*- # vi: set ft=ruby : Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :kubeadm do |kubeadm| kubeadm.vm.box = &amp;#34;debian/buster64&amp;#34; kubeadm.vm.hostname = &amp;#34;kubeadm&amp;#34; kubeadm.vm.provider :libvirt do |libvirt| libvirt.cpus = 2 libvirt.memory = 2048 libvirt.qemu_use_session = true libvirt.</description>
+    </item>
+    
+    <item>
+      <title>Vagrant con LXC</title>
+      <link>https://www.alexrrinformatico.com/posts/lxc/</link>
+      <pubDate>Wed, 04 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/lxc/</guid>
+      <description>Vagrant con LXC Vamos a instalar vagrant con LXC, esto es un plugin de vagrant.
+Instalamos lxc
+root@pc-alex:~# apt install lxc lxc-templates redir Y también vamos a instalar vagrant-lxc en dicha máquina
+root@pc-alex:~# apt install vagrant vagrant-lxc Para configurar los parámetros de red vamos a /etc/lxc/default.conf y cambiamos las lineas que estaban por estas:
+lxc.net.0.type = veth lxc.net.0.link = virbr0 lxc.net.0.flags = up lxc.apparmor.profile = generated lxc.apparmor.allow_nesting = 1 Y instalamos las redes libvirt</description>
+    </item>
+    
+    <item>
+      <title>Proxy, Proxy inverso y balanceadores de carga</title>
+      <link>https://www.alexrrinformatico.com/posts/proxy/</link>
+      <pubDate>Tue, 03 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/proxy/</guid>
+      <description>Proxy, Proxy inverso y balanceadores de carga Vamos a realizar un ejercicio donde vamos a hacer proxys, proxys inversos y balanceadores de carga.
+Vamos a utilizar el siguiente Vagrantfile
+# -*- mode: ruby -*- # vi: set ft=ruby : Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :proxy do |proxy| proxy.vm.box = &amp;#34;debian/buster64&amp;#34; proxy.vm.hostname = &amp;#34;proxy&amp;#34; proxy.vm.network :private_network, ip: &amp;#34;10.0.0.10&amp;#34;, virtualbox__intnet: &amp;#34;red_privada1&amp;#34; proxy.vm.network :private_network, ip: &amp;#34;192.168.200.10&amp;#34; end config.vm.define :cliente_int do |cliente_int| cliente_int.vm.box = &amp;#34;debian/buster64&amp;#34; cliente_int.</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Openstack con Kolla-Ansible</title>
+      <link>https://www.alexrrinformatico.com/posts/openstack/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/openstack/</guid>
+      <description>Instalación de Openstack con Kolla-Ansible Vamos a preparar un escenario que se basará en 3 máquinas, 1 máquina será el instalador, otra será el controlador y otra será el computador, por lo que vamos a empezar a realizar las siguientes configuraciones:
+Configuración inicial Vamos primero a hacer nuestras dos máquinas master y compute para la instalación (ambas máquinas tienen que tener instaladas python-dev, también añadirle contraseña a root y editar el fichero /etc/ssh/sshd_config)</description>
+    </item>
+    
+    <item>
+      <title>Clusters de Alta Disponibilidad</title>
+      <link>https://www.alexrrinformatico.com/posts/clusters/</link>
+      <pubDate>Mon, 24 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/clusters/</guid>
+      <description>Clusters de Alta Disponibilidad Vamos a realizar un cluster de alta disponibilidad donde instalaremos un CMS y comprobaremos que si se apaga un nodo la aplicación sigue funcionando. Para ello necesitamos 2 nodos con la base de datos y el cms.
+El escenario que tendremos será el siguiente:
+git clone https://github.com/josedom24/escenarios-HA Utilizaremos el escenario 05 en este caso.
+Tenemos un entorno virtual con ansible y un vagrant
+Si no sabemos instalar ansible, hacemos</description>
+    </item>
+    
+    <item>
+      <title>Implantación de aplicaciones web PHP en Docker</title>
+      <link>https://www.alexrrinformatico.com/posts/docker/</link>
+      <pubDate>Thu, 20 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/docker/</guid>
+      <description>Implantación de aplicaciones web PHP en Docker Ejecución de una aplicación web PHP en docke Vamos a implantar una aplicación web basada en citas médicas, escrita en php.
+Primero vamos a realizar la instalación de docker
+apt install docker.io Luego vamos a clonarnos el repositorio en nuestra máquina
+git clone https://github.com/evilnapsis/bookmedik Nuestro esquema será el siguiente:
+2 contenedores-&amp;gt; 1-Base de datos mariadb 2-Apache con módulo PHP
+Vamos a borrar la línea en schema.</description>
+    </item>
+    
+    <item>
+      <title>Gestión de usuarios con Kerberos5, Ldap y NFS4</title>
+      <link>https://www.alexrrinformatico.com/posts/kerberos/</link>
+      <pubDate>Wed, 19 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/kerberos/</guid>
+      <description>Gestión de usuarios con Kerberos5, Ldap y NFS4 Ajustes previos Configuración del DNS con bind9 Para ello vamos a ir a /var/cache/bind/db.gonzalonazareno.org que es el fichero donde tenemos nuestras configuraciones de DNS y añadimos las siguientes líneas
+$ORIGIN alejandro.gonzalonazareno.org. ... kerberos IN CNAME croqueta ldap IN CNAME croqueta _kerberos IN TXT &amp;#34;ALEJANDRO.GONZALONAZARENO.ORG&amp;#34; _kerberos._udp IN SRV 0 0 88 kerberos.alejandro.gonzalonazareno.org. _kerberos_adm._tcp IN SRV 0 0 749 kerberos.alejandro.gonzalonazareno.org. _ldap._tcp IN SRV 0 0 389 ldap.</description>
+    </item>
+    
+    <item>
+      <title>Configuración de perfiles AppArmor(mariadb,sensu,bacula)</title>
+      <link>https://www.alexrrinformatico.com/posts/apparmor/</link>
+      <pubDate>Mon, 17 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/apparmor/</guid>
+      <description>AppArmor Vamos a habilitar apparmor en tortilla de forma estricta y segura, para ello instalamos los siguientes paquetes
+apt install apparmor-utils apparmor-profiles Ahora vamos a generar un perfil
+aa-genprof mysqld Y vamos a editar el fichero /etc/apparmor.d/usr.sbin/mysqld
+Para hacer este fichero debemos ir haciendo restart de mariadb, buscando los errores en journalctl -xe hasta que se active dicho programa.
+# Last Modified: Sat Feb 15 15:52:53 2020 #include &amp;lt;tunables/global&amp;gt; /usr/sbin/mysqld { #include &amp;lt;abstractions/base&amp;gt; /lib/x86_64-linux-gnu/ld-*.</description>
+    </item>
+    
+    <item>
+      <title>Servidor de correos(Postfix)</title>
+      <link>https://www.alexrrinformatico.com/posts/correos/</link>
+      <pubDate>Mon, 17 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/correos/</guid>
+      <description>Servidor de correos Postfix Primero de todo tenemos que tener instalado postfix
+apt install postfix Y en /etc/postfix/main.cf editamos las siguientes líneas
+myhostname = alejandro.gonzalonazareno.org relayhost = babuino-smtp.gonzalonazareno.org Y en /etc/hosts tendremos la siguiente configuración
+127.0.1.1 alejandro.gonzalonazareno.org croqueta.alejandro.gonzalonazareno.org croqueta Y nuestro hostname será el siguiente:
+root@croqueta:/home/debian# hostname -f alejandro.gonzalonazareno.org Reiniciamos postfix
+systemctl restart postfix Y enviamos un correo desde telnet a alexrodriguezrojas98@gmail.com
+root@croqueta:/home/debian# telnet localhost 25 Trying 127.0.0.1... Connected to localhost.</description>
+    </item>
+    
+    <item>
+      <title>iSCSI</title>
+      <link>https://www.alexrrinformatico.com/posts/iscsi/</link>
+      <pubDate>Sun, 02 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/iscsi/</guid>
+      <description>Primero de todo, para trabajar con iSCSI debemos hacer un escenario vagrant, que contendrá un cliente Linux y un servidor que proporcionará los targets.
+El escenario vagrant será el siguiente:
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :iscsi do |iscsi| disco = &amp;#39;.vagrant/discoiscsi1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoiscsi2.vdi&amp;#39; disco3 = &amp;#39;.vagrant/discoiscsi3.vdi&amp;#39; disco4 = &amp;#39;.vagrant/discoiscsi4.vdi&amp;#39; iscsi.vm.box = &amp;#34;debian/buster64&amp;#34; iscsi.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; iscsi.vm.network :public_network,:bridge=&amp;gt; &amp;#34;wlp0s20f3&amp;#34; iscsi.vm.provider :virtualbox do |v| if not File.exist?(disco) v.customize [&amp;#34;createhd&amp;#34;, &amp;#34;--filename&amp;#34;, disco, &amp;#34;--size&amp;#34;, 1024] end v.</description>
+    </item>
+    
+    <item>
+      <title>Sistema de Copias de Seguridad(Bacula)</title>
+      <link>https://www.alexrrinformatico.com/posts/bacula/</link>
+      <pubDate>Thu, 30 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/bacula/</guid>
+      <description>Vamos a utilizar bacula como sistema de copia de seguridad, y vamos a utilizar una instancia de ubuntu que la llamaremos choco(172.22.200.164)
+Instalación de bacula Primero de todo vamos a empezar instalando los servidores necesarios para poder ejecutar bacula
+apt install apache2 mariadb-server mariadb-client php Ahora instalaremos bacula completamente
+apt install bacula bacula-client bacula-common-mysql bacula-director-mysql bacula-server Instalcaión de webmin Para instalarnos webmin, que sirve para monitorizar las copias de seguridad, debemos descargarnoslo de la página https://sourceforge.</description>
+    </item>
+    
+    <item>
+      <title>OpenVPN con TLS/SSL</title>
+      <link>https://www.alexrrinformatico.com/posts/openvpn/</link>
+      <pubDate>Mon, 27 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/openvpn/</guid>
+      <description>VPN de acceso remoto con OpenVPN y certificados x509 Práctica VPN Vamos a preparar el escenario vagrant
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :server do |server| server.vm.box = &amp;#34;debian/buster64&amp;#34; server.vm.hostname = &amp;#34;server&amp;#34; server.vm.synced_folder &amp;#39;.&amp;#39;, &amp;#39;/vagrant&amp;#39; server.vm.network :public_network, :bridge =&amp;gt; &amp;#39;enp7s0&amp;#39; server.vm.network :private_network, ip: &amp;#34;192.168.1.1&amp;#34;, virtualbox__intnet: &amp;#34;lolitofdez&amp;#34; end config.vm.define :cliente do |cliente| cliente.vm.box = &amp;#34;debian/buster64&amp;#34; cliente.vm.hostname = &amp;#34;local&amp;#34; cliente.vm.synced_folder &amp;#39;.&amp;#39;, &amp;#39;/vagrant&amp;#39; cliente.vm.network :private_network, ip: &amp;#34;192.168.1.2&amp;#34;, virtualbox__intnet: &amp;#34;lolitofdez&amp;#34; end config.vm.define :clientevpn do |clientevpn| clientevpn.vm.box = &amp;#34;debian/buster64&amp;#34; clientevpn.</description>
+    </item>
+    
+    <item>
+      <title>Despliegue de CMS Java (Apache Guacamole)</title>
+      <link>https://www.alexrrinformatico.com/posts/guacamole/</link>
+      <pubDate>Thu, 23 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/guacamole/</guid>
+      <description>Guacamole En este caso vamos a elegir el CMS Java Apache Guacamole, que lo desplegaremos utilizando tomcat 9, esta aplicación nos permitirá acceder a servidores remotamente utilizando solo un navegador web. No necesita plugins de clientes ni softwares de clientes y además es de software libre.
+Tomcat Para instalar tomcat necesitaremos primero de todo instalar el siguiente paquete
+apt install tomcat8 Dependencias de Apache Guacamole También para poder instalar el CMS necesitaremos instalar varias dependencias, algunas son requeridas y otras opcionales, en este caso vamos a instalar todas</description>
+    </item>
+    
+    <item>
+      <title>Interconexión de bases de datos</title>
+      <link>https://www.alexrrinformatico.com/posts/interconexion/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/interconexion/</guid>
+      <description>Conexion Oracle a Oracle Vamos a configurar dos máquinas Debian con un Oracle instalado en cada una de ellas.
+Para configurar la interconexión primero debemos configurar el listener.ora de Oracle que está ubicado en /opt/oracle/product/12.2.0.1/dbhome_1/network/admin. Ip de la máquina: listener.ora: tnsnames.ora: lsnrctl stop lsnrctl start Comprobar interconexión Para que podamos hacer un database link en oracle primero tendremos que darle permisos a nuestro usuario alexrr Ahora entramos al usuario alexrr Ahora creamos el link: Y probamos un join de nuestras tablas con la base de datos remota Conexion PostgreSQL a PostgreSQL Vamos a configurar dos máquinas Debian con un PostgreSQL instalado en cada uno de ellas.</description>
+    </item>
+    
+    <item>
+      <title>Integración Continua estática y Django</title>
+      <link>https://www.alexrrinformatico.com/posts/integracion/</link>
+      <pubDate>Thu, 16 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/integracion/</guid>
+      <description>Despliegue de una página web estática Vamos a realizar una integración continua de este mismo blog en githubpages con travis, nuestra aplicación es de Hugo. Para ello crearemos un repositorio en github que solo contenga los ficheros markdown.
+alexrr@pc-alex:~/Hugo$ git@github.com:alexrr12341/alexblogtravis.git alexrr@pc-alex:~/Hugo$ cp -r alexblog/* alexblogtravis/ Vamos ahora a borrar la carpeta public que es la que contiene los htmls
+alexrr@pc-alex:~/Hugo/alexblogtravis$ rm -r public/ Ahora vamos a hacer nuestro fichero travis y vamos a modificarlo para que instale hugo y ejecute el comando (.</description>
+    </item>
+    
+    <item>
+      <title>Creación de un Hosting Simple por FTP</title>
+      <link>https://www.alexrrinformatico.com/posts/ftp/</link>
+      <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/ftp/</guid>
+      <description>Instalación de Hugo Primero creamos un virtual host para nuestra página web
+server { listen 80; server_name hosting.alejandro.gonzalonazareno.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl; ssl_certificate /etc/nginx/cert/salmorejo.alejandro.gonzalonazareno.org.crt; ssl_certificate_key /etc/nginx/cert/salmorejo.alejandro.gonzalonazareno.org.key; root /var/www/hosting; index index.html index.htm index.nginx-debian.html index.php; server_name hosting.alejandro.gonzalonazareno.org; location / { try_files $uri $uri/ =404; } location ~ \.php$ { try_files $uri $uri/ =404; fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; include fastcgi_params; } if (!-e $request_filename) { rewrite ^(.</description>
+    </item>
+    
+    <item>
+      <title>Cortafuegos perimetral con DMZ</title>
+      <link>https://www.alexrrinformatico.com/posts/iptables/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/iptables/</guid>
+      <description>La máquina router-fw tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.
+iptables -A INPUT -s 172.22.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT iptables -A OUTPUT -d 172.22.0.0/16 -p tcp -m tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT iptables -A INPUT -s 172.23.0.0/16 -p tcp -m tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT iptables -A OUTPUT -d 172.</description>
+    </item>
+    
+    <item>
+      <title>Cifrado Asimétrico (GPG/OpenSSL)</title>
+      <link>https://www.alexrrinformatico.com/posts/gpg/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/gpg/</guid>
+      <description>h2. Tarea 1: Generación de claves (1 punto)
+1. Genera un par de claves (pública y privada). ¿En que directorio se guarda las claves de un usuario?
+Para generar el par de claves utilizamos el siguiente comando:
+gpg --gen-key gpg (GnuPG) 2.2.17; Copyright (C) 2019 Free Software Foundation, Inc. This is free software: you are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.</description>
+    </item>
+    
+    <item>
+      <title>Como instalar un CMS de Python en Centos 8 con Gunicorn/Nginx</title>
+      <link>https://www.alexrrinformatico.com/posts/pythoncms/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/pythoncms/</guid>
+      <description>Vamos primero a hacer nuestro entorno virtual
+python3 -m venv mezzanine alexrr@pc-alex:~/pythonvirtual$ source mezzanine/bin/activate (mezzanine) alexrr@pc-alex:~/pythonvirtual$ Ahora vamos a instalar mezzanine con pip
+pip install mezzanine Ahora vamos a movernos a una carpeta, por ejemplo mezzanine y nos vamos a hacer un requirements.txt
+pip freeze &amp;gt; requirements.txt Y borramos la línea del requirements.txt de pkg-resources:
+pkg-resources==0.0.0 Y ahora vamos a hacer el proyecto de mezzanine
+mezzanine-project pythoncms Y vamos a crear la base de datos</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Python3 Makefile</title>
+      <link>https://www.alexrrinformatico.com/posts/python/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/python/</guid>
+      <description>h2. Instalación de Python
+https://www.python.org/downloads/
+tar -xf Python-3.8.0.tar.xz Y ejecutamos el configure
+mkdir /opt/python3 ./configure --prefix=/opt/python3 make Nos saltará una dependencia
+zipimport.ZipImportError: can&amp;#39;t decompress data; zlib not available El paquete de esta dependencia es zlib1g-dev
+apt install zlib1g-dev Y ahora lo instalamos
+make make install </description>
+    </item>
+    
+    <item>
+      <title>Integridad, firmas y autentificación</title>
+      <link>https://www.alexrrinformatico.com/posts/firmas/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/firmas/</guid>
+      <description>h2. Tarea 1: Firmas electrónicas (3 puntos)
+Manda un documento y la firma electrónica del mismo a un compañero. Verifica la firma que tu has recibido. Le mando el documento y la firma electrónica a Paco por scp.
+alexrr@pc-alex:~/gpg$ echo &amp;#34;Hola amigos&amp;#34; &amp;gt; paco alexrr@pc-alex:~/gpg$ gpg --output paco.sig --detach-sig paco Ahora la verificamos
+gpg --verify alex.sig alex alexrr@pc-alex:~/gpg$ gpg --verify alex.sig alex gpg: Firmado el mar 15 oct 2019 11:07:01 CEST gpg: usando RSA clave DA21BD5A7231AF245B1BA986733C176D1363BFF4 gpg: Firma correcta de &amp;#34;Francisco Guillermo García &amp;lt;pakotoes@gmail.</description>
+    </item>
+    
+    <item>
+      <title>Servidor Apache2</title>
+      <link>https://www.alexrrinformatico.com/posts/apache/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/apache/</guid>
+      <description>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant con una máquina con una red pública o utiliza una máquina del cloud. Instala el servidor web Apache2 en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.
+apt install apache2 En /var/www/html editamos el fichero index.html y accedemos a la IP de la máquina en nuestro navegador Tarea 2 (2 puntos)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</description>
+    </item>
+    
+    <item>
+      <title>Servidor Nginx</title>
+      <link>https://www.alexrrinformatico.com/posts/nginx/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/nginx/</guid>
+      <description>Tarea 1 (1 punto)(Obligatorio): Crea un escenario Vagrant o utiliza una máquina del cloud con una red pública. Instala el servidor web nginx en la máquina. Modifica la página index.html que viene por defecto y accede a ella desde un navegador. Entrega una captura de pantalla accediendo a ella.
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :nginx do |nginx| nginx.vm.box = &amp;#34;debian/buster64&amp;#34; nginx.vm.hostname = &amp;#34;local&amp;#34; nginx.vm.network :public_network,:bridge=&amp;gt;&amp;#34;wlp0s20f3&amp;#34; nginx.vm.network :private_network, ip: &amp;#34;10.1.1.103&amp;#34;, virtualbox__intnet: &amp;#34;apache&amp;#34; end end apt install nginx Tarea 2 (1 punto)(Obligatorio): Configura la resolución estática en los clientes y muestra el acceso a cada una de las páginas.</description>
+    </item>
+    
+    <item>
+      <title>Servidores DNS</title>
+      <link>https://www.alexrrinformatico.com/posts/dns/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/dns/</guid>
+      <description>Tarea 1 (2 punto)(Obligatorio): Modifica los clientes para que utilicen el nuevo servidor dns. Realiza una consulta a www.iesgn.org, y a www.josedomingo.org. Realiza una prueba de funcionamiento para comprobar que el servidor dnsmasq funciona como cache dns. Muestra el fichero hosts del cliente para demostrar que no estás utilizando resolución estática. Realiza una consulta directa al servidor dnsmasq. ¿Se puede realizar resolución inversa?. Documenta la tarea en redmine.
+Primero instalamos dnsmasq.</description>
+    </item>
+    
+    <item>
+      <title>Script para seleccionar paquetes por repositorio</title>
+      <link>https://www.alexrrinformatico.com/posts/scriptrepositorio/</link>
+      <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/scriptrepositorio/</guid>
+      <description>Script para seleccionar paquetes por repositorio #!/bin/sh  echo &amp;#34;¿Que repositorio quieres buscar?(Debe estar en /etc/apt/sources.list)&amp;#34; read repositorio reposistema=`cat /etc/apt/sources.list | grep -o $repositorio | head -1` #Aqui hacemos que si el repositorio está en el sistema avance el programa, sino simplemente finalice if [ $repositorio = $reposistema ]; then echo &amp;#34;Repositorio encontrado&amp;#34; #Aqui encuentra los paquetes que estan instalados en el sistema for paquetes in $(dpkg -l | grep &amp;#39;^ii&amp;#39;| awk &amp;#39;{print $2}&amp;#39;); do #Aqui está diciendo que si el repositorio se encuentra en el apt policy, entonces que mande por la terminal el paquete if [ $repositorio = $(apt policy $paquetes 2&amp;gt;/dev/null | egrep &amp;#39;\*\*\*&amp;#39; -A1 | tail -1 | awk &amp;#39;{print $2}&amp;#39;) ];then echo $paquetes fi done else echo &amp;#34;Este repositorio no existe&amp;#34; fi </description>
+    </item>
+    
+    <item>
+      <title>Servidor DHCP</title>
+      <link>https://www.alexrrinformatico.com/posts/creating-a-new-theme/</link>
+      <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/creating-a-new-theme/</guid>
+      <description>##Servidor DHCP
+Tarea 2 (1 punto)(Obligatorio): Entrega el fichero Vagrantfile que define el escenario.
+$script = &amp;lt;&amp;lt;-SCRIPT apt-get update apt-get -y install isc-dhcp-server SCRIPT Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :nodo_lan1 do |lan1| lan1.vm.box = &amp;#34;debian/buster64&amp;#34; lan1.vm.hostname = &amp;#34;nodolan1&amp;#34; lan1.vm.network :private_network,type: &amp;#34;dhcp&amp;#34;, virtualbox__intnet: &amp;#34;dhcp&amp;#34; lan1.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;ip r del default via 10.0.2.2&amp;#34; end config.vm.define :Servidor do |servidor| servidor.vm.box = &amp;#34;debian/buster64&amp;#34; servidor.vm.hostname = &amp;#34;Servidor&amp;#34; servidor.vm.network :private_network, ip: &amp;#34;192.168.100.1&amp;#34;, virtualbox__intnet: &amp;#34;dhcp&amp;#34; servidor.vm.network :public_network,:bridge=&amp;gt;&amp;#34;wlp0s20f3&amp;#34;,use_dhcp_assigned_default_route: true servidor.</description>
+    </item>
+    
+    <item>
+      <title>Ejercicio Raid 5</title>
+      <link>https://www.alexrrinformatico.com/posts/raid5/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid5/</guid>
+      <description>Ejercicio Raid 5 Fichero de Configuración
+Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid5 do |raid5| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; disco3 = &amp;#39;.vagrant/discoraid3.vdi&amp;#39; raid5.vm.box = &amp;#34;debian/buster64&amp;#34; raid5.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y upgrade&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install mdadm&amp;#34; raid5.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get -y install lvm2&amp;#34; raid5.vm.provider :virtualbox do |v| if not File.exist?(disco) v.customize [&amp;#34;createhd&amp;#34;, &amp;#34;--filename&amp;#34;, disco, &amp;#34;--size&amp;#34;, 1024] end v.customize [&amp;#34;storageattach&amp;#34;, :id, &amp;#34;--storagectl&amp;#34;, &amp;#34;SATA Controller&amp;#34;, &amp;#34;--port&amp;#34;, 1, &amp;#34;--device&amp;#34;, 0, &amp;#34;--type&amp;#34;, &amp;#34;hdd&amp;#34;, &amp;#34;--medium&amp;#34;, disco] end raid5.</description>
+    </item>
+    
+    <item>
+      <title>Instalación de Oracle 12c en Debian Jessie</title>
+      <link>https://www.alexrrinformatico.com/posts/oracle/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/oracle/</guid>
+      <description>Instalación de Oracle 12c en Debian Jessie Para instalar Oracle 12c debemos tener los siguientes requisitos mínimos:
+ 30GB de disco duro 2GB de RAM 2 procesadores Conexión a Internet  Configuración de Oracle Para la estructura de grupos y usuarios se recomienda la siguiente:
+addgroup --system oinstall addgroup --system dba adduser --system --ingroup oinstall -shell /bin/bash oracle adduser oracle dba passwd oracle Creación de directorios requeridos de Oracle:
+mkdir -p /opt/oracle/product/12.</description>
+    </item>
+    
+    <item>
+      <title>Primeros pasos de Hugo</title>
+      <link>https://www.alexrrinformatico.com/posts/hugo/</link>
+      <pubDate>Mon, 30 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/hugo/</guid>
+      <description>Instalación de Hugo Para instalar el generador Hugo simplemente debemos ejecutar el siguiente comando en la terminal
+apt-get install hugo  Hugo utiliza el lenguaje de programación Go Hugo utiliza el sistema de plantillas Go  Para crear un sitio web solo debemos ejecutar el siguiente comando en la terminal
+hugo new site {nombre} Configuración del theme Primero debemos elegir la plantilla Go que queramos y hacemos un git clone(debemos ponerla en la carpeta themes)</description>
+    </item>
+    
+    <item>
+      <title>Ejercicio Raid 1</title>
+      <link>https://www.alexrrinformatico.com/posts/raid1/</link>
+      <pubDate>Sat, 28 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/posts/raid1/</guid>
+      <description>Ejercicio RAID 1  Tarea 1: Entrega un fichero Vagranfile donde definimos la máquina con los discos necesarios para hacer el ejercicio. Además al crear la máquina con vagrant se debe instalar el programa mdadm que nos permite la construcción del RAID.  Vagrant.configure(&amp;#34;2&amp;#34;) do |config| config.vm.define :raid1 do |raid1| disco = &amp;#39;.vagrant/discoraid1.vdi&amp;#39; disco2 = &amp;#39;.vagrant/discoraid2.vdi&amp;#39; raid1.vm.box = &amp;#34;debian/buster64&amp;#34; raid1.vm.hostname = &amp;#34;EscenarioRaid&amp;#34; raid1.vm.network :public_network,:bridge=&amp;gt; &amp;#34;wlp0s20f3&amp;#34; raid1.vm.provision &amp;#34;shell&amp;#34;,run: &amp;#34;always&amp;#34;,inline: &amp;#34;apt-get update&amp;#34; raid1.</description>
+    </item>
+    
+    <item>
+      <title>About Hugo</title>
+      <link>https://www.alexrrinformatico.com/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/about/</guid>
+      <description>このテーマはhugo-coderを元に作成をしています。
+一見綺麗なポートフォリをサイトですが、より個人的なことも伝えられるようにしました。
+変更点の詳細はブログから、&amp;ldquo;FeaturesOfCoderPortfolio&amp;quot;を見てください。
+それ以外のDEMOのコンテンツに関してはhugo-coderのものです。
+質問や、報告がありましたら、下記からお願いいたします。
+ open an issue on GitHub ask me on Twitter   Hugo is a static site engine written in Go.
+It makes use of a variety of open source projects including:
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
+Setup Some fun facts about Hugo:
+ Built in Go Loosely inspired by Jekyll Primarily developed by spf13 on the train while commuting to and from Manhattan.</description>
+    </item>
+    
+    <item>
+      <title>Contact</title>
+      <link>https://www.alexrrinformatico.com/contact/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/contact/</guid>
+      <description>連絡をとりたいですか? 質問や報告などの連絡は下記からお願いします。
+ open an issue on GitHub ask me on Twitter  </description>
+    </item>
+    
+    <item>
+      <title>Contactame</title>
+      <link>https://www.alexrrinformatico.com/contactar/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/contactar/</guid>
+      <description>¿Quieres Contactarme? ¿Preguntas, sugerencias? Sientete libre de abrir un issue en GitHub.
+También puedes contactarme en mi email</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>https://www.alexrrinformatico.com/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/projects/</guid>
+      <description>Portfolio Demo  Coder Portfolio hugo-coderを元に作成しました。
+より自分を伝えられるようにしました。
+   </description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>https://www.alexrrinformatico.com/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/projects/</guid>
+      <description>Portfolio Demo  Coder Portfolio This theme is created based on hugo-coder.
+I made it possible to tell yourself more by my change.
+   </description>
+    </item>
+    
+    <item>
+      <title>Sobre Mi</title>
+      <link>https://www.alexrrinformatico.com/sobre/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.alexrrinformatico.com/sobre/</guid>
+      <description> Esta página ha sido creada con el tema: hugo-coder.
+Alumno de 2º de Administración de Sistemas Informáticos en Red. ¿Tienes preguntas? Pregunta en mi GitHub.
+ Gracias por visitar mi página.
+Amplios conocimientos en:
+ Bases de Datos(Oracle,MongoDB,MariaDB,PostgreSQL) Sistemas Operativos(Debian y Windows) Lenguaje de programación Python Lenguajes de Marcas(Markdown,JSON,Html5)  </description>
+    </item>
+    
+  </channel>
+</rss>
